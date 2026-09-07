@@ -1,0 +1,2409 @@
+<!doctype html>
+<html lang="zh-CN" data-page-node-id="BOiyIfQArPMysRPgw3zbGf">
+<head data-page-node-id="SMWiuBcCZ2yzbt3vGLB2NW">
+<meta charset="utf-8" data-page-node-id="bC0fGEgWcELuj78pP6fKaC">
+<title>阴阳师 · 召唤阵</title>
+<link rel="icon" href="data:," data-page-node-id="lxLU676ftySj22HpbAX0cs">
+<meta name="viewport" content="width=device-width,initial-scale=1" data-page-node-id="RSxILF6VgBUGOsDKO2oJNY">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#c8161d">
+<style>
+  :root{
+    --gold:#f6c860; --gold-2:#ffe9a8; --red:#c8161d; --red-2:#ff5b66; --ink:#fff5dc;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{width:100%;height:100%;overflow:hidden;background:#000;color:var(--ink);
+    font-family:"Noto Serif SC","STKaiti","KaiTi","Songti SC",serif;
+    -webkit-user-select:none;user-select:none}
+  body{background:radial-gradient(ellipse at 50% 55%, #3a0612 0%, #1a0408 35%, #07020a 75%, #000 100%)}
+
+  /* 返回图鉴 */
+  .back{
+    position:fixed;left:20px;top:18px;z-index:20;
+    color:#d6b67a;text-decoration:none;font-size:13px;letter-spacing:.15em;
+    padding:7px 16px;border:1px solid rgba(246,200,96,.4);border-radius:999px;
+    background:rgba(20,4,8,.5);backdrop-filter:blur(6px);transition:.15s;
+  }
+  .back:hover{color:#fff5dc;border-color:var(--gold);background:rgba(198,22,29,.35)}
+
+  .stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;perspective:1200px}
+  .top{position:absolute;top:16px;left:0;right:0;text-align:center;z-index:5;
+    font-size:22px;letter-spacing:.4em;color:var(--gold-2);
+    text-shadow:0 0 12px rgba(246,200,96,.6), 0 0 24px rgba(198,22,29,.45)}
+  .top small{display:block;margin-top:5px;font-size:12px;letter-spacing:.3em;color:#a0876a;opacity:.85}
+
+  .circle{position:relative;width:min(88vmin,760px);height:min(88vmin,760px);
+    display:flex;align-items:center;justify-content:center}
+  .circle svg{position:absolute;inset:0;width:100%;height:100%}
+  .ring-rot{animation:spin 40s linear infinite;transform-origin:50% 50%}
+  .ring-rot.rev{animation-direction:reverse;animation-duration:60s}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* 符咒卡 */
+  .talisman{position:absolute;width:74px;height:104px;border-radius:6px;
+    background:linear-gradient(160deg,#fff5dc 0%,#f3d490 55%,#b8893a 100%);
+    border:1px solid #6a4a1a;box-shadow:0 0 18px rgba(255,180,80,.45), inset 0 0 14px rgba(120,40,30,.35);
+    color:#3a0508;display:flex;align-items:center;justify-content:center;font-weight:700;
+    transform:translate(-50%,-50%);animation:float 6s ease-in-out infinite}
+  .talisman::before{content:"";position:absolute;inset:6px;border:1px solid rgba(90,30,20,.4);border-radius:4px}
+  .talisman span{position:relative;z-index:1;font-size:30px;text-shadow:0 1px 0 rgba(255,230,170,.6)}
+  @keyframes float{0%,100%{transform:translate(-50%,-50%) translateY(0) rotate(var(--rot,0deg))}
+    50%{transform:translate(-50%,-50%) translateY(-10px) rotate(calc(var(--rot,0deg) + 3deg))}}
+  .talisman:nth-child(1){top:8%;left:50%;--rot:8deg}
+  .talisman:nth-child(2){top:22%;left:84%;--rot:-12deg;animation-delay:-.7s}
+  .talisman:nth-child(3){top:55%;left:96%;--rot:18deg;animation-delay:-1.4s}
+  .talisman:nth-child(4){top:86%;left:78%;--rot:-7deg;animation-delay:-2.1s}
+  .talisman:nth-child(5){top:95%;left:48%;--rot:6deg;animation-delay:-2.8s}
+  .talisman:nth-child(6){top:84%;left:18%;--rot:-18deg;animation-delay:-3.5s}
+  .talisman:nth-child(7){top:50%;left:2%;--rot:10deg;animation-delay:-4.2s}
+  .talisman:nth-child(8){top:18%;left:14%;--rot:-4deg;animation-delay:-4.9s}
+
+  .rose{position:absolute;width:120px;height:120px;transform:translate(-50%,-50%);
+    opacity:.9;pointer-events:none;filter:drop-shadow(0 0 18px rgba(255,80,90,.5))}
+  .rose.r1{top:6%;left:18%} .rose.r2{top:6%;right:8%;left:auto}
+  .rose.r3{bottom:6%;left:10%} .rose.r4{bottom:6%;right:8%;left:auto}
+
+  .draw-layer{position:absolute;inset:0;width:100%;height:100%;cursor:crosshair;z-index:4}
+
+  .toolbar{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);z-index:7;
+    display:flex;gap:10px;align-items:center;white-space:nowrap;
+    background:rgba(20,4,8,.55);backdrop-filter:blur(8px);
+    border:1px solid rgba(246,200,96,.35);border-radius:999px;padding:8px 12px}
+  .swatch{width:24px;height:24px;border-radius:50%;border:2px solid rgba(255,255,255,.4);cursor:pointer}
+  .swatch.on{outline:2px solid var(--gold);outline-offset:2px}
+  .toolbar button{background:linear-gradient(180deg,#c8161d,#7a0a10);color:#fff5dc;border:1px solid var(--gold);
+    padding:8px 18px;border-radius:999px;cursor:pointer;font:inherit;letter-spacing:.15em;
+    box-shadow:0 0 14px rgba(198,22,29,.6), inset 0 0 8px rgba(255,200,120,.4);transition:.12s}
+  .toolbar button.ghost{background:transparent;color:var(--gold);border-color:rgba(246,200,96,.6)}
+  .toolbar button:hover{transform:translateY(-1px);box-shadow:0 0 20px rgba(255,200,120,.7), 0 0 28px rgba(198,22,29,.7)}
+  .toolbar .seg{display:flex;border:1px solid rgba(246,200,96,.5);border-radius:999px;overflow:hidden}
+  .toolbar .seg button{background:transparent;border:none;border-radius:0;color:#d6b67a;
+    padding:6px 14px;cursor:pointer;font:inherit;letter-spacing:.15em;box-shadow:none}
+  .toolbar .seg button.on{background:linear-gradient(180deg,#c8161d,#7a0a10);color:#fff5dc}
+  .toolbar .seg button:hover{transform:none;box-shadow:none;background:linear-gradient(180deg,#a01017,#600810);color:#fff5dc}
+  /* 十周年期间锁定：玩家切不动，固定 十连+蓝票 */
+  .toolbar .seg.locked{opacity:.55;pointer-events:none;cursor:default}
+  /* 当前使用 UP 池时的状态牌（poolSeg 两个常规按钮都不亮，由它表明当前池子） */
+  .up-chip{flex:none;padding:5px 12px;border-radius:999px;cursor:pointer;font:inherit;
+    font-size:12.5px;font-weight:700;letter-spacing:.08em;
+    background:linear-gradient(180deg,#ffefb3,#f6c860 55%,#a87422);color:#3a0508;
+    border:1px solid #fff3cf;box-shadow:0 0 10px rgba(255,220,150,.6);
+    animation:chipGlow 2.2s ease-in-out infinite;transition:transform .12s}
+  .up-chip:hover{transform:translateY(-1px)}
+  @keyframes chipGlow{
+    0%,100%{box-shadow:0 0 8px rgba(255,220,150,.5)}
+    50%{box-shadow:0 0 18px rgba(255,225,160,.95)}
+  }
+
+  /* 十周年特别版（仅一次）：金色高亮按钮 */
+  .toolbar button.tenth{background:linear-gradient(180deg,#ffefb3,#f6c860 40%,#a87422);
+    color:#3a0508;border-color:#fff3cf;
+    box-shadow:0 0 18px rgba(255,220,150,.85), 0 0 36px rgba(198,22,29,.6), inset 0 -6px 0 rgba(90,51,8,.25);
+    animation:tenthGlow 2.2s ease-in-out infinite}
+  @keyframes tenthGlow{
+    0%,100%{box-shadow:0 0 14px rgba(255,220,150,.6), 0 0 30px rgba(198,22,29,.45), inset 0 -6px 0 rgba(90,51,8,.25)}
+    50%{box-shadow:0 0 26px rgba(255,230,170,.95), 0 0 50px rgba(255,120,90,.65), inset 0 -6px 0 rgba(90,51,8,.25)}
+  }
+
+  /* ===== 百羽凤凰火限时UP：花瓣入口按钮（顶部「召唤阵」标题右侧） ===== */
+  .top-main{position:relative;display:inline-block}
+  .petal-btn{position:absolute;left:calc(100% + 14px);top:-5px;
+    width:38px;height:38px;padding:0;border:none;background:transparent;cursor:pointer;
+    filter:drop-shadow(0 0 12px rgba(255,120,150,.5));animation:petalPulse 2.6s ease-in-out infinite;
+    transition:transform .15s}
+  .petal-btn:hover{transform:scale(1.12)}
+  .petal-btn svg{display:block;width:100%;height:100%;pointer-events:none}
+  @keyframes petalPulse{
+    0%,100%{filter:drop-shadow(0 0 8px rgba(255,120,150,.4))}
+    50%{filter:drop-shadow(0 0 20px rgba(255,140,165,.9))}
+  }
+
+  /* ===== 百羽凤凰火限时UP 弹窗 ===== */
+  .up-wrap{position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;
+    background:rgba(0,0,0,.62);backdrop-filter:blur(3px)}
+  .up-wrap.on{display:flex;animation:fadeIn .25s ease}
+  .up-modal{position:relative;width:min(90vw,410px);max-height:min(92vh,780px);overflow:auto;
+    border-radius:14px;padding:16px 14px 16px;text-align:center;
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(255,210,120,.18), transparent 55%),
+      linear-gradient(180deg,#2a070c,#16030a 62%,#24060b);
+    border:2px solid rgba(246,200,96,.8);
+    box-shadow:inset 0 0 0 1px rgba(122,16,22,.9), inset 0 0 26px rgba(0,0,0,.6),
+      0 0 0 4px rgba(246,200,96,.25), 0 18px 48px rgba(0,0,0,.7);
+    animation:upPop .32s cubic-bezier(.2,.9,.3,1.18)}
+  @keyframes upPop{from{transform:scale(.85);opacity:0}to{transform:none;opacity:1}}
+  /* 弹窗背景立绘：限时UP页签时铺满整个弹窗（参考图样式），内容浮在上层 */
+  .up-bg{position:absolute;inset:0;z-index:0;overflow:hidden;border-radius:12px;pointer-events:none}
+  .up-bg[hidden]{display:none}
+  .up-bg img{width:100%;height:100%;object-fit:contain;object-position:center 8%;
+    filter:saturate(1.08)}
+  /* 自下而上渐变：立绘上方不压暗，从靠近文字的下部开始压暗保证可读 */
+  .up-bg::after{content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg, rgba(22,3,10,0) 0%, rgba(22,3,10,0) 40%,
+      rgba(22,3,10,.42) 56%, rgba(22,3,10,.85) 68%, rgba(22,3,10,.97) 78%, #16030a 90%)}
+  /* 自选模式已选角色：点背景立绘重新选择 */
+  .up-bg.pick-sel{pointer-events:auto;cursor:pointer}
+  .up-tabs,.up-pane,.up-prog,.up-pick{position:relative;z-index:1}
+  .up-close{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:50%;z-index:2;
+    border:1px solid rgba(246,200,96,.7);background:rgba(20,4,8,.92);color:#ffe9a8;cursor:pointer;
+    font-size:14px;line-height:1;font-family:inherit;transition:background .15s}
+  .up-close:hover{background:rgba(198,22,29,.65)}
+  /* 三个页签气泡：常驻 / 自选 / 限时 */
+  .up-tabs{display:flex;gap:8px;justify-content:center;margin:2px 6px 12px}
+  .up-tab{flex:1;max-width:108px;padding:6px 0;border-radius:999px;cursor:pointer;font:inherit;
+    font-size:13.5px;font-weight:700;letter-spacing:.18em;text-indent:.18em;
+    border:1px solid rgba(246,200,96,.5);background:rgba(20,4,8,.6);color:#c9ab72;
+    transition:all .15s}
+  .up-tab:hover{color:#ffe9a8;border-color:rgba(246,200,96,.8)}
+  .up-tab.on{background:linear-gradient(180deg,#ffefb3,#f6c860 55%,#a87422);color:#3a0508;
+    border-color:#fff3cf;box-shadow:0 0 10px rgba(255,220,150,.55)}
+  /* 已选中的卡池页签：右上角金色 ✓ 角标（三池互斥，同一时间只有一个） */
+  .up-tab{position:relative}
+  .up-tab.sel::after{content:"✓";position:absolute;top:-7px;right:-2px;width:17px;height:17px;
+    border-radius:50%;background:radial-gradient(circle at 50% 30%,#ffefb3,#f6c860 60%,#a87422);
+    color:#3a0508;font-size:11px;font-weight:700;line-height:17px;text-indent:0;letter-spacing:0;
+    border:1px solid #fff3cf;box-shadow:0 0 6px rgba(255,220,150,.7)}
+  /* 未上线的限时UP：页签照常可点进来看，只是「选择卡池」按钮点不了 */
+  .up-pick:disabled{opacity:.45;cursor:not-allowed;filter:grayscale(.4);box-shadow:none}
+  .up-pane[hidden]{display:none}
+  /* 限时/自选（已选角色）：立绘已作弹窗背景，内容下移让上半部露出立绘（参考图构图） */
+  .up-pane[data-pane="limited"],.up-pane[data-pane="pick"].with-bg{padding-top:min(26vh,210px)}
+  /* 常驻：纯文字统计 */
+  .up-stats{margin:18px 6px 22px;padding:14px 10px;border-radius:10px;
+    background:rgba(0,0,0,.35);border:1px solid rgba(246,200,96,.35);
+    color:#e8cf96;font-size:14px;letter-spacing:.08em;line-height:2.1}
+  .up-stats b{color:#ffe9a8;font-size:16px;margin:0 2px}
+  .up-stats .st-row{display:flex;flex-wrap:wrap;justify-content:center;gap:2px 14px}
+  /* 自选：立绘位置的「＋」按钮 */
+  .up-figure-pick{position:relative}
+  .up-add{width:100%;height:100%;min-height:200px;border:none;border-radius:8px;cursor:pointer;
+    background:rgba(0,0,0,.3);color:#f6c860;font-size:64px;font-weight:300;font-family:inherit;
+    line-height:1;transition:all .15s}
+  .up-add:hover{background:rgba(246,200,96,.12);color:#ffefb3}
+  .up-figure-pick img{cursor:pointer}   /* 点立绘重新选择角色 */
+  /* 自选角色选择浮层 */
+  .up-charlist{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;
+    border-radius:14px;background:linear-gradient(180deg,#2a070c,#16030a 62%,#24060b)}
+  .up-charlist[hidden]{display:none}
+  .up-charlist-head{display:flex;align-items:center;justify-content:space-between;
+    padding:12px 12px 8px;color:#f3d490;font-size:13.5px;letter-spacing:.08em}
+  .up-charlist-head button{border:1px solid rgba(246,200,96,.6);border-radius:999px;
+    background:transparent;color:#e8cf96;font:inherit;font-size:12.5px;padding:4px 14px;cursor:pointer}
+  .up-charlist-head button:hover{background:rgba(246,200,96,.12)}
+  .up-char-grid{flex:1;overflow:auto;display:grid;grid-template-columns:repeat(3,1fr);
+    gap:8px;padding:4px 12px 14px;align-content:start}
+  .up-char-grid.dragging{cursor:grabbing;user-select:none}
+  .up-char-grid{cursor:grab}
+  .up-char-item{border:1px solid rgba(246,200,96,.4);border-radius:8px;background:rgba(0,0,0,.3);
+    padding:6px 4px;cursor:pointer;text-align:center;transition:all .12s}
+  .up-char-item:hover{border-color:#f6c860;background:rgba(246,200,96,.1)}
+  .up-char-item img{width:64px;height:64px;object-fit:contain;display:block;margin:0 auto 4px}
+  .up-char-item i{font-style:normal;font-size:11px;color:#d6b67a;display:block;white-space:nowrap;
+    overflow:hidden;text-overflow:ellipsis}
+  /* 标题绶带：金字 + 两侧装饰线 */
+  .up-banner{display:flex;align-items:center;gap:10px;margin:2px 6px 10px}
+  .up-banner::before,.up-banner::after{content:"";flex:1;height:1px;
+    background:linear-gradient(90deg,transparent,rgba(246,200,96,.75));}
+  .up-banner::after{background:linear-gradient(90deg,rgba(246,200,96,.75),transparent)}
+  .up-banner span{font-size:17px;font-weight:700;letter-spacing:.18em;text-indent:.18em;white-space:nowrap;
+    background:linear-gradient(180deg,#ffefb3,#f6c860 55%,#d99a2b);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    text-shadow:0 0 14px rgba(246,200,96,.35)}
+  /* 立绘：贴参考图中间大图 */
+  .up-figure{position:relative;margin:2px 4px 10px;border-radius:10px;overflow:hidden;
+    background:
+      radial-gradient(ellipse at 50% 72%, rgba(255,170,120,.22), transparent 70%),
+      linear-gradient(180deg,#3a0d12,#1c040a)}
+  .up-figure::after{content:"";position:absolute;inset:0;border-radius:10px;pointer-events:none;
+    border:1px solid rgba(246,200,96,.35)}
+  .up-figure img{display:block;width:100%;height:min(32vh,250px);object-fit:contain;object-position:center bottom}
+  .up-figure img[hidden]{display:none}   /* 作者 display:block 会盖掉 UA 的 [hidden]，显式补回 */
+  /* 「46次召唤内必得 SSR/SP」红底横条 */
+  .up-strip{margin:0 6px 7px;padding:7px 8px;border-radius:8px;
+    background:linear-gradient(180deg,#c8161d,#7a0a10);border:1px solid rgba(246,200,96,.6);
+    color:#ffe9a8;font-size:14px;letter-spacing:.08em;
+    box-shadow:0 0 12px rgba(198,22,29,.5), inset 0 0 8px rgba(255,200,120,.28)}
+  .up-strip b{margin-left:5px;font-size:15px;color:#fff3cf;text-shadow:0 0 8px rgba(255,220,150,.6)}
+  /* 概率UP行 */
+  .up-rate{margin:0 6px 12px;font-size:13.5px;letter-spacing:.1em;color:#f3d490}
+  .up-rate b{margin-left:3px;font-size:15px;color:#ffe9a8;text-shadow:0 0 10px rgba(255,220,150,.55)}
+  /* 抽数进度条：整条「刻度尺」比可视区宽，左右拖动平移查看（玩家真实抽数标记不可拖） */
+  .up-prog{position:relative;margin:0 6px 12px}
+  .up-prog-tip{text-align:center;font-size:12.5px;letter-spacing:.1em;color:#f3d490;margin:0 6px 8px}
+  /* 可视窗口（overflow 裁掉尺子超宽部分）；尺子宽度由 JS 按 450 档设置。
+     高度 92px：顶部 22px 留给「当前抽数」气泡，下方轨道 + 刻度 */
+  .up-prog-zone{position:relative;height:92px;overflow:hidden;cursor:grab;touch-action:none}
+  .up-prog-zone:active{cursor:grabbing}
+  .up-scale{position:absolute;left:0;top:0;height:100%;will-change:transform}
+  /* 轨道：左侧内缩 10px，右侧 22px（给 450 刻度标签留出完整显示空间） */
+  .up-track{position:absolute;left:10px;right:22px;top:30px;height:10px;border-radius:5px;
+    background:#1a0806;border:1px solid rgba(246,200,96,.55);overflow:visible}
+  .up-fill{position:absolute;left:0;top:0;bottom:0;border-radius:5px;
+    background:linear-gradient(180deg,#ffefb3,#f6c860 55%,#c98f2e);width:0}
+  .up-handle{position:absolute;top:50%;transform:translate(-50%,-50%);left:0;width:20px;height:20px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #fff7dd, #f6c860 60%, #b8893a);
+    border:2px solid #fff3cf;box-shadow:0 0 10px rgba(255,220,150,.8);pointer-events:none;z-index:3}
+  /* 当前抽数气泡：悬在金色滑块正上方，带下指小尾巴 */
+  .up-cur{position:absolute;top:0;transform:translateX(-50%);padding:2px 9px;border-radius:999px;
+    background:linear-gradient(180deg,#ffefb3,#f6c860 60%,#c98f2e);color:#3a0508;
+    font-size:11px;font-weight:700;letter-spacing:.05em;white-space:nowrap;pointer-events:none;z-index:4;
+    border:1px solid #fff3cf;box-shadow:0 0 8px rgba(255,220,150,.65)}
+  .up-cur::after{content:"";position:absolute;left:50%;bottom:-5px;transform:translateX(-50%);
+    border:5px solid transparent;border-top-color:#e9b84f;border-bottom:none}
+  /* 刻度：抽数 + 对应UP概率 */
+  .up-ticks{position:absolute;left:10px;right:22px;top:46px;height:44px;pointer-events:none}
+  .up-tick{position:absolute;top:0;transform:translateX(-50%);text-align:center;line-height:1.25}
+  .up-tick b{display:block;font-size:12.5px;color:#f6c860;font-weight:700}
+  .up-tick i{display:block;font-style:normal;font-size:10.5px;color:#d6b67a}
+  .up-tick::before{content:"";position:absolute;top:-6px;left:50%;transform:translateX(-50%);
+    width:1.5px;height:4px;background:rgba(246,200,96,.6)}
+  /* 选择卡池：主行动按钮 */
+  .up-pick{display:block;width:calc(100% - 12px);margin:0 auto;padding:11px 0;border-radius:999px;cursor:pointer;
+    font:inherit;font-size:15px;font-weight:700;letter-spacing:.3em;text-indent:.3em;
+    background:linear-gradient(180deg,#ffefb3,#f6c860 40%,#a87422);color:#3a0508;
+    border:1px solid #fff3cf;
+    box-shadow:0 0 14px rgba(255,220,150,.55), inset 0 -5px 0 rgba(90,51,8,.25);
+    transition:transform .12s, box-shadow .15s}
+  .up-pick:hover{transform:translateY(-1px);box-shadow:0 0 22px rgba(255,225,160,.8), inset 0 -5px 0 rgba(90,51,8,.25)}
+  .up-pick:active{transform:translateY(1px)}
+  .up-pick.done{background:linear-gradient(180deg,#c8161d,#7a0a10);color:#fff5dc;border-color:rgba(246,200,96,.7)}
+
+  @media (max-width: 720px){
+    .petal-btn{width:32px;height:32px;top:-3px;left:calc(100% + 9px)}
+    .up-modal{width:min(94vw,400px)}
+    .up-figure img{height:24vh}
+  }
+
+  /* 中央落笔召唤按钮已删除（召唤阵在窄屏上下都要让出空间，否则会盖住召阵图） */
+  @media (max-width: 720px){
+    /* 让召阵整体缩小，往顶部压紧，给工具栏和按钮留足空间 */
+    .circle{
+      width:min(60vmin,300px);height:min(60vmin,300px);
+      margin-top:6vh
+    }
+    /* 缩小符咒：让它散布在召阵边缘而不是堆在中心（vmin 自适应） */
+    .talisman{width:13vmin;height:18vmin;min-width:48px;min-height:68px}
+    .talisman span{font-size:5.6vmin}
+    /* 把花往 viewport 角落推开，不被召阵吃掉 */
+    .rose{width:18vmin;height:18vmin;min-width:72px;min-height:72px}
+    .rose.r1{top:1%;left:3%} .rose.r2{top:1%;right:3%}
+    .rose.r3{bottom:34vh;left:3%} .rose.r4{bottom:34vh;right:3%}
+    /* 工具栏紧凑化：允许换行居中，避免一组按钮在窄屏一整行溢出被裁 */
+    .toolbar{left:8px;right:8px;bottom:max(12px, env(safe-area-inset-bottom));
+      transform:none;                          /* 清掉桌面版 translateX(-50%)，否则 left/right 定位会错位 */
+      border-radius:16px;gap:6px;row-gap:6px;padding:6px 8px;
+      flex-wrap:wrap;justify-content:center}
+    .toolbar button{padding:5px 10px;font-size:13px}
+    .toolbar .seg button{padding:4px 8px;font-size:12.5px;letter-spacing:.05em}
+    .swatch{width:20px;height:20px}
+    /* 顶部标题缩小 */
+    .top{font-size:22px;letter-spacing:.18em;margin-top:8px}
+    .top small{font-size:11px;letter-spacing:.12em}
+    /* 返回按钮小一点，避开 status bar */
+    .back{left:10px;top:max(10px, env(safe-area-inset-top));font-size:12px;padding:6px 12px}
+    /* 纸人 icon 收缩 */
+    .doll{width:42px;top:max(10px, env(safe-area-inset-top));right:12px}
+    /* 召唤阵光效缩小 */
+    .fx-circle{width:min(56vmin,300px);height:min(56vmin,300px)}
+    .fx-glow{width:40vmin;height:40vmin}
+  }
+
+  /* 比 720 更窄：更猛的小屏幕（iPhone SE 之类 320~375 宽） */
+  @media (max-width: 420px){
+    .circle{width:min(72vmax,300px);height:min(72vmax,300px);margin-top:2vh}
+    .talisman{width:46px;height:64px}
+    .talisman span{font-size:22px}
+    .talisman:nth-child(8){left:8%;top:30%}  /* 调整分布防止拥挤 */
+    .top{font-size:20px}
+  }
+
+  /* ===== 右上角小纸人 · 作者有话说 ===== */
+  .doll{position:fixed;top:14px;right:18px;z-index:30;width:52px;cursor:pointer;
+    filter:drop-shadow(0 0 10px rgba(255,200,120,.35));transition:transform .2s, filter .2s}
+  .doll img{display:block;width:100%;pointer-events:none}
+  .doll:hover{transform:scale(1.08) rotate(-3deg);filter:drop-shadow(0 0 16px rgba(255,220,150,.9))}
+  .doll .tip{position:absolute;top:50%;right:calc(100% + 14px);transform:translateY(-50%) translateX(8px);
+    white-space:nowrap;padding:8px 16px;border-radius:999px;border:1px solid rgba(246,200,96,.5);
+    background:rgba(20,4,8,.92);color:#ffe9a8;font-size:12px;letter-spacing:.25em;
+    opacity:0;pointer-events:none;transition:.22s}
+  .doll:hover .tip{opacity:1;transform:translateY(-50%) translateX(0)}
+
+  /* ===== 卷轴：从左往右摊开 ===== */
+  .scroll-wrap{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;
+    background:rgba(0,0,0,.55);backdrop-filter:blur(3px)}
+  .scroll-wrap.on{display:flex;animation:fadeIn .3s ease}
+  .scroll{position:relative;display:flex;align-items:stretch;
+    filter:drop-shadow(0 16px 44px rgba(0,0,0,.65))}
+  .scroll-rod{width:20px;border-radius:10px;position:relative;flex:none;
+    background:linear-gradient(180deg,#a87422,#5a380f 60%,#7a4c16);
+    box-shadow:inset 0 0 8px rgba(0,0,0,.6)}
+  .scroll-rod::before,.scroll-rod::after{content:'';position:absolute;left:50%;transform:translateX(-50%);
+    width:28px;height:13px;border-radius:7px;background:linear-gradient(180deg,#f6c860,#8a5a20)}
+  .scroll-rod::before{top:-8px}
+  .scroll-rod::after{bottom:-8px}
+  .scroll-paper{width:0;overflow:hidden;transition:width 1s cubic-bezier(.25,.85,.3,1);
+    background:linear-gradient(180deg,#f7ecd0,#efdba8);
+    border-top:4px solid #7a4c16;border-bottom:4px solid #7a4c16}
+  .scroll.open .scroll-paper{width:min(78vw,760px)}
+  .scroll-paper .inner{width:min(78vw,760px);padding:32px 44px;color:#4a2c0a;
+    font-size:15px;line-height:2.1;letter-spacing:.06em;
+    max-height:min(70vh,560px);overflow:auto;-webkit-user-select:text;user-select:text}
+  .scroll-paper .inner h3{margin:0 0 16px;text-align:center;font-size:20px;letter-spacing:.5em;
+    color:#7a1016;font-weight:700;text-indent:.5em}
+  .scroll-paper .inner p{margin:0 0 12px}
+  .scroll-paper .inner code{background:rgba(122,16,22,.08);padding:2px 7px;border-radius:4px;color:#7a1016}
+  .scroll-close{position:absolute;top:-18px;right:-18px;width:36px;height:36px;border-radius:50%;
+    border:1px solid rgba(246,200,96,.7);background:rgba(20,4,8,.92);color:#ffe9a8;cursor:pointer;
+    font-size:15px;line-height:1;font-family:inherit;display:none;z-index:2}
+  .scroll-wrap.on .scroll-close{display:block}
+  .scroll-close:hover{background:rgba(198,22,29,.6)}
+
+  /* ===== 结果场景：依次登场、渐隐移出 ===== */
+  .reveal{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;
+    flex-direction:column;overflow:hidden;
+    background:radial-gradient(ellipse at 50% 70%, rgba(120,8,24,.55) 0%, rgba(8,2,8,.95) 55%, #050108 100%);
+    backdrop-filter:blur(3px)}
+  .reveal.on{display:flex;animation:fadeIn .5s ease forwards}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .scene{position:relative;width:100%;height:100%;overflow:hidden}
+  .scene-bg{position:absolute;inset:0;pointer-events:none;
+    background:
+      radial-gradient(ellipse 60% 18% at 50% 78%, rgba(255,200,120,.18), transparent 70%),
+      radial-gradient(circle at 12% 18%, rgba(255,255,255,.5) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 28% 32%, rgba(255,230,180,.4) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 55% 8%,  rgba(255,255,255,.5) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 78% 22%, rgba(255,220,160,.4) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 88% 38%, rgba(255,255,255,.35) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 8%  55%, rgba(255,210,140,.3) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 42% 48%, rgba(255,255,255,.25) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 70% 60%, rgba(255,220,160,.3) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 18% 78%, rgba(255,200,140,.25) 0 1px, transparent 1.5px),
+      radial-gradient(circle at 65% 85%, rgba(255,200,140,.2) 0 1px, transparent 1.5px),
+      linear-gradient(180deg,#0a0208 0%,#150410 50%,#1a0612 100%);
+    background-size:100% 100%,200px 200px,240px 220px,180px 180px,220px 240px,260px 260px,
+      200px 220px,280px 260px,240px 200px,220px 240px,200px 220px,100% 100%;
+    background-repeat:no-repeat,repeat,repeat,repeat,repeat,repeat,repeat,repeat,repeat,repeat,repeat,no-repeat}
+  .scene-chars{position:absolute;inset:0;pointer-events:none}
+  .scene-char{position:absolute;left:50%;top:50%;
+    transform-origin:center bottom;opacity:0;will-change:transform,opacity}
+  .scene-char.enter{transform:translate(-50%,calc(-50% + 80px)) scale(.9);transition:none}
+  .scene-char.in{opacity:1;transform:translate(-50%,-50%) scale(1);
+    transition:opacity .55s ease, transform .7s cubic-bezier(.16,.84,.35,1)}
+  .scene-char.out{opacity:0;transform:translate(calc(-50% - 80vw),-50%) scale(.94);
+    transition:opacity .6s ease, transform .9s cubic-bezier(.42,0,.7,.4)}
+  .scene-char img{display:block;width:auto;height:auto;
+    max-width:min(84vmin,800px);
+    /* 底部预留约 115px 给进度点/计数/按钮；瘦高人形刚好不越线 */
+    max-height:calc(100vh - 165px);
+    filter:drop-shadow(0 0 18px rgba(255,200,120,.5)) drop-shadow(0 0 34px rgba(198,22,29,.4));
+    /* 立绘没加载完时显示微光骨架，加载完淡入，避免空白/闪烁 */
+    opacity:0;transition:opacity .45s ease;
+    background:linear-gradient(110deg, rgba(255,255,255,.04) 28%, rgba(255,225,150,.13) 50%, rgba(255,255,255,.04) 72%);
+    background-size:220% 100%;animation:skel 1.2s linear infinite}
+  .scene-char img.loaded{opacity:1;animation:none;background:none}
+  @keyframes skel{from{background-position:220% 0}to{background-position:-220% 0}}
+  .scene-name{position:absolute;left:6%;top:50%;transform:translate(-45%,-50%);
+    display:flex;flex-direction:column;gap:8px;padding:14px 24px 14px 18px;
+    background:linear-gradient(90deg, rgba(40,6,12,.85), rgba(40,6,12,.55) 80%, transparent);
+    border-left:3px solid var(--gold);border-radius:0 8px 8px 0;opacity:0;
+    transition:opacity .45s ease, transform .6s cubic-bezier(.16,.84,.35,1);z-index:30}
+  .scene-name.in{opacity:1;transform:translate(0,-50%)}
+  .scene-name .badge{display:inline-block;padding:3px 10px;border-radius:5px;
+    color:#2a0a06;font-size:12px;letter-spacing:.2em;font-weight:700;align-self:flex-start}
+  /* SSR/SP 专属黑幕里的立绘：同样先骨架占位，加载完淡入 */
+  #srImg{opacity:0;
+    background:linear-gradient(110deg, rgba(255,255,255,.04) 28%, rgba(255,225,150,.13) 50%, rgba(255,255,255,.04) 72%);
+    background-size:220% 100%;animation:skel 1.2s linear infinite}
+  /* 只收掉骨架微光，绝不能在这里写 opacity:1 —— #srImg.loaded(1,1,0) 会压过
+     #srFx img{opacity:0}(1,0,1)，立绘一加载完就直接显示，「先全黑再浮现」这一拍就没了。
+     可见性只由 #srFx img / #srFx img.in 管（黑幕 650ms 后才加 .in 渐现）。 */
+  #srImg.loaded{animation:none;background:none}
+  .scene-name .nm{font-size:28px;letter-spacing:.35em;color:var(--gold-2);
+    text-shadow:0 0 14px rgba(255,200,120,.7), 0 0 28px rgba(198,22,29,.5)}
+  .scene-name .new{
+    align-self:flex-start;margin-top:2px;padding:2px 8px;border-radius:4px;
+    background:linear-gradient(180deg,#ff5b66,#8a0a12);color:#fff;
+    font-size:11px;letter-spacing:.15em;animation:newPop .5s ease}
+  @keyframes newPop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
+
+  .seq-bar{position:absolute;left:0;right:0;bottom:30px;z-index:40;
+    display:flex;flex-direction:column;align-items:center;gap:12px}
+  .seq-dots{display:flex;gap:7px}
+  .seq-dots i{width:7px;height:7px;border-radius:50%;background:rgba(246,200,96,.22);transition:.3s}
+  .seq-dots i.on{background:var(--gold);transform:scale(1.4);box-shadow:0 0 8px var(--gold)}
+  .seq-dots i.done{background:rgba(246,200,96,.55)}
+  .seq-progress{font-size:14px;letter-spacing:.35em;color:#d6b67a;text-shadow:0 0 10px rgba(0,0,0,.9)}
+  .seq-actions{display:flex;gap:14px}
+  .seq-actions button{background:transparent;color:var(--gold);border:1px solid var(--gold);
+    padding:8px 22px;border-radius:999px;cursor:pointer;font:inherit;letter-spacing:.2em;transition:.15s}
+  .seq-actions button:hover{background:rgba(246,200,96,.15)}
+  .seq-actions button.primary{background:linear-gradient(180deg,#c8161d,#7a0a10);color:#fff;border-color:var(--gold)}
+  .seq-actions button.hide{display:none}
+
+  /* SSR/SP 专属落场：渐变黑屏 → 立绘渐现 → 上升光点 → 播语音。
+     层级：盖过普通立绘(scene-chars auto)，让名牌(z30)/进度条按钮(z40)浮在黑幕上 */
+  #srFx{position:absolute;inset:0;z-index:20;background:#020104;opacity:0;
+    transition:opacity .6s ease;pointer-events:none;overflow:hidden}
+  #srFx.on{opacity:1}
+  #srSparks{position:absolute;inset:0}
+  #srSparks .spark{bottom:-10px}   /* 复用召唤阵同款 .spark 光点 + rise 动画 */
+  #srFx img{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);
+    max-width:min(84vmin,800px);max-height:calc(100vh - 165px);
+    opacity:0;transition:opacity .8s ease;
+    filter:drop-shadow(0 0 18px rgba(255,200,120,.5)) drop-shadow(0 0 34px rgba(198,22,29,.4))}
+  #srFx img.in{opacity:1}
+  /* 黑幕那一段要「全屏纯黑」：底部进度点/进度数字与跳过·再画一次·收起按钮
+     （seq-bar z40 / seqSingle z30）本就浮在黑幕(z20)之上，会露在黑底上破坏效果，
+     所以黑幕期间一并隐去，立绘渐现时（名牌出来同时）再淡回来。 */
+  .seq-bar,#seqSingle{transition:opacity .4s ease}
+  #reveal.sr-black .seq-bar,
+  #reveal.sr-black #seqSingle{opacity:0;visibility:hidden;pointer-events:none}
+
+  /* 十连召唤 · 阵容页（替代小卡片网格） */
+  .lu-row{position:relative;z-index:2;display:flex;align-items:flex-end;justify-content:center;
+    margin-top:3vh;max-width:100vw;padding:0 8px}
+  .lu-slot{position:relative;margin:0 -12px;flex:0 0 auto;z-index:var(--lu-z,1);
+    opacity:0;animation:luIn .55s cubic-bezier(.16,.84,.35,1) forwards;
+    animation-delay:var(--lu-delay,0ms)}
+  @keyframes luIn{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+  .lu-slot img{display:block;width:var(--lu-w,9vw);height:auto;
+    max-height:58vh;object-fit:contain;
+    filter:drop-shadow(0 0 14px rgba(255,200,120,.5)) drop-shadow(0 0 30px rgba(198,22,29,.4))}
+  .lu-banner{position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);
+    display:flex;flex-direction:column;align-items:center;gap:5px;
+    padding:8px 6px 10px;border-radius:5px 5px 9px 9px;
+    background:linear-gradient(180deg, var(--lu-c,#c8161d) 0%, rgba(30,5,10,.92) 70%);
+    border:1px solid rgba(255,235,190,.55);
+    box-shadow:0 0 14px rgba(0,0,0,.65), inset 0 0 8px rgba(255,220,150,.25)}
+  .lu-banner .rb{font-size:11px;font-weight:700;color:#fff5dc;background:rgba(0,0,0,.3);
+    padding:1px 6px;border-radius:4px;letter-spacing:.06em;white-space:nowrap}
+  .lu-banner .rn{writing-mode:vertical-rl;font-size:13px;letter-spacing:.14em;
+    color:#ffe9a8;max-height:150px;text-shadow:0 0 6px rgba(0,0,0,.85)}
+  .lu-new{position:absolute;top:6%;right:6%;z-index:5;padding:2px 8px;border-radius:4px;
+    background:linear-gradient(180deg,#ff5b66,#8a0a12);color:#fff;font-size:11px;
+    letter-spacing:.12em;animation:newPop .5s ease}
+  .lu-title{position:absolute;left:50%;bottom:16%;transform:translateX(-50%);z-index:20;
+    font:700 48px/1 "STKaiti","KaiTi","Noto Serif SC",serif;letter-spacing:.16em;white-space:nowrap;
+    background:linear-gradient(180deg,#ffefb3 0%,#f6c860 45%,#a87422 90%);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+    filter:drop-shadow(0 0 16px rgba(255,200,120,.85)) drop-shadow(0 3px 5px rgba(60,10,5,.9))}
+  /* 结算页操作按钮：再次绘制 / 收起 */
+  .lu-actions{position:absolute;left:0;right:0;bottom:24px;z-index:30;
+    display:flex;justify-content:center;gap:16px}
+  .lu-actions button{background:transparent;color:var(--gold);border:1px solid var(--gold);
+    padding:9px 26px;border-radius:999px;cursor:pointer;font:inherit;font-size:15px;
+    letter-spacing:.25em;text-indent:.25em;transition:.15s}
+  .lu-actions button:hover{background:rgba(246,200,96,.15);transform:translateY(-1px)}
+  .lu-actions button.primary{background:linear-gradient(180deg,#c8161d,#7a0a10);color:#fff;border-color:var(--gold)}
+  /* 十连结果页：角色阵容 → 标题 → 按钮 三段改成流内排列并整体垂直居中，
+     避免 default 的 reveal justify-content:center + title/actions 绝对定位沉底产生巨大空隙 */
+  #reveal10{justify-content:center;padding-top:0}
+  #reveal10 .lu-row{margin-top:0;max-height:52vh}
+  #reveal10 .lu-title{position:static;transform:none;margin-top:10px;font-size:44px;
+    letter-spacing:.2em}
+  #reveal10 .lu-actions{position:static;margin-top:32px;
+    padding-bottom:max(18px, env(safe-area-inset-bottom))}
+  /* 手机端十连结果页（须在 .lu-slot / .lu-title 等基础规则之后，否则同优先级被覆盖） */
+  @media (max-width: 720px){
+    #reveal10 .lu-row{max-height:48vh}
+    /* 放大角色 + 更大负 margin 重叠 → 既够大又不溢出视口 */
+    .lu-slot{margin:0 -22px}
+    .lu-slot img{width:calc(var(--lu-w,9vw) * 1.8);max-height:42vh}
+    #reveal10 .lu-title{font-size:37px;margin-top:6px}
+    #reveal10 .lu-actions{margin-top:24px}
+    #reveal10 .lu-actions button{padding:8px 22px;font-size:14px}
+  }
+  /* 「点击继续」通用底部提示（十连阵容页 / 单抽页共用） */
+  .click-continue{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:30;
+    padding:9px 36px;border:1px solid rgba(246,200,96,.55);border-radius:999px;
+    color:#ffe9a8;font-size:15px;letter-spacing:.4em;text-indent:.4em;white-space:nowrap;
+    background:rgba(20,4,8,.6);animation:hintPulse 1.8s ease-in-out infinite;
+    pointer-events:none;text-shadow:0 0 10px rgba(0,0,0,.9)}
+  @keyframes hintPulse{0%,100%{opacity:.5}50%{opacity:1}}
+
+  /* 召唤时的「关门开门」过场（替代刺眼的白屏闪烁） */
+  .door{position:fixed;inset:0;z-index:60;pointer-events:none;display:flex;overflow:hidden}
+  .door-panel{position:absolute;top:0;bottom:0;width:50%;
+    background:linear-gradient(180deg,#250507,#5e0d12 45%,#33080b);
+    box-shadow:inset 0 0 80px rgba(0,0,0,.7);
+    transition:transform .55s cubic-bezier(.76,0,.24,1)}
+  .door-panel.left{left:0;transform:translateX(-100%)}
+  .door-panel.right{right:0;transform:translateX(100%)}
+  .door-panel::after{content:'';position:absolute;top:0;bottom:0;width:3px;
+    background:linear-gradient(180deg,#f6c860,#fff3cf,#f6c860);opacity:.85}
+  .door-panel.left::after{right:0}
+  .door-panel.right::after{left:0}
+  .door.closing .door-panel.left,
+  .door.closing .door-panel.right{transform:translateX(0)}
+  .door.opening .door-panel.left{transform:translateX(-100%)}
+  .door.opening .door-panel.right{transform:translateX(100%)}
+
+  .spark{position:absolute;width:6px;height:6px;border-radius:50%;
+    background:radial-gradient(circle,#fff7c8 0%,#f6c860 50%,transparent 70%);
+    box-shadow:0 0 10px #f6c860,0 0 18px rgba(255,200,120,.6);
+    animation:rise 7s linear infinite;opacity:0}
+  @keyframes rise{0%{transform:translateY(0) scale(.4);opacity:0}10%{opacity:1}
+    90%{opacity:.6}100%{transform:translateY(-120vh) scale(1);opacity:0}}
+
+  .state{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;
+    gap:14px;background:rgba(8,2,8,.95);z-index:99;text-align:center;padding:30px}
+  .state .t{font-size:19px;letter-spacing:.3em;color:var(--gold)}
+  .state .d{font-size:13px;letter-spacing:.1em;color:#a08a6c;line-height:2;max-width:560px}
+  .state code{background:rgba(255,255,255,.07);padding:2px 7px;border-radius:4px;color:var(--gold-2)}
+
+  /* === 召唤阵注入光效（红瓣 + 金光屑）· 不满意可整体删除：
+     删 #summonFx 节点 + 这段 CSS + JS 中 summonFx 相关函数 === */
+  .summon-fx{position:fixed;inset:0;z-index:55;pointer-events:none;display:none;
+    align-items:center;justify-content:center;overflow:hidden}
+  .summon-fx.on{display:flex}
+  /* 外层 wrap 锁死居中：top:50% + left:50% + translate(-50%,-50%)，不受子元素 transform 影响 */
+  .fx-circle-wrap,.fx-glow-wrap{
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+  .fx-circle{width:min(68vmin,600px);height:min(68vmin,600px);border-radius:50%;
+    background:conic-gradient(from 0deg, rgba(246,200,96,.65), rgba(255,91,102,.5), rgba(246,200,96,.65));
+    -webkit-mask:radial-gradient(circle, transparent 47%, #000 49%, #000 51%, transparent 53%);
+            mask:radial-gradient(circle, transparent 47%, #000 49%, #000 51%, transparent 53%);
+    transform:scale(.2);opacity:0;transform-origin:50% 50%}
+  .fx-glow{width:48vmin;height:48vmin;border-radius:50%;transform:scale(.2);opacity:0;
+    background:radial-gradient(circle, rgba(255,240,190,.9), rgba(246,200,96,.35) 40%, transparent 70%);
+    filter:blur(6px);transform-origin:50% 50%}
+  /* 粒子（替代蝴蝶）：红瓣 + 金光屑，贴合页面金红符阵风格 */
+  .fx-petal{position:absolute;left:0;top:0;pointer-events:none;
+    will-change:transform,opacity;border-radius:80% 0 55% 50%;
+    background:linear-gradient(135deg, #fff3cf 0%, #ff8aa0 45%, #c8161d 100%);
+    box-shadow:0 0 10px rgba(255,140,160,.85), 0 0 22px rgba(255,80,90,.35);
+    opacity:0}
+  .fx-spark{position:absolute;left:0;top:0;pointer-events:none;
+    will-change:transform,opacity;border-radius:50%;
+    background:radial-gradient(circle, #fff7c8 0%, #f6c860 55%, transparent 100%);
+    box-shadow:0 0 6px #f6c860, 0 0 14px rgba(255,200,120,.6);
+    opacity:0}
+  @keyframes fxSpin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body data-page-node-id="BbzFNgWp3xnQN8koik7bJf">
+  <a class="back" href="codex.html" data-page-node-id="fEBg9NrS7ezwt9PN8wGlHH">← 返回图鉴</a>
+
+  <div class="stage" id="stage" data-page-node-id="B8W3hV3ltuecYDQi4P3j0U">
+    <div class="top" data-page-node-id="OaXdqssDezfuL8tMYEsgCc"><span class="top-main">召 唤 阵<small data-page-node-id="7q9UkMFzGgNuEO1hPPkerk">· 鼠标在阵中绘制图形 ·</small><button class="petal-btn" id="petalBtn" title="百羽凤凰火 限时UP卡池" aria-label="百羽凤凰火 限时UP卡池">
+        <svg viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="46" fill="rgba(42,7,12,.85)" stroke="rgba(246,200,96,.8)" stroke-width="2.5"/>
+          <g transform="translate(50 50)">
+            <ellipse cx="0" cy="-23" rx="12" ry="16" fill="#ff8fa3" transform="rotate(0)"/>
+            <ellipse cx="0" cy="-23" rx="12" ry="16" fill="#ff7d95" transform="rotate(72)"/>
+            <ellipse cx="0" cy="-23" rx="12" ry="16" fill="#ffa3b5" transform="rotate(144)"/>
+            <ellipse cx="0" cy="-23" rx="12" ry="16" fill="#ff7d95" transform="rotate(216)"/>
+            <ellipse cx="0" cy="-23" rx="12" ry="16" fill="#ffa3b5" transform="rotate(288)"/>
+            <circle r="7.5" fill="#f6c860" stroke="#a87422" stroke-width="1.5"/>
+          </g>
+        </svg>
+      </button></span></div>
+
+    <div class="circle" id="circle" data-page-node-id="mCrGd5WxWY2ZCnvkeG4kSV">
+      <svg viewBox="0 0 800 800" aria-hidden="true" data-page-node-id="kbWgPYBHPvh8PepxEE8Gtw">
+        <defs data-page-node-id="AEHPgNolBKLS6fZ5IXyDGV">
+          <radialGradient id="ringG" cx="50%" cy="50%" r="50%" data-page-node-id="lO0xxCtbpIzpK5zPGzmQNh">
+            <stop offset="0%" stop-color="#f6c860" stop-opacity="0" data-page-node-id="rAWsT0aBHossemU1EoLfFD"/>
+            <stop offset="70%" stop-color="#f6c860" stop-opacity=".25" data-page-node-id="YtqZBNB0dXKhRxnNrkxzUy"/>
+            <stop offset="92%" stop-color="#f6c860" stop-opacity=".85" data-page-node-id="FkitdNtCEpU8Dd5Fw7bbcO"/>
+            <stop offset="100%" stop-color="#ff5b66" stop-opacity="0" data-page-node-id="r1W3K00PLDQDf29ztXF4HC"/>
+          </radialGradient>
+          <radialGradient id="innerG" cx="50%" cy="50%" r="50%" data-page-node-id="sSysUD5H8cq6Ibg6Fpzml9">
+            <stop offset="0%" stop-color="#ffe9a8" stop-opacity=".4" data-page-node-id="y5uIeb5GqheqZWACnqu74x"/>
+            <stop offset="60%" stop-color="#c8161d" stop-opacity=".15" data-page-node-id="QdW6NMs1GkX3YLlQfFN4Mq"/>
+            <stop offset="100%" stop-color="#1a0408" stop-opacity="0" data-page-node-id="wURY6jHK9374iCoX6JSsQr"/>
+          </radialGradient>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%" data-page-node-id="EByv8yQAAKSRRO1AvWG6KP">
+            <feGaussianBlur stdDeviation="3" result="b" data-page-node-id="BVp4j3vI49FfTWAzWXROPW"/>
+            <feMerge data-page-node-id="GAIo0Tvjslc1EMlHwRt39b"><feMergeNode in="b" data-page-node-id="jKlIYR9FhP5VHjGUEnDROQ"/><feMergeNode in="SourceGraphic" data-page-node-id="Tr22a9vkwhzGMCAwe3Z7zH"/></feMerge>
+          </filter>
+        </defs>
+        <circle cx="400" cy="400" r="395" fill="url(#ringG)" class="ring-rot" data-page-node-id="ZuLYu6Z1gZVSEmR0ch3SZx"/>
+        <circle cx="400" cy="400" r="320" fill="none" stroke="rgba(246,200,96,.35)" stroke-width="1" data-page-node-id="LQc1aMZUZ1QF1MqK95Vs3Z"/>
+        <circle cx="400" cy="400" r="270" fill="none" stroke="rgba(246,200,96,.55)" stroke-width="1.2"
+                stroke-dasharray="6 8" class="ring-rot rev" data-page-node-id="nOhyNlLvFQUC3DBujseOuf"/>
+        <g class="ring-rot" data-page-node-id="7t6PJVHAc3r33rAtiViAvo">
+          <g fill="#f6c860" data-page-node-id="6sctC79aBe1a6MvYGACJqw">
+            <circle cx="400" cy="80"  r="3" data-page-node-id="v0oGCjbqoxM3a4tPz9xZrl"/><circle cx="720" cy="400" r="3" data-page-node-id="SB20f7ST9XU3ib2vYEAu2E"/>
+            <circle cx="400" cy="720" r="3" data-page-node-id="kKJCwmIaCou1SQ4JgqGPlx"/><circle cx="80"  cy="400" r="3" data-page-node-id="f5lMwgzcbde8EdIGpAfFSi"/>
+          </g>
+        </g>
+        <circle cx="400" cy="400" r="220" fill="url(#innerG)" data-page-node-id="YwSRuoSs9fwlceWbj1W349"/>
+        <g class="pentagram" filter="url(#glow)" transform="translate(400 400)" data-page-node-id="h9DJWs5kHM2mlNfXnBRVE0">
+          <polygon points="0,-180 171,-55 106,145 -106,145 -171,-55"
+                   fill="none" stroke="rgba(255,210,120,.55)" stroke-width="1.4" data-page-node-id="ciIzgcPVDcmM0pu94EFZ8Z"/>
+          <polygon points="0,-200 59,-65 190,-62 95,28 117,164 0,90 -117,164 -95,28 -190,-62 -59,-65"
+                   fill="rgba(255,210,120,.04)" stroke="#ffe9a8" stroke-width="2.2" stroke-linejoin="round" data-page-node-id="51PtwTJwOvtUo01GXTWWjm"/>
+          <circle r="20" fill="rgba(255,210,120,.18)" stroke="#f6c860" stroke-width="1.2" data-page-node-id="3fMwfIK2l26LVMzJ77wFPb"/>
+        </g>
+      </svg>
+
+      <div class="talisman" data-page-node-id="surBBGgaDsfrdvlSKCcUuy"><span data-page-node-id="zOKvSRaFS20HXoQGiVwuhG">符</span></div>
+      <div class="talisman" data-page-node-id="RaUdGcIy0cbHny8K3RXgdR"><span data-page-node-id="Kdg3maZV79kOJxBlau1ZzA">咒</span></div>
+      <div class="talisman" data-page-node-id="QepTqINlFgJB6Ewb1Ygwg9"><span data-page-node-id="r7phExuLnWWiNKHIleSlg8">式</span></div>
+      <div class="talisman" data-page-node-id="DAK63yzO8X8FgiNJlarRBf"><span data-page-node-id="5qMVSug3wzxVJfsvXQRpJ7">神</span></div>
+      <div class="talisman" data-page-node-id="lp9owh6ShZFUzrDDJid8Cy"><span data-page-node-id="HHfTe5aVlaLAtITmGRDJnH">灵</span></div>
+      <div class="talisman" data-page-node-id="W7INIYEvoSmjdSfmp7dCyr"><span data-page-node-id="oCHndzyJ0LBVNCXlupu7jh">阵</span></div>
+      <div class="talisman" data-page-node-id="3B21mnHcYcWUx7fPdopm1W"><span data-page-node-id="UrU9SyeSiecevMd2BQbFeH">印</span></div>
+      <div class="talisman" data-page-node-id="ivgv2YPxDIQNdG4YKDZ728"><span data-page-node-id="l64kTL3begn41JMsvZv8ds">契</span></div>
+
+      <div class="rose r1" aria-hidden="true" data-page-node-id="GC6IyHOdSpdFOAJ4qxMIEx"><svg viewBox="0 0 100 100" width="100%" height="100%" data-page-node-id="gaiTFavEBeO1oz65tQBAFr">
+        <g data-page-node-id="XSn0bxv9M6DUGtlDb5wVrP"><circle cx="50" cy="50" r="44" fill="#3a0508" data-page-node-id="rUFCTqk3IyRGglCv4O2wLR"/><g transform="translate(50 50)" data-page-node-id="mETR8BG1UI03rikQaAuahE">
+        <ellipse cx="0" cy="-22" rx="10" ry="14" fill="#ff5b66" transform="rotate(0)" data-page-node-id="HpLVh1OQPIG4Y2JlIkOaet"/>
+        <ellipse cx="0" cy="-22" rx="10" ry="14" fill="#ff5b66" transform="rotate(72)" data-page-node-id="QCetbuiDpusU6Dv4hUplwa"/>
+        <ellipse cx="0" cy="-22" rx="10" ry="14" fill="#ff5b66" transform="rotate(144)" data-page-node-id="MSolDtmLgn0d1bBueIIUcs"/>
+        <ellipse cx="0" cy="-22" rx="10" ry="14" fill="#ff5b66" transform="rotate(216)" data-page-node-id="4sJL5pJUUy5aazvhc3tPIF"/>
+        <ellipse cx="0" cy="-22" rx="10" ry="14" fill="#ff5b66" transform="rotate(288)" data-page-node-id="Tfflq0QBU856qH2ig8clja"/>
+        <circle r="7" fill="#f6c860" data-page-node-id="UTmKN80ztsw59ZqfZrPmsm"/></g></g></svg></div>
+      <div class="rose r2" aria-hidden="true" data-page-node-id="nGKjL1V9CFiLEm2KwUH8Qa"><svg viewBox="0 0 100 100" width="100%" height="100%" data-page-node-id="3o5xvjoKy4D3XE939U5Y4t">
+        <g data-page-node-id="IyrCx2cwT8Te4igRi8cdyh"><circle cx="50" cy="50" r="44" fill="#3a0508" data-page-node-id="g9OEw3QB8YhMx2nAoI5gQX"/><g transform="translate(50 50)" data-page-node-id="yMz0MAVDweuhZFBY26L8vf">
+        <ellipse cx="0" cy="-22" rx="10" ry="14" fill="#ff5b66" transform="rotate(36)" data-page-node-id="RnDYv244Bt4k5FMp7zqEGI"/>
+        <ellipse cx="0" cy="-22" rx="10" ry="14" fill="#ff5b66" transform="rotate(108)" data-page-node-id="0b2Ya59uhekBWa5ei86Kd5"/>
+        <ellipse cx="0" cy="-22" rx="10" ry="14" fill="#ff5b66" transform="rotate(180)" data-page-node-id="D2af34AAz99xlUM03q4Nl5"/>
+        <ellipse cx="0" cy="-22" rx="10" ry="14" fill="#ff5b66" transform="rotate(252)" data-page-node-id="RNEPx3OVXk1b93dy4EqRcj"/>
+        <ellipse cx="0" cy="-22" rx="10" ry="14" fill="#ff5b66" transform="rotate(324)" data-page-node-id="bJFMAW3pVxGAGnsEeFtXop"/>
+        <circle r="7" fill="#f6c860" data-page-node-id="RGy6HxFVi0hk81f40acDIy"/></g></g></svg></div>
+      <div class="rose r3" aria-hidden="true" data-page-node-id="R1AkzTZ3ciXC6azV6k48eS"><svg viewBox="0 0 100 100" width="100%" height="100%" data-page-node-id="Ddr5qH6gR3SdYMqjctU01D">
+        <g data-page-node-id="HNF7PElpm6vv4N20PaLNiU"><circle cx="50" cy="50" r="44" fill="#3a0508" data-page-node-id="p9pmL2pRXnZE6vVNvpNtyX"/><g transform="translate(50 50)" data-page-node-id="arVXy7BJiHz11CnEJOq0Yw">
+        <ellipse cx="0" cy="-22" rx="10" ry="14" fill="#ff5b66" transform="rotate(0)" data-page-node-id="Bep3GTAVcEXOdeMeUGKZ4A"/>
+        <ellipse cx="0" cy="-22" rx="10" ry="14" fill="#ff5b66" transform="rotate(72)" data-page-node-id="a6U77kGxA9KVfPmxiETY9j"/>
+        <ellipse cx="0" cy="-22" rx="10" ry="14" fill="#ff5b66" transform="rotate(144)" data-page-node-id="WrVGR6eBDTxsjBySIvkYrD"/>
+        <ellipse cx="0" cy="-22" rx="10" ry="14" fill="#ff5b66" transform="rotate(216)" data-page-node-id="t4ot9yiARktSHKIYOVMeo1"/>
+        <ellipse cx="0" cy="-22" rx="10" ry="14" fill="#ff5b66" transform="rotate(288)" data-page-node-id="ymkIR2JZgSYALh5kUagTSa"/>
+        <circle r="7" fill="#f6c860" data-page-node-id="cUSD5Hz5ipXNoQt9GOBvao"/></g></g></svg></div>
+      <div class="rose r4" aria-hidden="true" data-page-node-id="YkNL2c6qv6Frpv5qEgLdBK"><svg viewBox="0 0 100 100" width="100%" height="100%" data-page-node-id="yRshIYAAgBHnNlEFzEWhzY">
+        <g data-page-node-id="s3Hf0lCP4e3LHkkwLHvt8o"><circle cx="50" cy="50" r="44" fill="#3a0508" data-page-node-id="NoBGI7370Wyy1HEEkkILSf"/><g transform="translate(50 50)" data-page-node-id="nhETAsCL5usj1Uf6H5rgbc">
+        <ellipse cx="0" cy="-22" rx="10" ry="14" fill="#ff5b66" transform="rotate(54)" data-page-node-id="3trBcRtFCIN4dGArHyYOQI"/>
+        <ellipse cx="0" cy="-22" rx="10" ry="14" fill="#ff5b66" transform="rotate(126)" data-page-node-id="zyjWd3Cvq1sU4fxrnq9WBf"/>
+        <ellipse cx="0" cy="-22" rx="10" ry="14" fill="#ff5b66" transform="rotate(198)" data-page-node-id="daiIKrCXEboxsn5kX2zJgR"/>
+        <ellipse cx="0" cy="-22" rx="10" ry="14" fill="#ff5b66" transform="rotate(270)" data-page-node-id="cVMsSVEpvHq7Y8D82LCtDA"/>
+        <ellipse cx="0" cy="-22" rx="10" ry="14" fill="#ff5b66" transform="rotate(342)" data-page-node-id="Qwle47cGD2koJBPpKDEsap"/>
+        <circle r="7" fill="#f6c860" data-page-node-id="MQXXHFTRWBUvbBAO0jHrqG"/></g></g></svg></div>
+
+      <canvas class="draw-layer" id="cv" data-page-node-id="iEFTfEyY6H7wG8tnE224FO"></canvas>
+    </div>
+
+    <div class="toolbar" id="toolbar" data-page-node-id="7AlMCVOjtfT5l6Z1GzJY2D">
+      <div class="swatch on" data-color="#ffe9a8" style="background:#ffe9a8" data-page-node-id="34GbZs8NY79TAZjGIMrgct"></div>
+      <div class="swatch"    data-color="#ff5b66" style="background:#ff5b66" data-page-node-id="U0CiAWjZhJdw0eJXIp4Gxv"></div>
+      <div class="swatch"    data-color="#f6c860" style="background:#f6c860" data-page-node-id="lGjn5NJFSW4Lr9tf4WpDbw"></div>
+      <div class="swatch"    data-color="#ffffff" style="background:#ffffff" data-page-node-id="LOCNAH9L6Pn7DulKCjqXGN"></div>
+      <div class="seg" id="modeSeg" data-page-node-id="BqD1OowqGCa9hEKsoQtygI">
+        <button class="on" data-mode="single" data-page-node-id="PyWH4i4S5A81Yld2MQMB3H">单 抽</button>
+        <button data-mode="ten" data-page-node-id="XUHo5y0qOYFZtXdZ7cJ4j5">十 连</button>
+      </div>
+      <div class="seg" id="poolSeg" title="切换抽卡池（概率在 rates.json 的 pools 段配置）" data-page-node-id="w05Ln3oHDAWHwhcvY60yXV">
+        <button class="on" data-pool="蓝票" data-page-node-id="wSvRaPBiwd5kJCGq1oaWum">蓝 票</button>
+        <button data-pool="破碎符咒" data-page-node-id="b9sUpO5fm9WH81qHS89UYO">破碎符咒</button>
+      </div>
+      <button class="up-chip" id="upChip" hidden title="当前使用 UP 卡池，点击查看详情"></button>
+      <button class="ghost" id="clearBtn" data-page-node-id="ULvOBMILnBWehwbHkbtAlK">清空</button>
+      <button id="summonBtn" data-page-node-id="5FB4qcwbyl9tPZxaLXpCLU">开始抽卡</button>
+    </div>
+  </div>
+
+  <!-- 卡池弹窗（花瓣按钮点开）：常驻 / 自选 / 限时 三页签。
+       限时=百羽凤凰火；自选=同限时但立绘换成「＋」选角色；常驻=纯文字统计。 -->
+  <div class="up-wrap" id="upWrap" aria-hidden="true">
+    <div class="up-modal" role="dialog" aria-label="卡池选择">
+      <!-- 弹窗背景立绘（限时UP页签时显示，放大铺满弹窗，内容浮在上层） -->
+      <div class="up-bg" id="upBg"><img id="upBgImg" src="img/sp/51百羽凤凰火.png" alt=""></div>
+      <button class="up-close" id="upClose" aria-label="关闭">✕</button>
+
+      <div class="up-tabs">
+        <button class="up-tab" data-tab="perm">常 驻</button>
+        <button class="up-tab" data-tab="pick">自 选</button>
+        <button class="up-tab on" data-tab="limited">限 时</button>
+      </div>
+
+      <!-- 常驻：纯文字统计（总抽数 + 各稀有度计数） -->
+      <div class="up-pane" data-pane="perm" hidden>
+        <div class="up-stats" id="upStats">还没有抽卡记录</div>
+      </div>
+
+      <!-- 自选：同限时，中间立绘换成「＋」，点击选概率UP角色 -->
+      <div class="up-pane" data-pane="pick" hidden>
+        <div class="up-banner"><span>自选概率UP</span></div>
+        <div class="up-figure up-figure-pick" id="upPickFig">
+          <button class="up-add" id="upAddBtn" aria-label="选择概率UP角色">＋</button>
+          <img id="upPickImg" src="" alt="" hidden>
+        </div>
+        <div class="up-strip"><span id="upPickGuarantee">60次召唤内必得</span><b>SSR/SP</b></div>
+        <div class="up-rate" id="upPickRateLine">点击「＋」选择概率UP角色 <b>10%</b></div>
+      </div>
+
+      <!-- 限时：百羽凤凰火（立绘作为弹窗放大背景，见 .up-bg） -->
+      <div class="up-pane" data-pane="limited">
+        <div class="up-banner"><span id="upTitle">百羽凤凰火限时UP</span></div>
+        <div class="up-strip"><span id="upGuarantee">60次召唤内必得</span><b>SSR/SP</b></div>
+        <div class="up-rate">SP百羽凤凰火概率UP <b id="upRate">10%</b></div>
+      </div>
+
+      <!-- 共享：进度尺 / 剩余时间 / 选择卡池（常驻页签下隐藏） -->
+      <div class="up-prog" id="upProg">
+        <div class="up-prog-tip" id="upProgTip">60次后提升至12%</div>
+        <div class="up-prog-zone" id="upProgZone">
+          <div class="up-scale" id="upScale">
+            <div class="up-track" id="upTrack">
+              <div class="up-fill" id="upFill"></div>
+              <div class="up-handle" id="upHandle"></div>
+            </div>
+            <div class="up-ticks" id="upTicks"></div>
+            <!-- 当前抽数气泡：跟随金色滑块（见 paintUpCur） -->
+            <div class="up-cur" id="upCur">0 抽</div>
+          </div>
+        </div>
+      </div>
+      <button class="up-pick" id="upPick">选 择 卡 池</button>
+
+      <!-- 自选角色选择浮层（SSR/SP） -->
+      <div class="up-charlist" id="upCharList" hidden>
+        <div class="up-charlist-head"><span>选择概率UP角色（SSR / SP）</span><button id="upCharClose" aria-label="收起">收起</button></div>
+        <div class="up-char-grid" id="upCharGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="door" id="door" aria-hidden="true" data-page-node-id="TGTpxcFeXQpjTi02pKfIkG">
+    <div class="door-panel left" data-page-node-id="SHI2b9r17wpJaO06g31G0h"></div>
+    <div class="door-panel right" data-page-node-id="u3rhjzipLDzZm7Mlj9bstH"></div>
+  </div>
+
+  <!-- 召唤阵注入光效（红瓣 + 金光屑）· 不满意可整体删除：删此节点 + 对应 CSS + JS -->
+  <div class="summon-fx" id="summonFx" aria-hidden="true" data-page-node-id="d6TnWwIyS1LUwi4Bft82Q2">
+    <div class="fx-circle-wrap" data-page-node-id="FRVrQcH08eoylVYlbdrReK"><div class="fx-circle" data-page-node-id="p2U2PB8McFwbBMYTB9Awkg"></div></div>
+    <div class="fx-glow-wrap" data-page-node-id="WiKos1MGjJa1t9HdG2YWSt"><div class="fx-glow" data-page-node-id="QygY7kYrdLVDVmDieSIykU"></div></div>
+    <div class="fx-particles" id="fxButterflies" data-page-node-id="KCGCxkrC8Q1D0ST57rvPSx"></div>
+  </div>
+
+  <div class="reveal" id="reveal" data-page-node-id="1tpWRuCeEQ5s1bitaSgxHv">
+    <div class="scene" id="scene" data-page-node-id="hNUOleNnqP0bENEu0GwfoQ">
+      <div class="scene-bg" data-page-node-id="8vF7Aw67eJgenImC2l2ziv"></div>
+      <div class="scene-chars" id="sceneChars" data-page-node-id="NAgQFwulYQlJrdIoBmMker"></div>
+      <div class="scene-name" id="sceneName" data-page-node-id="24WNh0GhSwQxNuHlQPUKQe">
+        <span class="badge" id="rvBadge" data-page-node-id="0jGsUocX9B0P0BQBD9A6e6">SP</span>
+        <span class="nm" id="rvName" data-page-node-id="8Ii0HAokiHhQNWBKTYwqT9">—</span>
+      </div>
+      <!-- SSR/SP 专属落场黑幕（黑屏渐入 + 立绘渐现 + 上升光点） -->
+      <div id="srFx" hidden>
+        <div id="srSparks"></div>
+        <img id="srImg" alt="">
+      </div>
+    </div>
+    <div class="seq-bar" data-page-node-id="GwsCTgvBLeoAAb4Jj2BKDU">
+      <div class="seq-dots" id="seqDots" data-page-node-id="ON8TmLv6aHSeDa4nPvQrxv"></div>
+      <div class="seq-progress" id="seqProgress" data-page-node-id="wNLjOJdqKwJRbGPIlmSeS2"></div>
+      <div class="seq-actions" id="seqActions" data-page-node-id="WRPgCBL1UG7BnHImQcEf32">
+        <button id="skipBtn" data-page-node-id="MSCSus1Xm6NEdU0o7ADOeI">跳 过</button>
+        <button class="primary" id="againBtn" data-page-node-id="SoTxWIS8XvvxjDgwHU0XG7">再 画 一 次</button>
+        <button id="closeBtn" data-page-node-id="vv09N8wop3nFA4HBY5W1Qz">收 起</button>
+      </div>
+    </div>
+    <div class="lu-actions" id="seqSingle" style="display:none" data-page-node-id="PrTCDyU2fstaWGONKzDFkb">
+      <button class="primary" id="againBtnS" data-page-node-id="D4hAUdTGFilMDvS4JOXkL6">再 次 绘 制</button>
+      <button id="closeBtnS" data-page-node-id="WCi3V5jM4nQIfI6j8Bnjpb">收 起</button>
+    </div>
+  </div>
+
+  <div class="reveal" id="reveal10" data-page-node-id="kfqPS2RLnkRjClg0hRUTXV">
+    <div class="scene-bg" data-page-node-id="4XxUVVIrBfwzmmMDiD5iGA"></div>
+    <div class="lu-row" id="luRow" data-page-node-id="DdFvIZ1dmwRnjtQKxN0Wfn"></div>
+    <div class="lu-title" data-page-node-id="WkUNNpz4pXRmvEh2oxqwvU">十 连 召 唤</div>
+    <div class="lu-actions" data-page-node-id="SgeE2pqG3G0lxY3Bi7xyPy">
+      <button class="primary" id="againBtn10" data-page-node-id="gVGPlIY9ktg5lUOR61nD41">再 次 绘 制</button>
+      <button id="closeBtn10" data-page-node-id="K4XwLsb96z0zHa5CZdlaTH">收 起</button>
+    </div>
+  </div>
+
+  <div class="state" id="loading" data-page-node-id="xeDX8yPnRCoVFYwpknVA32">
+    <div class="t" data-page-node-id="ipzSVyy4uDFAbxTR1b8npO">载 入 中</div>
+    <div class="d" data-page-node-id="13I5IqBhiEpCExmAcC8vP7">正在读取角色库与概率配置…</div>
+  </div>
+
+  <!-- 右上角小纸人：悬浮提示「作者有话说」，点击摊开卷轴（内容来自 author-note.html，每次点击重新加载） -->
+  <div class="doll" id="doll" data-page-node-id="DicqtRMcavkb2UFqTydHxa">
+    <img src="纸人.png" alt="小纸人" data-page-node-id="k6uOlKDald3AALkc7Be3kF">
+    <span class="tip" data-page-node-id="zW47DQfTL6kxxnS2oRRjFD">作 者 有 话 说</span>
+  </div>
+  <div class="scroll-wrap" id="scrollWrap" data-page-node-id="eCVo2sHNbZmwHS5YIAGIq4">
+    <div class="scroll" id="scrollEl" data-page-node-id="AHnMDAuvg4xCL7fdrX26JD">
+      <div class="scroll-rod" data-page-node-id="OOtDOutkkFqB4PC7NRvhDz"></div>
+      <div class="scroll-paper" data-page-node-id="at6NrFbzvFKdbAyxbx4gG9"><div class="inner" id="scrollBody" data-page-node-id="Xev2F3O3s4WPYaMNIaJkLe"></div></div>
+      <div class="scroll-rod" data-page-node-id="q5knrnFfiMZC8PcBiUApEl"></div>
+      <button class="scroll-close" id="scrollClose" title="收起" data-page-node-id="tGCbi7gQVt28Qm9EPDvC4g">✕</button>
+    </div>
+  </div>
+
+<script src="roster.js"></script>
+  <script src="voice.js"></script>
+  <script src="author-note.js"></script>
+  <script src="shared.js"></script>
+<script>
+(() => {
+  const CV = document.getElementById('cv');
+  const circle = document.getElementById('circle');
+  const summonBtn = document.getElementById('summonBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const door = document.getElementById('door');
+  const summonFx = document.getElementById('summonFx');
+  const fxButterflies = document.getElementById('fxButterflies');
+  const DOOR_CLOSE_MS = 550, DOOR_OPEN_MS = 600;
+  const SUMMON_AUDIO_DUR = 5.28;   // 召唤.mp3 实测时长，仅作兜底；运行时优先用音频真实 duration
+  const reveal = document.getElementById('reveal');
+  const reveal10 = document.getElementById('reveal10');
+  const luRow = document.getElementById('luRow');
+  const seqActions = document.getElementById('seqActions');
+  const seqSingle = document.getElementById('seqSingle');
+  const againBtn = document.getElementById('againBtn');
+  const closeBtn = document.getElementById('closeBtn');
+  const againBtn10 = document.getElementById('againBtn10');
+  const closeBtn10 = document.getElementById('closeBtn10');
+  const againBtnS = document.getElementById('againBtnS');
+  const closeBtnS = document.getElementById('closeBtnS');
+  const modeSeg = document.getElementById('modeSeg');
+  const sceneChars = document.getElementById('sceneChars');
+  const sceneName = document.getElementById('sceneName');
+  const seqDots = document.getElementById('seqDots');
+  const seqProgress = document.getElementById('seqProgress');
+  const skipBtn = document.getElementById('skipBtn');
+  const srFx = document.getElementById('srFx');
+  const srImg = document.getElementById('srImg');
+  const srSparks = document.getElementById('srSparks');
+  const poolSeg = document.getElementById('poolSeg');
+  const doll = document.getElementById('doll');
+  const scrollWrap = document.getElementById('scrollWrap');
+  const scrollEl = document.getElementById('scrollEl');
+  const scrollBody = document.getElementById('scrollBody');
+  const loading = document.getElementById('loading');
+  const ctx = CV.getContext('2d');
+
+  /* ---------------- 绘制画布 ---------------- */
+  let dpr = Math.max(1, window.devicePixelRatio || 1);
+  let W=0, H=0;
+  let strokes = [], current = null;
+  let color = '#ffe9a8';
+  const lineW = 4;
+
+  function resize(){
+    const r = circle.getBoundingClientRect();
+    W = r.width; H = r.height;
+    CV.width = W*dpr; CV.height = H*dpr;
+    CV.style.width = W+'px'; CV.style.height = H+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    redraw();
+  }
+  window.addEventListener('resize', resize);
+
+  document.querySelectorAll('.swatch').forEach(s=>{
+    s.addEventListener('click', ()=>{
+      document.querySelectorAll('.swatch').forEach(x=>x.classList.remove('on'));
+      s.classList.add('on');
+      color = s.dataset.color;
+    });
+  });
+
+  function pos(e){
+    const r = CV.getBoundingClientRect();
+    const t = e.touches ? e.touches[0] : e;
+    return { x: t.clientX - r.left, y: t.clientY - r.top };
+  }
+  function start(e){
+    e.preventDefault();
+    if(current) return;                       // 防止 touch+mouse 双触发导致重复起播
+    current = { color, points:[pos(e)] };
+    strokes.push(current);
+    playDrawSound();                          // 落笔即从头播绘制音效（中途再画则再从头放一遍）
+  }
+  function move(e){
+    if(!current) return;
+    e.preventDefault();
+    const p = pos(e);
+    const last = current.points[current.points.length-1];
+    if(Math.hypot(p.x-last.x, p.y-last.y) < 1.2) return;
+    current.points.push(p);
+    seg(current);
+  }
+  // 抬笔只结束当前笔画，不再切断绘制音效——让它自然放完；新一次落笔会从头重播
+  function end(){ current = null; }
+
+  function seg(s){
+    const pts = s.points;
+    if(pts.length < 2) return;
+    const a = pts[pts.length-2], b = pts[pts.length-1];
+    ctx.lineCap='round'; ctx.lineJoin='round';
+    ctx.strokeStyle = s.color; ctx.shadowColor = s.color; ctx.shadowBlur = 18;
+    ctx.lineWidth = lineW;
+    ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+    ctx.shadowBlur = 8; ctx.lineWidth = 1.6; ctx.strokeStyle = '#ffffff';
+    ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+  }
+  function redraw(){
+    ctx.clearRect(0,0,W,H);
+    for(const s of strokes){
+      if(s.points.length < 2) continue;
+      ctx.lineCap='round'; ctx.lineJoin='round';
+      ctx.strokeStyle=s.color; ctx.shadowColor=s.color; ctx.shadowBlur=18; ctx.lineWidth=lineW;
+      ctx.beginPath(); ctx.moveTo(s.points[0].x, s.points[0].y);
+      for(let i=1;i<s.points.length;i++) ctx.lineTo(s.points[i].x, s.points[i].y);
+      ctx.stroke();
+      ctx.shadowBlur=8; ctx.lineWidth=1.6; ctx.strokeStyle='#ffffff';
+      ctx.beginPath(); ctx.moveTo(s.points[0].x, s.points[0].y);
+      for(let i=1;i<s.points.length;i++) ctx.lineTo(s.points[i].x, s.points[i].y);
+      ctx.stroke();
+    }
+  }
+
+  CV.addEventListener('mousedown', start);
+  window.addEventListener('mousemove', move);
+  window.addEventListener('mouseup', end);
+  CV.addEventListener('touchstart', start, {passive:false});
+  CV.addEventListener('touchmove',  move,  {passive:false});
+  CV.addEventListener('touchend',   end);
+  CV.addEventListener('mouseleave', end);
+
+  clearBtn.addEventListener('click', ()=>{ strokes=[]; redraw(); });
+
+  /* ---------------- 模式 / 数据 ---------------- */
+  let mode = 'single';
+
+  /* ---------------- 抽卡池（蓝票 / 破碎符咒 / 十周年特别版） ----------------
+     概率配置在 rates.json 的 "pools" 段：每个池子单独一套稀有度权重，
+     池子里没写的稀有度沿用 rarities 的权重，改文件刷新即生效。 */
+  const POOL_KEY = 'onmyoji_pool_v1';
+  const POOLS = ['蓝票', '破碎符咒'];
+  let pool = POOLS[0];
+  try{ const s = localStorage.getItem(POOL_KEY); if(POOLS.includes(s)) pool = s; }catch(e){}
+
+  /** 还没上线的限时UP 角色不放进任何卡池（到点后自动进池，见 scheduleUpRelease） */
+  function drawRoster(){
+    if(upStarted()) return roster;
+    const out = {};
+    for(const k of Object.keys(roster || {}))
+      out[k] = (roster[k] || []).filter(c => c.id !== UP_POOL.charId);
+    return out;
+  }
+
+  function buildTiersFor(name){
+    const ov  = (rates && rates.pools && rates.pools[name]) || {};
+    const src = (rates && rates.rarities) || {};
+    const rarities = {};
+    for(const k of Object.keys(src)){
+      rarities[k] = { ...src[k], weight: (k in ov) ? ov[k] : src[k].weight };
+    }
+    return Gacha.buildTiers(drawRoster(), { ...rates, rarities });
+  }
+
+  /* ---------------- 十周年特别版（仅一次） ----------------
+     首次进入时召唤按钮变成「十周年特别版」：期间底部 UI 锁定为 十连 + 蓝票
+     （玩家点不动），实际抽卡固定为十连抽 + pools."十周年" 的概率；
+     点过一次（本地记忆）后解锁，按钮永久还原为普通「开始抽卡」。 */
+  const TENTH_KEY  = 'onmyoji_10th_v1';
+  const TENTH_POOL = '十周年';
+  let tenthUsed = false;
+  try{ tenthUsed = localStorage.getItem(TENTH_KEY) === '1'; }catch(e){}
+
+  function paintSummonBtn(){
+    if(!tenthUsed){
+      summonBtn.textContent = '十周年特别版召唤';
+      summonBtn.classList.add('tenth');
+    }else{
+      summonBtn.classList.remove('tenth');
+      summonBtn.textContent = mode === 'ten' ? '开 始 十 连' : '开始抽卡';
+    }
+  }
+
+  /** 十周年期间锁定显示 十连+蓝票；消耗后恢复玩家自己的选择。
+      四池互斥：选中 UP 池时 poolSeg 两个常规按钮都不亮，由 upChip 状态牌表明当前池子。 */
+  const upChip = document.getElementById('upChip');
+  function paintSegs(){
+    const lock = !tenthUsed;
+    modeSeg.classList.toggle('locked', lock);
+    poolSeg.classList.toggle('locked', lock);
+    const wantMode  = lock ? 'ten'   : mode;
+    const wantPool  = lock ? POOLS[0] : pool;
+    modeSeg.querySelectorAll('button').forEach(b=>b.classList.toggle('on', b.dataset.mode === wantMode));
+    poolSeg.querySelectorAll('button').forEach(b=>b.classList.toggle('on', b.dataset.pool === wantPool));
+    const isUp = (pool === UP_POOL.key || pool === PICK_POOL.key);
+    upChip.hidden = !isUp;
+    if(isUp) upChip.textContent = (pool === UP_POOL.key ? '限时UP' : '自选UP') + ' · 使用中';
+  }
+
+  modeSeg.addEventListener('click', e=>{
+    if(!tenthUsed) return;                       // 十周年期间锁定
+    const b = e.target.closest('button[data-mode]');
+    if(!b) return;
+    mode = b.dataset.mode;
+    modeSeg.querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    paintSummonBtn();
+  });
+
+  poolSeg.addEventListener('click', e=>{
+    if(!tenthUsed) return;                       // 十周年期间锁定
+    const b = e.target.closest('button[data-pool]');
+    if(!b) return;
+    pool = b.dataset.pool;
+    selUpTab = null;                             // 选常驻池 → 自动取消限时/自选的选中态
+    try{ localStorage.setItem(POOL_KEY, pool); }catch(err){}
+    paintSegs();
+    updateUpSelUI();
+    if(roster && Object.keys(roster).length) tiers = buildTiersFor(pool);
+  });
+
+  let tiers = [];
+  let roster = {}, rates = {};
+
+  /* ---------------- 卡池弹窗（常驻/自选/限时）+ UP 池规则 ----------------
+     抽卡规则（pool === 两个 UP 池 key 时生效，见 drawUpPool）：
+       · 基础概率其余不变（rates.json pools 对应键，SSR/SP 已按蓝票 ×2.5）；
+       · 每 60 抽必得任意一个 SSR/SP（upStates[id].since 计数，硬保底）；
+       · 抽中 SSR/SP 时按 UP 概率判定是否变为 UP 角色：
+         初始 10%，60抽起 12% → 120:14% → 180:18% → 240:25% → 300:40%
+         → 360:55% → 420:80% → 450:100%（按 upStates[id].count 阶梯取档）。
+     限时=百羽凤凰火（固定角色）；自选=同一套规则，角色由玩家在弹窗里选（SSR/SP）。 */
+  const UP_LADDER = [[60,12],[120,14],[180,18],[240,25],[300,40],[360,55],[420,80],[450,100]];
+  const UP_PITY   = 60;             // 每 60 抽必得任意 SSR/SP
+  const UP_POOL = {
+    tab: 'limited',
+    key: '百羽凤凰火UP',            // rates.json pools 对应键
+    title: '百羽凤凰火限时UP',
+    img: 'img/sp/51百羽凤凰火.png',
+    charId: 'sp/百羽凤凰火.png',    // UP 角色 id（roster 里的 id）
+    baseRate: 10,                   // 初始 UP 概率 %
+    upRate: '10%',                  // 弹窗文案：SP百羽凤凰火概率UP xx%
+    /* 上线时间：北京时间 2026-09-07 23:00。带 +08:00 偏移，换设备/换时区也不会算错。
+       没到点：页签锁定不可选、「选择卡池」拦一道、抽卡兜底走普通池（见 upStarted）。 */
+    startsAt: '2026-09-09T09:00:00+08:00',   // 北京时间 2026-09-09 09:00 开池
+    endsAt: '2026-09-30T23:59:59',  // 本地时区
+  };
+  const PICK_POOL = {
+    tab: 'pick',
+    key: '自选UP',
+    title: '自选概率UP',
+    baseRate: 10,
+    upRate: '10%',
+    endsAt: UP_POOL.endsAt,         // 与限时同周期
+  };
+  const UP_DEFS = { limited: UP_POOL, pick: PICK_POOL };
+  const UP_MAX = UP_LADDER[UP_LADDER.length - 1][0];   // 进度条满格抽数
+  const UPSTATE_KEY = 'onmyoji_up_state_v2';   // 两个 UP 池各自的 累计抽数 + 距上次 SSR/SP 抽数
+  /* ---- 限时UP 上线时间门控 ----
+     北京时间 startsAt 之前：页签锁定（点不动）、「选择卡池」拦一道、抽卡兜底走普通池。
+     到点后由 paintUpCountdown 的 15s 心跳自动解锁（弹窗开着也不用刷新页面）。 */
+  function upStartMs(){ return new Date(UP_POOL.startsAt).getTime(); }
+  function upStarted(){ return Date.now() >= upStartMs(); }
+  function isTabLocked(tab){ return tab === 'limited' && !upStarted(); }
+  /** x天x时x分 */
+  function fmtDur(ms){
+    const day = 86400000, hour = 3600000, min = 60000;
+    if(!(ms > 0)) ms = 0;
+    return `${Math.floor(ms / day)}天${Math.floor((ms % day) / hour)}时${Math.floor((ms % hour) / min)}分`;
+  }
+
+  // UP 池不在 POOLS 白名单里（poolSeg 只有两个常规按钮），这里单独恢复持久化的 UP 池选择。
+  // 限时UP 还没上线却存着旧选择（比如改过配置 / 改过系统时间）→ 丢掉，回到蓝票。
+  try{
+    const p = localStorage.getItem(POOL_KEY);
+    if(p === UP_POOL.key && !upStarted()){
+      try{ localStorage.removeItem(POOL_KEY); }catch(e){}
+    }else if(p === UP_POOL.key || p === PICK_POOL.key) pool = p;
+  }catch(e){}
+  let upStates = { limited: { count: 0, since: 0 }, pick: { count: 0, since: 0 } };
+  try{
+    const s = JSON.parse(localStorage.getItem(UPSTATE_KEY));
+    if(s && s.limited) upStates.limited = s.limited;
+    if(s && s.pick)    upStates.pick    = s.pick;
+  }catch(e){}
+  // 旧版（单池 v1）数据迁移到 limited
+  try{
+    if(!localStorage.getItem(UPSTATE_KEY)){
+      const s1 = JSON.parse(localStorage.getItem('onmyoji_up_state_v1'));
+      if(s1 && typeof s1.count === 'number')
+        upStates.limited = { count: Math.max(0, s1.count|0), since: Math.max(0, s1.since|0) };
+    }
+  }catch(e){}
+  function saveUpState(){ try{ localStorage.setItem(UPSTATE_KEY, JSON.stringify(upStates)); }catch(e){} }
+
+  /* 自选角色（玩家挑中的概率UP角色，持久化） */
+  const PICK_CHAR_KEY = 'onmyoji_pick_char_v1';
+  let pickChar = null;            // { id, name, img, rarity }
+  try{ const pc = JSON.parse(localStorage.getItem(PICK_CHAR_KEY)); if(pc && pc.id) pickChar = pc; }catch(e){}
+
+  /* 常驻统计：全局抽卡计数（所有池子都累加） */
+  const STATS_KEY = 'onmyoji_draw_stats_v1';
+  let drawStats = { total: 0, ur: 0, ssr: 0, sp: 0, sr: 0, r: 0, n: 0 };
+  try{
+    const s = JSON.parse(localStorage.getItem(STATS_KEY));
+    if(s) for(const k of Object.keys(drawStats)) if(typeof s[k] === 'number') drawStats[k] = s[k];
+  }catch(e){}
+  function addDrawStats(list){
+    for(const c of (list || [])){
+      const r = (c && c.rarity) || 'n';
+      drawStats.total++;
+      if(r in drawStats) drawStats[r]++;
+    }
+    try{ localStorage.setItem(STATS_KEY, JSON.stringify(drawStats)); }catch(e){}
+  }
+
+  const upWrap   = document.getElementById('upWrap');
+  const upBg     = document.getElementById('upBg');
+  const upBgImg  = document.getElementById('upBgImg');
+  const petalBtn = document.getElementById('petalBtn');
+  const upClose  = document.getElementById('upClose');
+  const upPick   = document.getElementById('upPick');
+  const upProgTip  = document.getElementById('upProgTip');
+  const upProgZone = document.getElementById('upProgZone');
+  const upScale    = document.getElementById('upScale');
+  const upTrack  = document.getElementById('upTrack');
+  const upFill   = document.getElementById('upFill');
+  const upHandle = document.getElementById('upHandle');
+  const upTicks  = document.getElementById('upTicks');
+  const upProg   = document.getElementById('upProg');
+  const upCur    = document.getElementById('upCur');
+  const upStats  = document.getElementById('upStats');
+  const upAddBtn = document.getElementById('upAddBtn');
+  const upPickImg   = document.getElementById('upPickImg');
+  const upPickGuarantee = document.getElementById('upPickGuarantee');
+  const upPickRateLine  = document.getElementById('upPickRateLine');
+  const upCharList = document.getElementById('upCharList');
+  const upCharGrid = document.getElementById('upCharGrid');
+  let upTimer = null;
+  // 限时UP 没上线时默认落在「自选」页签，别一打开就是看不了的东西
+  let upActive = upStarted() ? 'limited' : 'pick';   // 当前页签：limited | pick | perm
+  let selUpTab  = null;           // 当前选中的 UP 池页签（null=选的是常驻蓝票/破碎符咒）；三池互斥
+
+  /** 刷新互斥选中态：页签角标 + 「选择卡池」按钮的文字/颜色 */
+  function updateUpSelUI(){
+    document.querySelectorAll('.up-tab').forEach(b => b.classList.toggle('sel', b.dataset.tab === selUpTab));
+    const pickedHere = (upActive === 'perm') ? (pool === '蓝票' && !selUpTab)
+                                             : (!!selUpTab && selUpTab === upActive);
+    upPick.classList.toggle('done', pickedHere);
+    upPick.textContent = pickedHere ? '已选择该卡池 ✓' : '选 择 卡 池';
+    updateUpLock();     // 未上线的限时UP：按钮禁用 + 文案改「距上线 x天x时x分」
+  }
+
+  /** 页签切换：perm 隐藏进度尺/时间（选择卡池按钮三页签都显示） */
+  function switchUpTab(tab){
+    upActive = tab;
+    document.querySelectorAll('.up-tab').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
+    document.querySelectorAll('.up-pane').forEach(p => { p.hidden = (p.dataset.pane !== tab); });
+    syncUpBg();   // 背景立绘：限时页签 或 自选页签已选角色时显示
+    const isPerm = tab === 'perm';
+    upProg.style.display = isPerm ? 'none' : '';
+    upPick.style.display = '';
+    if(!isPerm){
+      layoutUpScale(); paintUpBar(); centerUpPan();
+    }
+    paintUpCountdown();   // 切页签时同步主按钮的「距上线」倒计时
+    if(tab === 'pick') buildUpCharList();
+    updateUpSelUI();
+  }
+  /** 限时UP 未上线：页签照常能点进来看，但「选择卡池」按钮禁用，
+      按钮文字直接显示「距上线 x天x时x分」（文本由 paintUpCountdown 维护） */
+  let upLaunchCd = '';   // 最新「距上线」倒计时文案；空串 = 已上线
+  function updateUpLock(){
+    const locked = upActive === 'limited' && !upStarted();
+    upPick.disabled = locked;
+    upPick.title = locked ? '限时UP 尚未上线，不可选择' : '';
+    if(locked) upPick.textContent = upLaunchCd || '距上线 --天--时--分';
+    try{
+      petalBtn.title = upStarted() ? '百羽凤凰火 限时UP卡池' : '百羽凤凰火 限时UP卡池（未上线）';
+    }catch(e){}
+  }
+  document.querySelectorAll('.up-tab').forEach(b => b.addEventListener('click', () => switchUpTab(b.dataset.tab)));
+  paintUpCountdown();   // 进页面先算一次锁定态与「距上线」，不用等弹窗打开
+
+  /** 到点自动「开池」：UP 角色进池 + 重建 tiers + 解开「选择卡池」+ 自选列表把它加回来。
+      页面开着跨过上线时间也不用刷新（setTimeout 上限约 24.8 天，够用）。 */
+  function scheduleUpRelease(){
+    const wait = upStartMs() - Date.now();
+    if(!(wait > 0)) return;
+    setTimeout(()=>{
+      if(roster && Object.keys(roster).length) tiers = buildTiersFor(pool);
+      if(charListBuilt){ charListBuilt = false; upCharGrid.innerHTML = ''; }  // 自选列表重算
+      paintUpCountdown();
+      updateUpSelUI();
+    }, Math.min(wait + 800, 2147483647));
+  }
+  scheduleUpRelease();
+
+  function openUpModal(){
+    upWrap.classList.add('on');
+    upWrap.setAttribute('aria-hidden', 'false');
+    // 定位到当前使用中的卡池页签，保证进度/保底/概率提示与实际抽卡数据同步
+    switchUpTab(UP_TAB_BY_POOL[pool] || upActive);
+    paintUpCountdown();
+    if(!upTimer) upTimer = setInterval(paintUpCountdown, 15000);
+  }
+  function closeUpModal(){
+    upWrap.classList.remove('on');
+    upWrap.setAttribute('aria-hidden', 'true');
+    if(upTimer){ clearInterval(upTimer); upTimer = null; }
+  }
+  petalBtn.addEventListener('click', openUpModal);
+  upChip.addEventListener('click', openUpModal);   // 主界面 UP 状态牌 → 打开弹窗查看
+  upClose.addEventListener('click', closeUpModal);
+  upWrap.addEventListener('click', e=>{ if(e.target === upWrap) closeUpModal(); });
+
+  /** 当前抽数对应的 UP 概率（阶梯取档，初始 baseRate） */
+  function upRateAt(count){
+    let r = UP_POOL.baseRate;
+    for(const [n, v] of UP_LADDER){ if(count >= n) r = v; }
+    return r;
+  }
+
+  /* 进度条：整条「刻度尺」比可视窗口宽，左右拖动平移查看各档；
+     滑块/进度钉在尺子上、始终代表玩家真实数据，不可拖。 */
+  const UP_PAD_L = 10, UP_PAD_R = 22;   // 轨道/刻度在尺子两端的内缩（与 CSS 一致）
+  const UP_TW = () => Math.max(1, upScale.offsetWidth - UP_PAD_L - UP_PAD_R);   // 轨道宽
+  function layoutUpScale(){
+    const zoneW = upProgZone.clientWidth || 300;
+    // 尺子宽度：至少铺满可视区；每 60 档间距 ≥64px，保证相邻刻度文字不重叠
+    upScale.style.width = Math.max(zoneW, Math.ceil(UP_MAX / 60 * 64)) + 'px';
+  }
+  /** 把尺子平移到可视范围内（带钳制） */
+  function applyUpPan(){
+    const max = Math.max(0, upScale.offsetWidth - upProgZone.clientWidth);
+    upPan = Math.max(0, Math.min(upPan, max));
+    upScale.style.transform = `translateX(${-upPan}px)`;
+    paintUpCur();   // 气泡钉在滑块上方，跟随尺子平移保持可见
+  }
+  /** 「当前抽数」气泡：悬在金色滑块正上方；拖动/平移时钳制在可视窗口内 */
+  function paintUpCur(){
+    if(!upCur) return;
+    const st = upStates[upActive] || upStates.limited;
+    const x = UP_PAD_L + Math.min(st.count / UP_MAX, 1) * UP_TW();
+    upCur.textContent = st.count + ' 抽';
+    const bw = upCur.offsetWidth || 40;
+    const cx = Math.max(upPan + bw / 2 + 2, Math.min(x, upPan + upProgZone.clientWidth - bw / 2 - 2));
+    upCur.style.left = cx + 'px';
+  }
+  function paintUpBar(){
+    const st   = upStates[upActive] || upStates.limited;
+    const frac = Math.min(st.count / UP_MAX, 1);
+    const x = UP_PAD_L + frac * UP_TW();
+    upFill.style.width   = (x - UP_PAD_L) + 'px';
+    upHandle.style.left  = x + 'px';
+    paintUpCur();
+    const next = UP_LADDER.find(([n]) => st.count < n);
+    upProgTip.textContent = `当前UP概率 ${upRateAt(st.count)}%` +
+      (next ? ` · ${next[0]}次后提升至${next[1]}%` : ' · 已达最高');
+    paintGuarantees();
+    paintPickLine();
+  }
+  /** 「xx次召唤内必得 SSR/SP」跟实时保底计数走：显示距必得还剩几次 */
+  function paintGuarantees(){
+    document.getElementById('upGuarantee').textContent =
+      `${Math.max(0, UP_PITY - upStates.limited.since)}次召唤内必得`;
+    upPickGuarantee.textContent =
+      `${Math.max(0, UP_PITY - upStates.pick.since)}次召唤内必得`;
+  }
+  /** 自选页签的 UP 行：随选中角色与当前档位刷新 */
+  function paintPickLine(){
+    const rate = upRateAt(upStates.pick.count);
+    if(pickChar){
+      const m = Gacha.rarityMeta(rates, pickChar.rarity || 'ssr');
+      upPickRateLine.innerHTML = `${m.label}${pickChar.name} 概率UP <b>${rate}%</b>`;
+    }else{
+      upPickRateLine.innerHTML = `点击「＋」选择概率UP角色 <b>${rate}%</b>`;
+    }
+  }
+  /** 打开弹窗时把尺子平移到玩家当前抽数附近 */
+  function centerUpPan(){
+    const st = upStates[upActive] || upStates.limited;
+    const zoneW = upProgZone.clientWidth;
+    const x = UP_PAD_L + Math.min(st.count / UP_MAX, 1) * UP_TW();
+    upPan = x - zoneW / 2;
+    applyUpPan();
+  }
+
+  /* 尺子平移（横向，鼠标/触摸） */
+  let upPan = 0, upPanDrag = null;
+  function upPanStart(e){
+    upPanDrag = { startX: (e.touches ? e.touches[0].clientX : e.clientX), startPan: upPan };
+  }
+  function upPanMove(e){
+    if(!upPanDrag) return;
+    if(e.cancelable) e.preventDefault();
+    const x = (e.touches ? e.touches[0].clientX : e.clientX);
+    upPan = upPanDrag.startPan - (x - upPanDrag.startX);
+    applyUpPan();
+  }
+  function upPanEnd(){ upPanDrag = null; }
+  upProgZone.addEventListener('mousedown', upPanStart);
+  window.addEventListener('mousemove', upPanMove);
+  window.addEventListener('mouseup',    upPanEnd);
+  upProgZone.addEventListener('touchstart', upPanStart, { passive:false });
+  upProgZone.addEventListener('touchmove',  upPanMove,  { passive:false });
+  upProgZone.addEventListener('touchend',   upPanEnd);
+  upProgZone.addEventListener('touchcancel',upPanEnd);
+  window.addEventListener('resize', ()=>{ layoutUpScale(); paintUpBar(); applyUpPan(); });
+
+  // 刻度：60~450 每档抽数 + 对应UP概率
+  (function buildUpTicks(){
+    for(const [n, r] of UP_LADDER){
+      const t = document.createElement('div');
+      t.className = 'up-tick';
+      t.style.left = (n / UP_MAX * 100) + '%';
+      t.innerHTML = `<b>${n}</b><i>${r}%</i>`;
+      upTicks.appendChild(t);
+    }
+  })();
+
+  /** 限时UP 未上线：主按钮倒计时「距上线 x天x时x分」（15s 心跳 + 切页签时刷新）。
+      上线后由 scheduleUpRelease / updateUpSelUI 把按钮恢复为「选 择 卡 池」。 */
+  function paintUpCountdown(){
+    const now = Date.now(), start = upStartMs();
+    upLaunchCd = now < start ? '距上线 ' + fmtDur(start - now) : '';
+    updateUpLock();                                  // 到点了就在这里自动解锁按钮
+  }
+
+  /* ---------------- UP 池抽卡规则（限时/自选 共用一套，状态各自独立） ---------------- */
+
+  /** UP 池 tiers：normal=完整池（SSR/SP 已 ×2.5），forced=只保留 SSR/SP（60抽保底用） */
+  function buildUpTiers(forced, poolKey){
+    const ov  = (rates && rates.pools && rates.pools[poolKey]) || {};
+    const src = (rates && rates.rarities) || {};
+    const rarities = {};
+    for(const k of Object.keys(src)){
+      let w = (k in ov) ? ov[k] : src[k].weight;
+      if(forced && k !== 'ssr' && k !== 'sp') w = 0;
+      rarities[k] = { ...src[k], weight: w };
+    }
+    return Gacha.buildTiers(drawRoster(), { ...rates, rarities });
+  }
+
+  function findCharById(id){
+    for(const k of Object.keys(roster || {})){
+      const hit = (roster[k] || []).find(c => c.id === id);
+      if(hit) return hit;
+    }
+    return null;
+  }
+
+  /** id 抽取：tabId 'limited' | 'pick'。返回本批角色卡片数组 */
+  function drawUpPool(tabId, n){
+    if(tabId === 'limited' && !upStarted()) return Gacha.draw(tiers, n);   // 未上线兜底：按普通池抽
+    const def = UP_DEFS[tabId] || UP_POOL;
+    const upChar = (tabId === 'limited') ? findCharById(UP_POOL.charId)
+                 : (pickChar ? findCharById(pickChar.id) : null);
+    if(!upChar) return Gacha.draw(tiers, n);          // 兜底：自选还没选角色 / 找不到 UP 角色按普通池抽
+    // 还没上线的 UP 角色（比如被存成了自选角色）：按普通池抽，不提前放出来
+    if(!upStarted() && upChar.id === UP_POOL.charId) return Gacha.draw(tiers, n);
+    const st   = upStates[tabId];
+    const m    = Gacha.rarityMeta(rates, upChar.rarity || 'sp');
+    const tN   = buildUpTiers(false, def.key);
+    const tF   = buildUpTiers(true,  def.key);
+    const out  = [];
+    for(let i = 0; i < n; i++){
+      st.count++; st.since++;
+      let c;
+      if(st.since >= UP_PITY){
+        c = Gacha.draw(tF, 1)[0];                     // 60 抽硬保底：必得任意 SSR/SP
+      }else{
+        c = Gacha.draw(tN, 1)[0];
+      }
+      if(c && (c.rarity === 'ssr' || c.rarity === 'sp')){
+        st.since = 0;                                 // 出了 SSR/SP，保底计数归零
+        if(Math.random() * 100 < upRateAt(st.count)){
+          c = { ...upChar, label: m.label, color: m.color };   // UP 判定命中 → UP 角色
+        }
+      }
+      if(c) out.push(c);
+    }
+    saveUpState();
+    paintUpBar();
+    return out;
+  }
+
+  /** 主流程 doSummon 里的池子 → UP 页签映射 */
+  const UP_TAB_BY_POOL = { [UP_POOL.key]: 'limited', [PICK_POOL.key]: 'pick' };
+
+  // 选择卡池：常驻=蓝票；限时/自选=对应 UP 池（抽卡走 drawUpPool 规则）；
+  // 三池互斥：选中的同时自动取消其它池的选中态
+  upPick.addEventListener('click', ()=>{
+    if(isTabLocked(upActive)) return;            // 限时UP 未上线：选不了（页签本身就是锁的，这里是兜底）
+    if(upActive === 'perm'){
+      pool = '蓝票';
+      selUpTab = null;
+      try{ localStorage.setItem(POOL_KEY, pool); }catch(e){}
+      if(roster && Object.keys(roster).length) tiers = buildTiersFor(pool);
+      updateUpSelUI();
+      paintSegs();
+      setTimeout(closeUpModal, 420);
+      return;
+    }
+    const def = UP_DEFS[upActive] || UP_POOL;
+    if(upActive === 'pick' && !pickChar){             // 自选还没选角色：先打开选择浮层
+      upCharList.hidden = false;
+      return;
+    }
+    pool = def.key;
+    selUpTab = upActive;
+    try{ localStorage.setItem(POOL_KEY, pool); }catch(e){}
+    if(roster && Object.keys(roster).length) tiers = buildTiersFor(pool);
+    updateUpSelUI();
+    paintSegs();
+    setTimeout(closeUpModal, 420);
+  });
+
+  /* ---------------- 自选角色选择浮层 ---------------- */
+  let charListBuilt = false;
+  function buildUpCharList(){
+    if(charListBuilt) return;
+    charListBuilt = true;
+    // 只列 SSR / SP（保底与 UP 判定都作用在这两档，选别的没有意义）
+    const RANK = { sp: 0, ssr: 1 };
+    const list = [];
+    const src = drawRoster();          // 未上线的限时UP 角色不能当自选 UP
+    for(const k of Object.keys(src || {})){
+      for(const c of (src[k] || [])){
+        if(RANK[c.rarity] !== undefined) list.push(c);
+      }
+    }
+    list.sort((a, b) => RANK[a.rarity] - RANK[b.rarity] || a.name.localeCompare(b.name, 'zh'));
+    for(const c of list){
+      const it = document.createElement('button');
+      it.className = 'up-char-item';
+      it.innerHTML = `<img src="${c.file}" alt=""><i>${c.name}</i>`;
+      it.addEventListener('click', ()=>{
+        // 已经用自选池抽过、且换了一个角色 → 重置该池概率进度（防止攒完进度再换人白嫖）
+        const changed = !pickChar || pickChar.id !== c.id;
+        const hadDrawn = upStates.pick.count > 0;
+        pickChar = { id: c.id, name: c.name, img: c.file, rarity: c.rarity };
+        try{ localStorage.setItem(PICK_CHAR_KEY, JSON.stringify(pickChar)); }catch(e){}
+        if(changed && hadDrawn){
+          upStates.pick = { count: 0, since: 0 };
+          saveUpState();
+        }
+        upCharList.hidden = true;
+        paintPickFigure();
+        paintPickLine();
+        paintUpBar();
+      });
+      upCharGrid.appendChild(it);
+    }
+  }
+  /** 自选立绘区：没选角色显示「＋」，选了显示立绘（点立绘可重新选择） */
+  function paintPickFigure(){
+    const pane = document.querySelector('[data-pane="pick"]');
+    if(pickChar){
+      upAddBtn.style.display = 'none';
+      upPickImg.hidden = false;
+      upPickImg.src = pickChar.img;
+      upPickImg.alt = pickChar.name;
+      // 立绘放大为弹窗背景（同限时UP），页签内的立绘框隐藏
+      document.getElementById('upPickFig').style.display = 'none';
+      pane.classList.add('with-bg');
+    }else{
+      upAddBtn.style.display = '';
+      upPickImg.hidden = true;
+      document.getElementById('upPickFig').style.display = '';
+      pane.classList.remove('with-bg');
+    }
+    syncUpBg();
+  }
+  /** 背景立绘同步：限时显示百羽凤凰火；自选已选角色时显示该角色（点背景可重选） */
+  let upBgFace = null;   // 当前背景立绘的脸部数据 {x,y,s}（roster 里合并自 faces.json）
+  function faceOfChar(id){
+    const c = findCharById(id);
+    return (c && c.face) || null;
+  }
+  /** 背景立绘定位规则：
+      1. 基础：contain 置顶——整张图先完整放进弹窗、顶对齐，脸和身体默认完整可见；
+      2. 脸部横向偏移 → 优先纯平移居中（利用 contain 留白），宽度受限平移够不着时
+         才放大气补位（k = 0.5bw / (sw0·min(fx,1-fx))，封顶 1.45）；
+      3. 脸部偏下（>45% 高度，开始压进底部渐变区）→ 向上平移把脸提到 ~38%；
+      4. 脸部过于靠上（<25% 高度）→ 适当放大把脸往下带到 ~32%；
+      5. 内容太小（contain 后高度不足弹窗 85%）→ 最小放大气补位（封顶 1.35）；
+      6. 其余情况绝不缩放、绝不向下压，保住上半部分画面。
+      face 数据可带 z（最小 zoom 倍数）用于个别角色微调。 */
+  function applyUpBgPos(){
+    const f = upBgFace;
+    upBgImg.style.transform = '';
+    upBgImg.style.objectPosition = 'center top';   // 置顶为基准
+    if(!f) return;
+    const bw = upBg.clientWidth, bh = upBg.clientHeight;
+    const iw = upBgImg.naturalWidth, ih = upBgImg.naturalHeight;
+    if(!iw || !ih || !bw || !bh) return;          // 图片未加载完，load 事件里会再算
+    const cl = (v,lo,hi)=>Math.max(lo,Math.min(hi,v));
+    const sc  = Math.min(bw / iw, bh / ih);       // contain：整张图先完整放下
+    const sw0 = iw * sc, sh0 = ih * sc;
+    // —— 缩放决策（取各规则所需的最大值）——
+    let k = f.z > 1 ? f.z : 1;                    // 个别角色的人工最小倍数
+    // 规则4：脸过于靠上（放大后会 <25% 高）才放大往下带
+    if (f.y * sh0 * k < 0.25 * bh)
+      k = Math.max(k, cl(0.32 * bh / (f.y * sh0), 1, 1.4));
+    // 规则5：内容太小（纵向不满 85%）→ 最小放大气补位
+    k = Math.max(k, cl(0.85 * bh / sh0, 1, 1.35));
+    // 规则2：横向——脸明显偏移（>4% 宽）才动；先平移（利用留白），平移钳不住才放大
+    const pxTest = cl(0.5 * bw - f.x * sw0, Math.min(0, bw - sw0), Math.max(0, bw - sw0));
+    if (Math.abs(0.5 * bw - (f.x * sw0 + pxTest)) > 0.04 * bw){
+      const need = 0.5 * bw / (sw0 * Math.min(f.x, 1 - f.x));
+      k = Math.max(k, cl(need, 1, 1.45));
+    }
+    const sw = sw0 * k, sh = sh0 * k;
+    // 横向位置：脸居中，钳制在内容可移动范围内（不让内容整体跑出画面）
+    const px = cl(0.5 * bw - f.x * sw, Math.min(0, bw - sw), Math.max(0, bw - sw));
+    // 规则3/6：纵向置顶为基准，只有脸压进底部渐变区才向上提；绝不向下压。
+    // 内容比弹窗矮时也允许上提：底部有渐变遮罩，露出的暗底不可见。
+    // f.dy = 人工微调的额外上提量（弹窗高度占比，负值向上）。
+    let py = 0;
+    if (f.y * sh > 0.45 * bh)
+      py = Math.min(0, 0.38 * bh - f.y * sh);
+    py = Math.min(0, py + (f.dy || 0) * bh);
+    // 换算成元素 transform（contain 内容默认位于 (cx0, 0)，scale 原点 0 0）
+    const cx0 = (bw - sw0) / 2;
+    const tx = px - k * cx0, ty = py;
+    if(k <= 1.001 && Math.abs(tx) < .5 && Math.abs(ty) < .5) return;
+    upBgImg.style.transformOrigin = '0 0';
+    upBgImg.style.transform = (k <= 1.001)
+      ? `translate(${tx.toFixed(1)}px,${ty.toFixed(1)}px)`
+      : `translate(${tx.toFixed(1)}px,${ty.toFixed(1)}px) scale(${k.toFixed(3)})`;
+  }
+  upBgImg.addEventListener('load', applyUpBgPos);
+  function syncUpBg(){
+    const pickMode = (upActive === 'pick' && pickChar);
+    upBg.hidden = !(upActive === 'limited' || pickMode);
+    upBg.classList.toggle('pick-sel', pickMode);
+    upBgFace = pickMode ? faceOfChar(pickChar.id) : faceOfChar(UP_POOL.charId);
+    upBgImg.src = pickMode ? pickChar.img : UP_POOL.img;
+    applyUpBgPos();   // src 未变时不触发 load，这里直接补算
+  }
+  upBg.addEventListener('click', ()=>{
+    if(upActive === 'pick' && pickChar){ buildUpCharList(); upCharList.hidden = false; }
+  });
+  upAddBtn.addEventListener('click', ()=>{ buildUpCharList(); upCharList.hidden = false; });
+  upPickImg.addEventListener('click', ()=>{ buildUpCharList(); upCharList.hidden = false; });   // 点立绘重选
+  // 选角后立绘框会隐藏、背景放大铺满——但 .up-pane 层压在背景上会吃掉空白区域的点击，
+  // 这里补一层：点在页签空白处（非按钮/立绘/文字行）也算「点已选角色位置」→ 重新选人。
+  document.querySelector('[data-pane="pick"]').addEventListener('click', e=>{
+    if(upActive !== 'pick' || !pickChar) return;
+    if(e.target.closest('button, img, .up-rate, .up-strip, .up-banner')) return;
+    buildUpCharList(); upCharList.hidden = false;
+  });
+  document.getElementById('upCharClose').addEventListener('click', ()=>{ upCharList.hidden = true; });
+  /* 选人列表：桌面端鼠标按住拖动即可滚动（触摸端原生滑动不受影响）。
+     拖动超过 6px 时吞掉后续 click，避免「拖完停在某个角色上被误选」。 */
+  (function upGridDragScroll(){
+    const g = document.getElementById('upCharGrid');
+    let drag = null;
+    g.addEventListener('mousedown', e=>{
+      if(e.button !== 0) return;
+      drag = { x: e.clientX, y: e.clientY, top: g.scrollTop, moved: false };
+      g.classList.add('dragging');
+    });
+    window.addEventListener('mousemove', e=>{
+      if(!drag) return;
+      const dy = e.clientY - drag.y;
+      if(Math.abs(dy) > 2 || Math.abs(e.clientX - drag.x) > 2) drag.moved = true;
+      g.scrollTop = drag.top - dy;
+    });
+    window.addEventListener('mouseup', ()=>{
+      if(!drag) return;
+      const moved = drag.moved;
+      drag = null;
+      g.classList.remove('dragging');
+      if(moved) g.addEventListener('click', e=>{ e.stopPropagation(); e.preventDefault(); },
+                                  { capture:true, once:true });
+    });
+    g.addEventListener('click', e=>{ if(g.classList.contains('dragging')){ e.stopPropagation(); e.preventDefault(); } });
+  })();
+
+  /* ---------------- 常驻统计（纯文字） ---------------- */
+  function paintUpStats(){
+    if(!drawStats.total){
+      upStats.textContent = '还没有抽卡记录';
+      return;
+    }
+    const s = drawStats;
+    upStats.innerHTML =
+      `累计召唤 <b>${s.total}</b> 次<br>` +
+      `<span class="st-row">` +
+      `<span>UR <b>${s.ur}</b></span>` +
+      `<span>SSR <b>${s.ssr}</b></span>` +
+      `<span>SP <b>${s.sp}</b></span>` +
+      `<span>SR <b>${s.sr}</b></span>` +
+      `<span>R <b>${s.r}</b></span>` +
+      `<span>N <b>${s.n}</b></span>` +
+      `</span>`;
+  }
+
+  // 调试钩子：自动化测试用，玩家无感知
+  window.__UP_DEBUG__ = { drawUpPool, upRateAt, states: () => JSON.parse(JSON.stringify(upStates)), stats: () => ({ ...drawStats }), UP_POOL, PICK_POOL };
+
+  const HOLD=1250, OVERLAP=480, EXIT=900;
+  let seqList = [], seqTimer = null;
+  let freshIds = new Set();      // 本次新解锁的角色
+  let curSeqIdx = -1;            // 揭晓页当前已落场的角色下标（跳过时补录它之后的角色用）
+  let skipMode = false;          // 跳过模式：快速掠过「已有」角色，新角色仍完整落场
+  let singleReady = false;       // 单抽揭晓页：落场片刻后才允许「点击任意处返回」
+
+  /* ---------------- 式神语音 ----------------
+     voiceMap：角色 id -> music/ 下的相对路径，由 gen-voice.js 扫描生成。
+     有语音 → 播完（+ 短暂停留）再切下一个；没语音 → 退回原来的 HOLD 停留。 */
+  const VOICE_TAIL = 650;        // 语音播完后再停留一会儿，给个收尾呼吸
+  const VOICE_LEAD = 260;        // 卡面弹出后稍等再开口，不和入场动画撞在一起
+  const VOICE_MAX  = 8000;       // 无时长信息时的兜底上限（元数据异常也不至于停 30 秒）
+  const VOICE_KEY  = 'onmyoji_voice_v1';   // 兼容旧存储键（音声开关已移除，语音常开）
+  let voiceMap  = {};
+  let voiceBase = 'music/';
+  let voiceOn   = true;
+  let voiceCtl  = null;          // 当前语音的控制句柄
+
+  const audioCache = new Map();  // url -> HTMLAudioElement（复用，顺带当缓存）
+  function audioFor(url){
+    let a = audioCache.get(url);
+    if(!a){
+      a = new Audio();
+      a.preload = 'auto';
+      a.src = url;
+      // 挂进 DOM（隐藏）：方便调试时在 DevTools 里直接看到当前有哪些语音在加载/播放
+      a.style.display = 'none';
+      a.dataset.voice = '1';
+      document.body.appendChild(a);
+      audioCache.set(url, a);
+    }
+    return a;
+  }
+
+  // ---- 动作音效（非角色语音，按固定文件名直接引用）----
+  // 同一个 url 只对应一个 Audio 实例，重播时回到开头播放，永远不会「打架」。
+  const DRAW_SFX  = 'music/绘制.mp3';   // 玩家绘制图案时循环感地播放
+  const SUMMON_SFX= 'music/召唤.mp3';   // 点击召唤时播放
+  function playSfx(url){
+    const a = audioFor(url);
+    try{ a.currentTime = 0; const p = a.play(); if(p && p.catch) p.catch(()=>{}); }catch(e){}
+  }
+  function stopSfx(url){
+    const a = audioCache.get(url);
+    if(a){ try{ a.pause(); a.currentTime = 0; }catch(e){} }
+  }
+  function playDrawSound(){ playSfx(DRAW_SFX); }
+  function stopDrawSound(){ stopSfx(DRAW_SFX); }
+  function playSummonSound(){ playSfx(SUMMON_SFX); }
+  function voiceUrlOf(c){
+    const rel = voiceMap[c.id];
+    return rel ? Gacha.voiceUrl(voiceBase, rel) : null;
+  }
+
+  /** 停掉当前语音。runDone=true 时立即推进流程（用于中途关声音），否则只是静音。 */
+  function stopVoice(runDone){
+    if(voiceCtl){ voiceCtl.stop(runDone); voiceCtl = null; }
+  }
+
+  /**
+   * 播报一个角色的语音，播完（或播不了 / 被停掉）后回调 done。
+   * 没有语音时按 HOLD 停留后回调。返回一个 {stop} 句柄。
+   */
+  function playVoice(c, done){
+    const url = voiceOn ? voiceUrlOf(c) : null;
+    const holdThen = ms => {
+      const t = setTimeout(done, ms);
+      return { stop(runDone){ clearTimeout(t); if(runDone) done(); } };
+    };
+    if(!url) return holdThen(HOLD);
+
+    let a;
+    try{ a = audioFor(url); }
+    catch(e){ return holdThen(HOLD); }
+
+    let settled = false, t1 = null, t2 = null, leadT = null;
+    const detach = () => {
+      a.removeEventListener('ended', onEnd);
+      a.removeEventListener('error', onEnd);
+      a.removeEventListener('loadedmetadata', refineLimit);
+      if(t1){ clearTimeout(t1); t1 = null; }
+    };
+    const onEnd = () => {
+      if(settled) return;
+      settled = true;
+      detach();
+      t2 = setTimeout(() => { t2 = null; done(); }, VOICE_TAIL);
+    };
+    // 拿到真实时长就把上限改成「时长 + 余量」，长语音不会被 VOICE_MAX 截断；
+    // 元数据来得晚也没关系，loadedmetadata 会再调一次。
+    const refineLimit = () => {
+      if(settled) return;
+      const dur = (a.duration && isFinite(a.duration) && a.duration > 0) ? a.duration * 1000 : 0;
+      if(dur){
+        clearTimeout(t1);
+        t1 = setTimeout(onEnd, dur + VOICE_LEAD + 1500);
+      }
+    };
+
+    a.addEventListener('ended', onEnd);
+    a.addEventListener('error', onEnd);
+    a.addEventListener('loadedmetadata', refineLimit);
+
+    // 硬上限：从调用开始算，防止元数据异常 / 事件丢失把流程卡死
+    t1 = setTimeout(onEnd, VOICE_MAX);
+    refineLimit();                 // 已预取过的语音此刻就有 duration，先把上限放宽
+
+    // 卡面弹出后稍等再开口，不和入场动画撞在一起
+    leadT = setTimeout(() => {
+      leadT = null;
+      try{ a.currentTime = 0; }catch(e){}
+      const p = a.play();
+      if(p && typeof p.catch === 'function') p.catch(()=>onEnd());   // 自动播放被拦也别卡住
+      refineLimit();                                                 // play 之后再补一次
+    }, VOICE_LEAD);
+
+    return {
+      stop(runDone){
+        if(leadT){ clearTimeout(leadT); leadT = null; }
+        detach();
+        if(t2){ clearTimeout(t2); t2 = null; }
+        try{ a.pause(); a.currentTime = 0; }catch(e){}
+        if(runDone && !settled){ settled = true; done(); }
+        settled = true;
+      }
+    };
+  }
+
+  /* ---------------- 本轮媒体预取 ----------------
+     揭晓原本是「翻到谁才去下载谁」：冷启动时每张卡都要等 0.6~1.3s，
+     其中约 0.65s 纯粹是首字节等待（TTFB），十连就是十次串行空窗。
+     门过场那 1~4 秒是闲着的，用来把这轮的立绘并行拉完，揭晓时直接命中缓存。
+     并发限 6：太多会抢带宽，反而把正在播的召唤音效和门光效拖卡。 */
+  const PREFETCH_CONCURRENCY = 6;
+  const VOICE_WARM_AHEAD = 3;          // 语音预热窗口（含下一条）
+  const prefetched = new Set();        // 已预取过的 url，整页生命周期内不重复拉
+
+  async function prefetchImages(urls){
+    const queue = (urls || []).filter(u => u && !prefetched.has(u));
+    queue.forEach(u => prefetched.add(u));
+    let cursor = 0;
+    const worker = async () => {
+      while(cursor < queue.length){
+        const u = queue[cursor++];
+        await new Promise(done => {
+          const im = new Image();
+          im.onload = im.onerror = done;
+          im.src = u;
+        });
+      }
+    };
+    const n = Math.min(PREFETCH_CONCURRENCY, queue.length);
+    await Promise.all(Array.from({ length: n }, worker));
+  }
+
+  /** 预取一整轮的媒体：立绘全量 + 语音前几条（剩下的靠 warmNextVoice 滚动补） */
+  function prefetchSeqMedia(list){
+    if(!list || !list.length) return;
+    prefetchImages(list.map(c => c && c.file)).catch(()=>{});
+    if(!voiceOn) return;
+    for(const c of list.slice(0, VOICE_WARM_AHEAD)){
+      const u = c && voiceUrlOf(c);
+      if(u) audioFor(u);               // preload='auto'，建好就由浏览器去缓冲
+    }
+  }
+
+  /** 提前把后面几条语音拉起来，切换时不用等网络 */
+  function warmNextVoice(i){
+    if(!voiceOn) return;
+    for(let k = 1; k <= VOICE_WARM_AHEAD; k++){
+      const nx = seqList[i + k];
+      if(!nx) break;
+      const u = voiceUrlOf(nx);
+      if(u) audioFor(u);
+    }
+  }
+
+  /* ---------------- 语音开关（已移除按钮，语音常开） ---------------- */
+
+  function buildDots(n){
+    seqDots.innerHTML = '';
+    if(n <= 1){ seqDots.style.display='none'; return; }
+    seqDots.style.display='flex';
+    for(let i=0;i<n;i++) seqDots.appendChild(document.createElement('i'));
+  }
+  function paintDots(i){
+    [...seqDots.children].forEach((d,k)=>{
+      d.classList.toggle('on', k===i);
+      d.classList.toggle('done', k<i);
+    });
+  }
+  function clearScene(){
+    sceneChars.innerHTML = '';
+    sceneName.classList.remove('in');
+    seqProgress.textContent = '';
+  }
+  function stopSeq(){ if(seqTimer){ clearTimeout(seqTimer); seqTimer=null; } }
+
+  /* ---------- SSR/SP 专属落场：黑屏渐入 → 立绘渐现 → 上升光点 → 播语音 ----------
+     不论角色是否已拥有都完整演出；跳过模式下同样不掠过。 */
+  const SPECIAL_RARITY = new Set(['ssr','sp']);
+  let srSparkT = null;
+  const isSpecial = c => SPECIAL_RARITY.has(String(c.rarity || '').toLowerCase());
+
+  function srStartSparks(){
+    srStopSparks();
+    srSparkT = setInterval(()=>{
+      const s = document.createElement('div');
+      s.className = 'spark';                       // 与召唤阵同款光点（rise 动画）
+      s.style.left = (6 + Math.random()*88) + '%';
+      const d = 2.6 + Math.random()*2.8;
+      s.style.animationDuration = d + 's';
+      s.style.width = s.style.height = (4 + Math.random()*5) + 'px';
+      srSparks.appendChild(s);
+      setTimeout(()=>s.remove(), (d + 0.5) * 1000);
+    }, 160);
+  }
+  function srStopSparks(){
+    if(srSparkT){ clearInterval(srSparkT); srSparkT = null; }
+    srSparks.innerHTML = '';
+  }
+  /** 黑幕淡出（正常过场收尾）；force=true 立即收掉（跳过/Esc/收起时用） */
+  function srFadeOut(){
+    srStopSparks();
+    srFx.classList.remove('on');
+    srImg.classList.remove('in');
+    reveal.classList.remove('sr-black');      // 底部按钮/进度点恢复（无论正常收尾还是被跳过）
+    setTimeout(()=>{ if(!srFx.classList.contains('on')) srFx.hidden = true; }, 650);
+  }
+  const srHide = srFadeOut;                        // 语义别名：强制收掉
+
+  /** SSR/SP 落场：与 enterChar 同样的记录/名牌逻辑，但演出换成黑幕→立绘→语音 */
+  function enterCharSpecial(i){
+    const c = seqList[i];
+
+    // 记录收集（与普通落场一致）
+    curSeqIdx = i;
+    const isNew = !Gacha.Codex.has(c.id);
+    Gacha.Codex.add(c.id);
+    if(isNew) freshIds.add(c.id);
+
+    // 名牌复用 sceneName（z-index 在黑幕之上，照常显示）
+    const nm = document.getElementById('rvName');
+    const bg = document.getElementById('rvBadge');
+    nm.textContent = c.name;
+    bg.textContent = c.label;
+    bg.style.background = `linear-gradient(180deg, ${c.color}, #5a3308)`;
+    const old = sceneName.querySelector('.new');
+    if(old) old.remove();
+    if(isNew){
+      const tag = document.createElement('span');
+      tag.className = 'new'; tag.textContent = 'NEW';
+      sceneName.appendChild(tag);
+    }
+    paintDots(i);
+    seqProgress.textContent = seqList.length>1 ? `${i+1} / ${seqList.length}` : '';
+
+    // ① 黑屏渐入 → ② 立绘渐现 + 光点上升 → ③ 播语音 → ④ 黑幕淡出接下一发
+    const BLACK = 650, ART = 800;
+    // 立绘加载完再淡入（替代「黑屏里突然蹦出图」的空白感）；加载失败也照常显示，绝不卡住流程
+    srImg.onload  = () => srImg.classList.add('loaded');
+    srImg.onerror = () => srImg.classList.add('loaded');
+    srImg.classList.remove('loaded');
+    srImg.src = c.file;
+    srImg.classList.remove('in');
+    srFx.hidden = false;
+    reveal.classList.add('sr-black');         // 黑幕期间隐去底部 UI → 全屏纯黑
+    requestAnimationFrame(()=>requestAnimationFrame(()=>srFx.classList.add('on')));
+    seqTimer = setTimeout(()=>{
+      sceneName.classList.remove('in');
+      srStartSparks();
+      srImg.classList.add('in');
+      seqTimer = setTimeout(()=>{
+        sceneName.classList.add('in');
+        reveal.classList.remove('sr-black');  // 立绘已渐现：底部按钮/进度点淡回来
+        warmNextVoice(i);
+        if(seqList.length <= 1){ voiceCtl = playVoice(c, ()=>{}); return; }  // 单抽：停住
+        voiceCtl = playVoice(c, ()=>{
+          voiceCtl = null;
+          srFadeOut();
+          sceneName.classList.remove('in');
+          const isLast = (i >= seqList.length-1);
+          seqTimer = setTimeout(()=>{
+            if(isLast) goSummary(); else gotoChar(i+1);
+          }, isLast ? 300 : 620);
+        });
+      }, ART);
+    }, BLACK);
+  }
+
+  function enterChar(i){
+    const c = seqList[i];
+    if(isSpecial(c)){ enterCharSpecial(i); return; }   // SSR/SP：专属黑幕演出
+    const el = document.createElement('div');
+    el.className = 'scene-char enter';
+    const im = document.createElement('img');
+    im.alt = c.name || '';
+    // 与 #srImg 完全一致：加载完（或失败）才加 .loaded 淡入。
+    // 缺了这步，CSS 里 .scene-char img{opacity:0} 永远不解除 → 立绘全透明看不见。
+    im.addEventListener('load',  () => im.classList.add('loaded'), { once:true });
+    im.addEventListener('error', () => im.classList.add('loaded'), { once:true });
+    im.src = c.file;
+    if(im.complete && im.naturalWidth) im.classList.add('loaded');   // 命中缓存时同步补一次
+    el.appendChild(im);
+    sceneChars.appendChild(el);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      el.classList.remove('enter');
+      el.classList.add('in');
+    }));
+
+    // 记录收集（每个角色只在其首次出现时标记 NEW）
+    curSeqIdx = i;
+    const isNew = !Gacha.Codex.has(c.id);
+    Gacha.Codex.add(c.id);
+    if(isNew) freshIds.add(c.id);
+
+    const nm = document.getElementById('rvName');
+    const bg = document.getElementById('rvBadge');
+    nm.textContent = c.name;
+    bg.textContent = c.label;
+    bg.style.background = `linear-gradient(180deg, ${c.color}, #5a3308)`;
+    // 旧的 NEW 角标清掉再加
+    const old = sceneName.querySelector('.new');
+    if(old) old.remove();
+    if(isNew){
+      const tag = document.createElement('span');
+      tag.className = 'new'; tag.textContent = 'NEW';
+      sceneName.appendChild(tag);
+    }
+    sceneName.classList.add('in');
+
+    paintDots(i);
+    seqProgress.textContent = seqList.length>1 ? `${i+1} / ${seqList.length}` : '';
+    warmNextVoice(i);
+
+    // 有语音 → 播完再走；没语音 → 按原节奏停留
+    if(seqList.length <= 1){ voiceCtl = playVoice(c, ()=>{}); return; }  // 单抽：停住
+    voiceCtl = playVoice(c, ()=>{ voiceCtl = null; exitChar(el, i); });
+  }
+
+  function exitChar(el, i){
+    if(!el || !el.isConnected) return;
+    el.classList.remove('in');
+    el.classList.add('out');
+    sceneName.classList.remove('in');
+    setTimeout(()=>el.remove(), EXIT+50);
+
+    const isLast = (i >= seqList.length-1);
+    seqTimer = setTimeout(()=>{
+      if(isLast) goSummary(); else gotoChar(i+1);
+    }, isLast ? EXIT-150 : OVERLAP);
+  }
+
+  /** 落场调度：跳过模式下已有角色快速掠过（只记录+推进度），新角色完整落场（动画+语音） */
+  function gotoChar(i){
+    if(i >= seqList.length){
+      paintDots(seqList.length-1);
+      goSummary();
+      return;
+    }
+    const c = seqList[i];
+    if(skipMode && Gacha.Codex.has(c.id) && !isSpecial(c)){   // SSR/SP 即使已拥有也不掠过
+      Gacha.Codex.add(c.id);          // 已有角色：静默记录，不播动画/语音
+      curSeqIdx = i;                  // 已记录到 i，recordRemaining 从 i+1 补录才不会重复计数
+      paintDots(i);
+      seqProgress.textContent = seqList.length>1 ? `${i+1} / ${seqList.length}` : '';
+      seqTimer = setTimeout(()=>gotoChar(i+1), 130);
+      return;
+    }
+    enterChar(i);                     // 新角色（或非跳过模式）：完整落场
+  }
+
+  function goSummary(){
+    reveal.classList.remove('on');
+    showSummary(seqList);
+  }
+  /** 收集补录：把揭晓页还没落场的角色（Esc 等提前退出时）记进收集册，
+      避免结算页看得到、图鉴里却没有。已落场的不再重复计数。 */
+  function recordRemaining(){
+    for(let i = curSeqIdx + 1; i < seqList.length; i++){
+      const c = seqList[i];
+      if(!c || !c.id) continue;
+      if(!Gacha.Codex.has(c.id)) freshIds.add(c.id);
+      Gacha.Codex.add(c.id);
+    }
+    curSeqIdx = seqList.length - 1;
+  }
+  function finishNow(){
+    srHide();                         // SSR/SP 黑幕演出无论走到哪一步都先收掉
+    if(skipMode){
+      // 跳过进行中再点跳过：直接强制结束、进结算。
+      // 不能只是 return——先执行的 stopVoice/stopSeq 会掐断推进链路
+      // （语音回调不触发、定时器被清），揭晓页就永久卡死了。
+      stopVoice(false);
+      stopSummonFx();
+      stopSeq();
+      recordRemaining();
+      skipMode = false;
+      sceneChars.querySelectorAll('.scene-char').forEach(el=>{
+        el.classList.remove('in'); el.classList.add('out');
+        setTimeout(()=>el.remove(), EXIT);
+      });
+      sceneName.classList.remove('in');
+      seqTimer = setTimeout(goSummary, 150);
+      return;
+    }
+    stopVoice(false);
+    stopSummonFx();
+    stopSeq();
+    skipMode = true;
+    skipBtn.classList.add('hide');    // 已在跳过，按钮不再需要（下次召唤会自动恢复）
+    sceneChars.querySelectorAll('.scene-char').forEach(el=>{
+      el.classList.remove('in'); el.classList.add('out');
+      setTimeout(()=>el.remove(), EXIT);
+    });
+    sceneName.classList.remove('in');
+    seqTimer = setTimeout(()=>gotoChar(curSeqIdx + 1), 350);
+  }
+
+  /* 十连召唤阵容页：按稀有度排布（最高稀有度居中），带竖排名牌绶带 */
+  function showSummary(list){
+    luRow.innerHTML = '';
+    const order = (rates && rates.order) || [];
+    const rank = c => { const i = order.indexOf(c.rarity); return i === -1 ? 99 : i; };
+    const sorted = [...list].sort((a,b)=> rank(a)-rank(b));
+    const n = sorted.length;
+    // 中间放最高稀有度：位置从中间向两侧交替铺开（n=10 → 4,5,3,6,2,7,1,8,0,9）
+    const pos = [];
+    let lo = Math.floor((n-1)/2), hi = Math.ceil((n-1)/2);
+    pos.push(lo); if(hi !== lo) pos.push(hi);
+    while(pos.length < n){ lo--; hi++; if(lo >= 0) pos.push(lo); if(hi <= n-1) pos.push(hi); }
+    const slots = new Array(n);
+    sorted.forEach((c,i)=>{ slots[pos[i]] = c; });
+    slots.forEach((c,i)=>{
+      const el = document.createElement('div');
+      el.className = 'lu-slot';
+      const dist = Math.abs(i - (n-1)/2);
+      // 宽度驱动：中心 14.5vw 向两边线性递减（面积差近 3 倍），总宽必在屏内
+      el.style.setProperty('--lu-w', Math.max(7, 14.5 - dist*1.5).toFixed(2) + 'vw');
+      el.style.setProperty('--lu-z', String(100 - Math.round(dist*10)));
+      el.style.setProperty('--lu-delay', (i*85) + 'ms');
+      el.innerHTML =
+        `<div class="lu-banner" style="--lu-c:${c.color}"><span class="rb">${c.label}</span>` +
+        `<span class="rn">${c.name}</span></div>` +
+        (freshIds.has(c.id) ? `<span class="lu-new">NEW</span>` : '') +
+        `<img src="${c.file}" alt="${c.name}">`;
+      luRow.appendChild(el);
+    });
+    reveal10.classList.add('on');
+  }
+
+  // 关门→(切换内容)→开门 的过场，替代刺眼的白屏闪烁
+  // leadInMs：门延迟多久才合拢（用于让前置光效填满音效前期，匹配音效时长）
+  // doorSeq 代数号：新的 backToStage 会让仍在倒计时的旧过场回调失效（如快速抽卡前奏期间点收起）
+  let doorSeq = 0;
+  function doorTransition(midFn, leadInMs){
+    leadInMs = leadInMs || 0;
+    const myGen = doorSeq;
+    const beginClose = () => {
+      door.classList.remove('opening');
+      door.classList.add('closing');
+      setTimeout(()=>{
+        try{ if(doorSeq === myGen && midFn) midFn(); }catch(e){ console.error(e); }
+        // 让门后内容先就位，再开门
+        setTimeout(()=>{
+          door.classList.remove('closing');
+          door.classList.add('opening');
+          setTimeout(()=>{ door.classList.remove('opening'); }, DOOR_OPEN_MS + 80);
+        }, 70);
+      }, DOOR_CLOSE_MS);
+    };
+    if(leadInMs > 0) setTimeout(beginClose, leadInMs);
+    else beginClose();
+  }
+
+  /* fast=true：结算页「再次绘制」快速通道——只播召唤语音的前奏（~1.1s）就开始关门，
+     不放蝴蝶注入光效；false：完整流程（光效填满整段语音再关门）。
+     fastNext：由结算页「再次绘制」设置——回到抽卡界面重新画，玩家可任意改十连/单抽与池子，
+     下一次召唤（无论什么配置）都走快速通道；「收起」则下一次保持完整流程。 */
+  let fastNext = false;    // 下一次召唤是否走快速通道
+  let summoning = false;   // 门过场进行中，防止重复触发
+  function doSummon(fast){
+    if(!tiers.length || summoning || leaving) return;
+    summoning = true;
+    stopVoice(false);
+    stopDrawSound();                 // 绘制音效先停下，避免和召唤音效叠在一起
+    freshIds = new Set();
+    curSeqIdx = -1;
+    skipMode = false;
+    playSummonSound();               // 点击召唤即播放召唤音效
+    const sa = audioFor(SUMMON_SFX);
+    let D = SUMMON_AUDIO_DUR;        // 兜底：音频元数据没拿到时用实测值
+    if(sa && sa.duration && isFinite(sa.duration) && sa.duration > 0) D = sa.duration;
+    // 完整流程：门的「合拢」落在音效最后那一下关门声附近；快速流程：前奏 1.1s 即关门
+    const leadInMs = fast ? 1100 : Math.max(0, D - (DOOR_CLOSE_MS/1000) - 0.12) * 1000;
+    // 十周年：按 rates.json 的 tenth.sequence 固定分段规则抽 10 连；
+    // UP 池（限时/自选）：走 drawUpPool（SSR/SP×2.5 + 60抽保底 + 阶梯UP判定）；
+    // 普通：按当前模式（单抽/十连）与池子概率抽
+    // 提到门过场「之前」：这样过场那 1~4 秒就能用来预取立绘和语音，
+    // 原来是在门关上才抽，预取一点提前量都没有。
+    const useTenth = !tenthUsed;     // 十周年特别版：仅第一次点击生效
+    const upTab = UP_TAB_BY_POOL[pool];
+    const picked = useTenth ? Gacha.drawTenth(drawRoster(), rates)
+                 : (upTab
+                     ? drawUpPool(upTab, mode === 'ten' ? 10 : 1)
+                     : Gacha.draw(tiers, mode === 'ten' ? 10 : 1));
+    prefetchSeqMedia(picked);        // 并发预取，揭晓时直接命中缓存
+    if(!fast) startSummonFx(leadInMs);
+
+    const startReveal = () => {
+      summoning = false;
+      fastNext = false;              // 快速标记仅对这一次召唤生效
+      if(fast) stopSfx(SUMMON_SFX);  // 快速模式只播前奏，关门时停掉剩余语音
+      stopSummonFx();                // 门关上、揭晓前停下光效
+      seqList = picked;
+      // 常驻页签统计：十周年特别召唤不计入任何卡池数据
+      if(!useTenth) addDrawStats(seqList);
+      paintUpStats();
+      if(!seqList.length){ return; }
+      if(useTenth){
+        tenthUsed = true;
+        try{ localStorage.setItem(TENTH_KEY, '1'); }catch(e){}
+        paintSummonBtn();
+        paintSegs();                 // 用掉即解锁，恢复玩家自己的模式/池子显示
+      }
+      stopSeq(); clearScene();
+      buildDots(seqList.length);
+      const single = seqList.length <= 1;
+      skipBtn.classList.toggle('hide', single);
+      seqActions.style.display = single ? 'none' : 'flex';
+      seqSingle.style.display = 'none';
+      singleReady = false;                 // 落场片刻后才亮出按钮，避免误触
+      if(single) setTimeout(()=>{ singleReady = true; seqSingle.style.display = 'flex'; }, 1400);
+      reveal.classList.add('on');
+      enterChar(0);
+    };
+    /* 一律走门过场（含首位就是 SSR/SP 的情况）：关门 → 揭晓 → 开门，
+       SSR/SP 的黑幕在开门时同步渐入，仍是「先全黑、再从黑里出角色」。 */
+    doorTransition(startReveal, leadInMs);
+  }
+
+  summonBtn.addEventListener('click', ()=>doSummon(fastNext));
+
+  /* ---------------- 召唤阵注入光效（红瓣 + 金光屑）· 不满意可整体删除 ---------------- */
+  let fxRunning=false, fxRAF=null, fxSpawnT=null, fxStart=0, fxDur=0;
+  let fxCircle, fxGlow;
+
+  function fxSpawnButterfly(){
+    if(!fxRunning) return;
+    const W=window.innerWidth, H=window.innerHeight;
+    // ~70% 红瓣 / 30% 金光屑，呼应页面金红符阵主题
+    const type = Math.random() < 0.7 ? 'fx-petal' : 'fx-spark';
+    const el = document.createElement('div');
+    el.className = type;
+    if(type === 'fx-petal'){
+      const s = 12 + Math.random()*14;
+      el.style.width = s+'px'; el.style.height = s+'px';
+    }else{
+      const s = 3 + Math.random()*3;
+      el.style.width = s+'px'; el.style.height = s+'px';
+    }
+    // 从屏幕四边随机飞入
+    const edge=Math.floor(Math.random()*4);
+    let x0,y0;
+    if(edge===0){ x0=Math.random()*W; y0=-40; }
+    else if(edge===1){ x0=W+40; y0=Math.random()*H; }
+    else if(edge===2){ x0=Math.random()*W; y0=H+40; }
+    else { x0=-40; y0=Math.random()*H; }
+    const cx=W/2, cy=H/2;
+    const ang=Math.random()*Math.PI*2, r=Math.min(W,H)*0.32;
+    // 二次贝塞尔：从边缘经一个偏移控制点汇入中心（注入召唤阵）
+    el._p={ x0, y0, cx:cx+Math.cos(ang)*r, cy:cy+Math.sin(ang)*r, tx:cx, ty:cy,
+            born:performance.now(),
+            life:1100+Math.random()*900,
+            rot0:Math.random()*360,
+            spin:(Math.random()-0.5)*540,    // °/s 红瓣有旋转
+            type };
+    fxButterflies.appendChild(el);
+  }
+
+  function fxFrame(now){
+    if(!fxRunning) return;
+    const W=window.innerWidth, H=window.innerHeight;
+    const t=Math.min(1,(now-fxStart)/fxDur);          // 0..1  buildup
+    const s=0.2+Math.min(1,t)*0.95, op=Math.min(1,t*1.5);
+    if(fxCircle){ fxCircle.style.transform=`scale(${s}) rotate(${(now/26)%360}deg)`; fxCircle.style.opacity=op; }
+    if(fxGlow){ const gp=s*(1+0.12*Math.sin(now/260)); fxGlow.style.transform=`scale(${gp})`; fxGlow.style.opacity=op; }
+    const bs=fxButterflies.children;
+    for(let i=bs.length-1;i>=0;i--){
+      const b=bs[i], p=b._p; if(!p) continue;
+      const u=(now-p.born)/p.life;
+      if(u>=1){ b.remove(); continue; }
+      const inv=1-u;
+      const x=inv*inv*p.x0+2*inv*u*p.cx+u*u*p.tx;     // 贝塞尔插值
+      const y=inv*inv*p.y0+2*inv*u*p.cy+u*u*p.ty;
+      const fade=u<0.7?1:(1-(u-0.7)/0.3);             // 靠近中心时淡出（注入消散）
+      // 用 translate(-50%,-50%) 让粒子中心对准 (x,y)
+      const sec=p.life*u/1000;                        // 已运动秒数
+      const rot = p.rot0 + p.spin*sec;                // 红瓣持续旋转
+      const scl = p.type==='fx-petal'
+        ? (1 - u*0.25 + 0.08*Math.sin(now/130 + i))   // 红瓣：轻微飘动
+        : (0.6 + 0.6*Math.abs(Math.sin(now/110 + i)));// 光屑：闪烁
+      b.style.transform=`translate(${x}px,${y}px) translate(-50%,-50%) rotate(${rot}deg) scale(${scl})`;
+      b.style.opacity=Math.max(0,fade)*0.95;
+    }
+    fxRAF=requestAnimationFrame(fxFrame);
+  }
+
+  function startSummonFx(leadInMs){
+    if(fxRunning) return;
+    fxRunning=true;
+    fxDur=Math.max(400,leadInMs);
+    fxStart=performance.now();
+    fxCircle=summonFx.querySelector('.fx-circle');
+    fxGlow =summonFx.querySelector('.fx-glow');
+    summonFx.classList.add('on');
+    fxFrame(fxStart);
+    fxSpawnT=setInterval(fxSpawnButterfly,210);       // 持续有红瓣/光屑汇入
+    fxSpawnButterfly(); fxSpawnButterfly(); fxSpawnButterfly();
+  }
+
+  function stopSummonFx(){
+    fxRunning=false;
+    if(fxRAF){ cancelAnimationFrame(fxRAF); fxRAF=null; }
+    if(fxSpawnT){ clearInterval(fxSpawnT); fxSpawnT=null; }
+    summonFx.classList.remove('on');
+    if(fxButterflies) fxButterflies.innerHTML='';
+    if(fxCircle){ fxCircle.style.transform='scale(.2)'; fxCircle.style.opacity=0; }
+    if(fxGlow){ fxGlow.style.transform='scale(.2)'; fxGlow.style.opacity=0; }
+  }
+
+  function closeAll(){
+    stopVoice(false);
+    stopDrawSound();
+    stopSfx(SUMMON_SFX);            // 快速通道前奏可能还在响，一并停掉
+    stopSummonFx();                 // 任何退出路径都确保蝴蝶光效停下
+    srHide();                       // SSR/SP 黑幕演出一并收掉
+    if(reveal.classList.contains('on') || reveal10.classList.contains('on')){
+      recordRemaining();            // Esc 等直接退出也补录，图鉴不漏记（已录完则为空操作）
+    }
+    stopSeq(); clearScene();
+    reveal.classList.remove('on');
+    reveal10.classList.remove('on');
+  }
+  function reset(){
+    closeAll();
+    strokes=[]; redraw();
+  }
+  againBtn.addEventListener('click', reset);
+  closeBtn.addEventListener('click', closeAll);
+  skipBtn.addEventListener('click', finishNow);
+
+  // 十连结算页：再次绘制（快速通道，固定十连）/ 收起（回抽卡界面，下次完整流程）
+  // 单抽揭晓页：同样 再次绘制（快速通道，按当前模式）/ 收起
+  let leaving = false;
+  function backToStage(){
+    if(leaving) return;
+    leaving = true;
+    doorSeq++;                        // 作废仍在倒计时的旧过场回调（快速抽卡前奏等）
+    summoning = false;                // 允许回到抽卡界面后再次召唤
+    doorTransition(()=>{ reset(); setTimeout(()=>{ leaving = false; }, 120); });
+  }
+  // 结算页「再次绘制」：回到抽卡界面重新画（十连/单抽/池子随意选），下一次召唤走快速通道
+  // 「收起」：回抽卡界面，下一次召唤保持完整流程
+  againBtn10.addEventListener('click', ()=>{ fastNext = true; backToStage(); });
+  closeBtn10.addEventListener('click', backToStage);
+  againBtnS.addEventListener('click', ()=>{ fastNext = true; backToStage(); });
+  closeBtnS.addEventListener('click', backToStage);
+
+  window.addEventListener('keydown', e=>{
+    if(e.key==='Escape'){
+      if(scrollWrap.classList.contains('on')){ closeScroll(); return; }
+      if(reveal10.classList.contains('on')){ backToStage(); return; }
+      if(reveal.classList.contains('on')){ seqList.length<=1 ? backToStage() : closeAll(); return; }
+    }
+    if((e.key===' '||e.key==='Enter') && reveal.classList.contains('on')){
+      e.preventDefault();
+      if(seqList.length<=1) backToStage(); else finishNow();
+    }
+  });
+
+  /* ---------------- 作者有话说（卷轴） ----------------
+     内容由 author-note.js 写入 window.__AUTHOR_NOTE__（gen.js 自动生成）。
+     改文件 → node gen.js → 重新打开召唤页即可看到新内容。
+     保留 fetch 兜底以应对历史部署/调试场景：file:// 双击时优先级看 window 全局，fetch 已不再必需。 */
+  function openScroll(){
+    scrollWrap.classList.add('on');
+    scrollEl.classList.remove('open');                     // 先收拢，再下一帧摊开 → 每次都有开卷动画
+    scrollBody.innerHTML = '<div style="text-align:center;color:#8a6a30;letter-spacing:.3em">展 卷 中 …</div>';
+    requestAnimationFrame(()=>requestAnimationFrame(()=>scrollEl.classList.add('open')));
+    // 优先用 author-note.js 注入的 window 全局（file:// 双击也能看，无需 fetch）
+    const inline = (typeof window.__AUTHOR_NOTE__ === 'string') ? window.__AUTHOR_NOTE__ : null;
+    if(inline){
+      scrollBody.innerHTML = inline;
+      return;
+    }
+    // 兜底：HTTP/部署场景可能在没有 author-note.js 的情况下被回退访问（比如调试期删了产物）
+    fetch('author-note.html?t=' + Date.now(), {cache:'no-store'})
+      .then(r => { if(!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
+      .then(html => { scrollBody.innerHTML = html; })
+      .catch(() => {
+        scrollBody.innerHTML =
+          '<h3>作 者 有 话 说</h3><p>卷轴内容加载失败：请确认项目根目录下存在 <code>author-note.js</code>（或 <code>author-note.html</code>）。</p>';
+      });
+  }
+  function closeScroll(){
+    if(!scrollWrap.classList.contains('on')) return;
+    scrollEl.classList.remove('open');                     // 收卷动画
+    setTimeout(()=> scrollWrap.classList.remove('on'), 480);
+  }
+  doll.addEventListener('click', ()=>{
+    scrollWrap.classList.contains('on') ? closeScroll() : openScroll();
+  });
+  scrollWrap.addEventListener('click', e=>{ if(e.target === scrollWrap) closeScroll(); });
+  document.getElementById('scrollClose').addEventListener('click', closeScroll);
+
+  /* ---------------- 启动 ---------------- */
+  Gacha.load().then(res=>{
+    roster = res.roster; rates = res.rates;
+    tiers  = buildTiersFor(pool);
+    paintSegs();
+    paintSummonBtn();
+    // 卡池弹窗初始状态：自选立绘/概率行、保底倒计数、常驻统计、互斥选中态恢复
+    paintPickFigure(); paintPickLine(); paintGuarantees(); paintUpStats();
+    selUpTab = UP_TAB_BY_POOL[pool] || null;
+    updateUpSelUI();
+    if(!tiers.length){
+      loading.innerHTML =
+        `<div class="t">没 有 可 抽 取 的 角 色</div><div class="d">` +
+        `请把图片放进 <code>img/&lt;稀有度&gt;/</code> 文件夹，并确保 <code>rates.json</code> 里该稀有度的 weight 大于 0。<br>` +
+        `当前 rates.json 中的稀有度：${(rates.order||[]).join('、')}</div>`;
+      return;
+    }
+    loading.style.display = 'none';
+    requestAnimationFrame(resize);
+
+    // 预载召唤音效，确保点击时能拿到真实 duration 来匹配过场时长
+    try{ audioFor(SUMMON_SFX); }catch(e){}
+
+    // 语音清单：拿不到也不影响抽卡，静默跳过
+    Gacha.loadVoice().then(v=>{
+      voiceMap  = v.map  || {};
+      voiceBase = v.base || 'music/';
+    }).catch(()=>{});
+  }).catch(err=>{
+    loading.innerHTML =
+      `<div class="t">载 入 失 败</div><div class="d">` +
+      `无法读取角色数据：<code>${err.message}</code><br><br>` +
+      `请用本地静态服务或部署到网页空间打开（手机端用 PWA / 局域网访问；直接双击 file:// 也能玩，只是无法离线安装）<code>node server.js</code>，再访问 <code>http://127.0.0.1:8910</code></div>`;
+  });
+
+  /* 浮动粒子 */
+  function spark(){
+    const s = document.createElement('div');
+    s.className='spark';
+    s.style.left = (10+Math.random()*80)+'%';
+    s.style.bottom='-10px';
+    s.style.animationDuration=(4+Math.random()*5)+'s';
+    document.body.appendChild(s);
+    setTimeout(()=>s.remove(), 9000);
+  }
+  setInterval(spark, 380);
+})();
+</script>
+
+<script>
+  if('serviceWorker' in navigator){
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(e => console.warn('SW 注册失败:', e.message));
+    });
+  }
+</script>
+</body>
+</html>

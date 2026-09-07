@@ -1,0 +1,25 @@
+{
+  "name": "阴阳师抽卡 · 本地网页版",
+  "short_name": "阴阳师抽卡",
+  "description": "阴阳师抽卡 · 式神图鉴（PWA 离线版）",
+  "start_url": "./",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#07020a",
+  "theme_color": "#c8161d",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,1647 @@
+<!doctype html>
+<html lang="zh-CN" data-page-node-id="8Y95vurxLOdqZlnNhJFmQt">
+<head data-page-node-id="LFKzOsq2byU3gID05VUIbW">
+<meta charset="utf-8" data-page-node-id="1dWroWvj4GgavEAJsL2Ilk">
+<title>阴阳师 · 式神图鉴</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" data-page-node-id="pUf9qcUww4qNz0pVdqiY74">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#c8161d">
+<link rel="icon" href="data:," data-page-node-id="MtknrNso9ZkRme32SNCm1Q">
+<style>
+  :root{
+    --gold:#f6c860; --gold-2:#ffe9a8; --red:#c8161d; --ink:#fff5dc;
+    --panel:rgba(28,6,12,.72); --line:rgba(246,200,96,.28);
+    --tab-dim:#8a7358;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:
+      radial-gradient(ellipse at 50% 0%, #40091a 0%, #1a0408 45%, #07020a 100%);
+    color:var(--ink);
+    font-family:"Noto Serif SC","STKaiti","KaiTi","Songti SC",serif;
+    overflow:hidden;
+  }
+  /* ============ 顶栏 ============ */
+  header{
+    height:64px;display:flex;align-items:center;gap:16px;padding:0 22px;
+    border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg, rgba(40,6,12,.9), rgba(20,4,8,.6));
+  }
+  .brand{font-size:22px;letter-spacing:.5em;color:var(--gold-2);
+    text-shadow:0 0 14px rgba(246,200,96,.6), 0 0 28px rgba(198,22,29,.5)}
+  .spacer{flex:1}
+  .btn{
+    background:linear-gradient(180deg,#c8161d,#7a0a10);color:#fff5dc;border:1px solid var(--gold);
+    padding:8px 20px;border-radius:999px;cursor:pointer;font:inherit;letter-spacing:.2em;
+    box-shadow:0 0 14px rgba(198,22,29,.5), inset 0 0 8px rgba(255,200,120,.35);
+    transition:transform .12s, box-shadow .15s;text-decoration:none;display:inline-block;
+    font-size:13px;
+  }
+  .btn:hover{transform:translateY(-1px);box-shadow:0 0 22px rgba(255,200,120,.7), 0 0 30px rgba(198,22,29,.6)}
+  .btn.ghost{background:transparent;color:var(--gold);border-color:rgba(246,200,96,.55);box-shadow:none;font-size:12px;padding:7px 16px}
+  .btn.ghost:hover{background:rgba(246,200,96,.12)}
+  .icbtn{
+    width:34px;height:34px;border-radius:8px;cursor:pointer;
+    background:rgba(246,200,96,.08);border:1px solid var(--line);
+    color:var(--gold-2);font-size:13px;letter-spacing:.1em;
+    display:flex;align-items:center;justify-content:center;
+    transition:background .15s, color .15s;
+  }
+  .icbtn:hover{background:rgba(246,200,96,.22)}
+
+  /* ============ 主体 ============ */
+  main{height:calc(100% - 64px);display:flex;gap:14px;padding:14px}
+
+  /* ---- 左侧：页签 + 网格 ---- */
+  .left{
+    flex:1;min-width:0;display:flex;flex-direction:column;gap:10px;
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:12px 16px;
+  }
+
+  /* 子栏：我的式神 X / 搜索 / 预设 */
+  .subbar{
+    display:flex;align-items:center;gap:10px;
+    padding-bottom:8px;border-bottom:1px solid rgba(246,200,96,.16);
+  }
+  .subbar .title{
+    font-size:17px;letter-spacing:.18em;color:var(--gold-2);
+    text-shadow:0 0 8px rgba(246,200,96,.4);
+    font-weight:600;
+  }
+  .subbar .title b{color:var(--gold);margin:0 3px;font-size:19px;font-weight:700}
+  .subbar .title span{color:#b39a72;font-size:15px}
+  .subbar .sep{width:1px;height:18px;background:rgba(246,200,96,.2);margin:0 2px}
+  .subbar .pill{
+    padding:5px 12px;border-radius:6px;background:rgba(246,200,96,.08);
+    border:1px solid var(--line);color:var(--gold-2);font-size:12px;
+    letter-spacing:.14em;cursor:pointer;transition:background .15s;
+    font-family:inherit;
+  }
+  .subbar .pill:hover{background:rgba(246,200,96,.2)}
+  /* 图鉴搜索框：实时过滤出所有名字含搜索字的角色 */
+  .subbar .search-input{
+    flex:0 1 170px;min-width:84px;max-width:210px;
+    padding:5px 11px;border-radius:6px;background:rgba(0,0,0,.28);
+    border:1px solid var(--line);color:var(--gold-2);font-size:13px;
+    letter-spacing:.06em;font-family:inherit;outline:none;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  .subbar .search-input::placeholder{color:#8a7358;letter-spacing:.1em}
+  .subbar .search-input:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(246,200,96,.15)}
+  .subbar .search-input::-webkit-search-cancel-button{cursor:pointer}
+
+  /* 页签栏 */
+  .tabs{
+    display:flex;flex-wrap:wrap;gap:2px;align-items:center;
+    padding-bottom:4px;
+  }
+  .tab{
+    padding:5px 14px;border-radius:6px;cursor:pointer;
+    font-size:14px;letter-spacing:.18em;font-weight:700;
+    color:var(--tab-dim);background:transparent;border:none;
+    transition:color .15s, background .15s, text-shadow .15s;
+    position:relative;font-family:inherit;
+  }
+  .tab:hover{color:var(--gold-2);background:rgba(246,200,96,.06)}
+  .tab.active{
+    color:var(--gold);
+    background:linear-gradient(180deg, rgba(246,200,96,.14), rgba(198,22,29,.14));
+    text-shadow:0 0 10px rgba(246,200,96,.55);
+  }
+  .tab.active::after{
+    content:"";position:absolute;left:18%;right:18%;bottom:-3px;height:2px;
+    background:linear-gradient(90deg, transparent, var(--gold), transparent);
+    border-radius:1px;
+  }
+
+  /* 网格 */
+  .grid{
+    flex:1;min-height:0;overflow-y:auto;
+    display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
+    padding:8px 4px 16px;
+    align-items:start;                 /* 行内 cell 不再拉伸 */
+    grid-auto-rows:max-content;        /* 行高按内容自适应，禁止隐式拉高 */
+  }
+  .grid::-webkit-scrollbar{width:6px}
+  .grid::-webkit-scrollbar-thumb{background:rgba(246,200,96,.25);border-radius:3px}
+  @media (max-width:1080px){.grid{grid-template-columns:repeat(3,1fr)}}
+  @media (max-width:760px){.grid{grid-template-columns:repeat(3,1fr)}}
+
+  /* ============ 手机竖屏：≤760px，整体重排 ============ */
+  @media (max-width:760px){
+    /* 允许整体滚动（桌面布局用 overflow:hidden 把内容锁在视口里，竖屏必须放开） */
+    body{overflow:auto}
+    html,body{height:auto;min-height:100%}
+
+    /* 头：缩高度、允许换行，按钮缩小 */
+    header{
+      height:auto;min-height:0;flex-wrap:wrap;gap:6px;
+      padding:8px 12px;
+    }
+    .brand{font-size:16px;letter-spacing:.3em;line-height:1}
+    .icbtn{width:30px;height:30px;font-size:12px}
+    .btn{padding:6px 14px;font-size:12px;letter-spacing:.15em}
+
+    /* 主：竖排；高度交给内部自己撑 */
+    main{
+      height:auto;display:flex;flex-direction:column;gap:10px;
+      padding:8px;
+    }
+
+    /* 左栏：占满宽 */
+    .left{padding:8px 10px}
+    .subbar{flex-wrap:wrap;gap:6px}
+    .subbar .title{font-size:14px;letter-spacing:.1em}
+    .subbar .title b{font-size:16px}
+
+    /* 页签：换行、更紧凑 */
+    .tabs{flex-wrap:wrap;gap:4px}
+    .tab{padding:4px 10px;font-size:12px;letter-spacing:.12em}
+
+    /* 网格：3 列（已有 760 → 2 列覆盖成 3 列让窄屏多展示） */
+    .grid{grid-template-columns:repeat(3,1fr);gap:8px;padding:8px 0}
+
+    /* 详情：全宽、置底、固定高度上限。
+       注意：本媒体查询块在文件里位于桌面版 .detail 规则「之前」，width:100% 会被后面的
+       clamp(420px,46vw,600px) 按层叠顺序盖回 420px（同优先级后者胜），导致手机端面板
+       比屏幕还宽、整块横向溢出 —— 必须用 max-width:100% 兜底（桌面版没设 max-width，必赢）。 */
+    .detail{width:100%;max-width:100%;flex:0 0 auto;max-height:none}
+    /* 内边距是给 applyCrop 看的：它按「内容盒」算缩放（会读取 padding），
+       没有这圈边距时立绘 bbox 会横向铺满整个面板 —— 手机端面板≈全屏宽，看起来就像图比屏幕还宽 */
+    .dimg-wrap{aspect-ratio:5/8;min-height:240px;flex:none;height:auto;padding:12px 26px}
+    .dname-side .vert-name{font-size:22px;letter-spacing:.32em}
+    .dname-side .rarity-mark{font-size:11px;padding:4px 7px}
+
+    .dbottom{padding:8px 10px;flex-wrap:wrap;gap:6px}
+    .dinfo{font-size:12px;flex:1 1 100%}
+    .dsig{font-size:12px;padding:0 8px;flex:1 1 100%;order:99}
+    .dacts{flex:1 1 100%;display:flex;gap:6px;justify-content:flex-end}
+    .daction,.dskin{padding:5px 14px;font-size:12px}
+  }
+
+  /* 卡片：5:8 比例贴立绘常态 */
+  .card{
+    position:relative;aspect-ratio:5/8;border-radius:8px;cursor:pointer;overflow:hidden;
+    background:
+      radial-gradient(circle at 50% 30%, rgba(255,210,120,.14), rgba(120,10,20,.18) 60%, transparent 80%),
+      linear-gradient(180deg, rgba(40,10,16,.65), rgba(20,4,8,.65));
+    border:2px solid rgba(246,200,96,.28);
+    transition:transform .15s, border-color .15s, box-shadow .15s;
+    padding:6px;                       /* 内边距挪到 .card 上 */
+    align-self:start;                  /* 不被同行其他卡片高度拉伸 */
+    contain:paint;                     /* 强制绘制边界，绝不溢出 */
+    isolation:isolate;                 /* 创建独立层叠上下文 */
+  }
+  .card img{
+    /* 无 crop 数据时的兜底布局。
+       注意：不能用 left/top/right/bottom 四项全写 —— 对替换元素而言 right/bottom 会被忽略，
+       图片会被钉在卡片左上角（表现为剪影"置顶"）。
+       改用 inset + margin:auto，浏览器才会把图片在卡片内水平垂直居中。 */
+    position:absolute;
+    inset:6px;
+    margin:auto;
+    width:auto;height:auto;
+    max-width:calc(100% - 12px);max-height:calc(100% - 12px);
+    object-fit:contain;display:block;pointer-events:none;
+    /* applyCrop 会写入精确的 left/top/width/height/margin，届时以上定位被覆盖 */
+    opacity:0;                       /* 立绘未加载完先隐身，加载完 .loaded 淡入（替代空白闪烁） */
+    transition:opacity .35s ease;
+  }
+  /* 骨架占位：立绘还没拉下来时，卡片里显示微光，避免一片空白让人以为「卡住」。
+     只有「正在请求」的卡（.loading，由懒加载 observer 打上）才跑微光动画；
+     还没进视口的卡只给静态底色 —— 否则一屏几十上百张卡各自跑无限渐变动画，
+     光栅线程被吃满，在核显 / 笔记本上会把整个页面拖慢（实测图鉴 SSR 页 64 张卡
+     里有 52 张处于未加载状态）。 */
+  .card img:not(.loaded){
+    opacity:1;                       /* 已获得角色不预先压暗 */
+  }
+  .card.locked img:not(.loaded){
+    opacity:.6;                      /* 未获得锁定卡保持压暗，与 .sil 一致 */
+  }
+  .card img.loading{
+    background:linear-gradient(110deg, rgba(255,255,255,.05) 28%, rgba(255,225,150,.16) 50%, rgba(255,255,255,.05) 72%);
+    background-size:220% 100%;
+    animation:skel 1.2s linear infinite;
+  }
+  .card img.loaded{opacity:1;animation:none;background:none}
+  @keyframes skel{from{background-position:220% 0}to{background-position:-220% 0}}
+  .card .sil{filter:brightness(0) opacity(.62)}
+  .card:hover{transform:translateY(-3px);border-color:rgba(246,200,96,.7);box-shadow:0 0 14px rgba(255,200,120,.35)}
+  .card.sel{
+    border-color:var(--gold);
+    box-shadow:0 0 0 2px rgba(246,200,96,.45), 0 0 18px rgba(255,200,120,.5);
+  }
+  /* 刚召唤到：滑动结束后闪一下金光，提示它跑到哪了 */
+  .card.justgot{animation:justGot .9s ease-out .28s 1}
+  .card.justgot img{opacity:1 !important;background:none !important;filter:none !important}
+  @keyframes justGot{
+    0%,100%{box-shadow:0 0 0 2px rgba(246,200,96,.45), 0 0 18px rgba(255,200,120,.5)}
+    35%    {box-shadow:0 0 0 3px rgba(255,225,150,.95), 0 0 34px rgba(255,215,130,.95)}
+  }
+  /* 展开 / 合并切换时，新冒出来的副本卡（#2/#3…）淡入放大 */
+  .card.cell-pop{animation:cellPop .42s cubic-bezier(.22,.61,.36,1) both}
+  @keyframes cellPop{
+    from{opacity:0; transform:scale(.82)}
+    to  {opacity:1; transform:none}
+  }
+  .card .cnum{
+    position:absolute;left:50%;bottom:5px;transform:translateX(-50%);
+    padding:0 7px;min-width:24px;line-height:18px;
+    border-radius:3px;background:rgba(0,0,0,.6);
+    color:var(--gold);font-size:11px;letter-spacing:.04em;text-align:center;
+    font-weight:700;text-shadow:0 0 4px rgba(0,0,0,.8);
+  }
+  .card.locked .cnum{color:#6d5f52}
+
+  /* ---- 右侧：详情 ---- */
+  .detail{
+    flex:0 0 auto;width:clamp(420px,46vw,600px);
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    display:flex;flex-direction:column;
+    position:relative;overflow:hidden;
+  }
+  .detail::before{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(ellipse at 50% 40%, rgba(255,210,120,.10), transparent 70%);
+  }
+  .dempty{
+    flex:1;display:flex;align-items:center;justify-content:center;
+    color:#8a7358;font-size:14px;letter-spacing:.25em;text-align:center;line-height:2.2;
+  }
+  /* min-height:0 —— 没有它，flex 子项的 min-content 高度会把底部栏挤出面板 */
+  .dcontent{display:none;flex:1;min-height:0;flex-direction:column}
+  .dcontent.show{display:flex}
+
+  .dimg-wrap{
+    flex:1;min-height:0;position:relative;
+    display:flex;align-items:center;justify-content:center;
+  }
+  /* 大图改为绝对定位：完全不参与 flex 撑高，底部栏永远不会被挤下去 */
+  .dimg-wrap img{
+    /* 与 .card img 兜底保持一致：用 inset 简写 + margin:auto，
+       避免旧写法 left/top/right/bottom 四项导致替换元素忽略 right/bottom、比例异常。 */
+    position:absolute;inset:6px 22px;margin:auto;
+    width:auto;height:auto;
+    max-width:calc(100% - 44px);max-height:100%;object-fit:contain;display:block;
+    filter:drop-shadow(0 0 26px rgba(255,200,120,.55));
+  }
+  .dimg-wrap img.sil{filter:brightness(0) drop-shadow(0 0 18px rgba(0,0,0,.8))}
+
+  /* 「点图播语音」的整片可点击区 + 悬浮 ♫ 徽标 */
+  .dimg-wrap.clickable{cursor:pointer}
+  .dimg-wrap.clickable:hover img{filter:drop-shadow(0 0 32px rgba(255,210,130,.75))}
+  /* 图标浮层：默认隐藏；图鉴根据当前角色是否有语音动态切换状态 */
+  .dvico{
+    position:absolute;right:14px;bottom:12px;
+    width:34px;height:34px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    background:rgba(20,8,6,.55);border:1px solid rgba(246,200,96,.5);
+    color:var(--gold-2);font-size:16px;line-height:1;
+    box-shadow:0 0 10px rgba(0,0,0,.5);
+    pointer-events:none;
+    opacity:0;transform:translateY(6px) scale(.92);transition:opacity .25s ease, transform .25s ease;
+  }
+  /* 有语音 + 已获得 → 高亮（鼠标悬停时也会亮起） */
+  .dimg-wrap.has-voice .dvico{ opacity:.85; }
+  .dimg-wrap.has-voice:hover .dvico{ opacity:1; }
+  /* 没语音 / 未解锁 → 整个 wrap 灰下去且不显示徽标（CSS 上面默认 opacity:0 已隐）*/
+  /* 播放中：徽标高亮 + 静态脉冲呼吸 */
+  .dimg-wrap.playing .dvico{
+    opacity:1;border-color:var(--gold-2);
+    box-shadow:0 0 14px rgba(246,200,96,.85), 0 0 32px rgba(246,200,96,.45);
+    animation:dvPulse 1.2s ease-in-out infinite;
+  }
+  @keyframes dvPulse{
+    0%,100%{ transform:translateY(0) scale(1); }
+    50%   { transform:translateY(0) scale(1.12); }
+  }
+  /* 边角的光晕，提示「这里能点」，有语音时显示 */
+  .dvring{
+    position:absolute;inset:0;pointer-events:none;border-radius:6px;
+    box-shadow:inset 0 0 0 1px rgba(246,200,96,.18);
+    opacity:0;transition:opacity .25s ease;
+  }
+  .dimg-wrap.has-voice .dvring{ opacity:1 }
+  .dimg-wrap.has-voice:hover .dvring{ box-shadow:inset 0 0 0 1px rgba(246,200,96,.45), 0 0 26px rgba(246,200,96,.18) inset }
+
+  /* 左侧竖排徽章 + 角色名 */
+  .dname-side{
+    position:absolute;left:8px;top:50%;transform:translateY(-50%);
+    display:flex;flex-direction:column;align-items:center;gap:8px;
+    pointer-events:none;
+  }
+  .dname-side .rarity-mark{
+    font-size:13px;letter-spacing:.18em;padding:5px 8px;
+    border-radius:5px;color:#2a0a06;font-weight:700;
+    box-shadow:0 0 10px rgba(255,200,120,.4);
+  }
+  .dname-side .vert-name{
+    writing-mode:vertical-rl;text-orientation:upright;
+    font-size:28px;letter-spacing:.42em;color:var(--gold-2);
+    text-shadow:0 0 14px rgba(255,200,120,.7);font-weight:700;
+    padding:8px 2px;
+  }
+  .dname-side.locked .vert-name{color:#6d5f52;text-shadow:none}
+
+  /* 底部信息栏：flex:none 固定占位，任何情况下都不被压缩或挤出 */
+  .dbottom{
+    border-top:1px solid rgba(246,200,96,.16);
+    padding:12px 14px;display:flex;align-items:center;justify-content:space-between;
+    gap:10px;flex:none;
+  }
+  .dinfo{font-size:13px;letter-spacing:.14em;color:#b39a72;line-height:1.6}
+  .dinfo .big{color:var(--gold);font-size:16px;margin:0 4px;font-weight:700}
+  .daction{
+    padding:6px 18px;border-radius:999px;cursor:pointer;
+    background:linear-gradient(180deg,#c8161d,#7a0a10);
+    border:1px solid rgba(246,200,96,.5);color:#fff5dc;font-size:13px;
+    letter-spacing:.18em;font-family:inherit;font-weight:700;
+    box-shadow:0 0 12px rgba(198,22,29,.5), inset 0 0 6px rgba(255,200,120,.3);
+    transition:transform .1s, box-shadow .15s;
+  }
+  .daction:hover{transform:translateY(-1px);box-shadow:0 0 18px rgba(255,200,120,.7)}
+
+  /* 底部中段：角色署名（界面朱红晕染蒙版，宽度随文字自适应，不占满整条） */
+  /* 底部中段：角色署名（最初始版本：无蒙版，金边引号，金色字） */
+  .dsig{
+    flex:1;min-width:0;padding:0 14px;text-align:center;
+    color:var(--gold-2);font-size:13px;letter-spacing:.18em;line-height:1.55;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    text-shadow:0 0 8px rgba(246,200,96,.35);
+  }
+  .dsig::before{content:"「";margin-right:2px;color:rgba(246,200,96,.65)}
+  .dsig::after {content:"」";margin-left:2px;color:rgba(246,200,96,.65)}
+  .dsig.empty{display:none}
+  .dsig.locked{color:#7d6a58;text-shadow:none}
+  .dsig.locked::before,.dsig.locked::after{color:rgba(125,106,88,.5)}
+
+  /* 底部右侧按钮组：皮肤切换 + 召唤 */
+  .dacts{display:flex;align-items:center;gap:8px}
+  .dskin{
+    padding:6px 14px;border-radius:999px;cursor:pointer;
+    background:rgba(246,200,96,.06);
+    border:1px solid rgba(246,200,96,.5);color:var(--gold);
+    font-size:12px;letter-spacing:.16em;font-family:inherit;
+    transition:background .15s, color .15s, border-color .15s;
+    white-space:nowrap;
+  }
+  .dskin:hover{background:rgba(246,200,96,.18);border-color:var(--gold);color:var(--gold-2)}
+  .dskin:active{transform:translateY(1px)}
+
+  /* 空 / 加载 / 错误状态 */
+  .state{
+    position:fixed;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;
+    gap:14px;background:rgba(8,2,8,.94);z-index:99;text-align:center;padding:30px;
+  }
+  .state .t{font-size:19px;letter-spacing:.3em;color:var(--gold)}
+  .state .d{font-size:13px;letter-spacing:.1em;color:#a08a6c;line-height:2;max-width:560px}
+  .state code{background:rgba(255,255,255,.07);padding:2px 7px;border-radius:4px;color:var(--gold-2)}
+
+  /* ===== 图鉴内召唤：门过场 + 立绘揭晓（样式与 summon.html 保持一致） ===== */
+  .door{position:fixed;inset:0;z-index:60;pointer-events:none;display:flex;overflow:hidden}
+  .door.closing,.door.opening{pointer-events:auto}   /* 过场中挡住点击，别点穿到网格 */
+  .door-panel{position:absolute;top:0;bottom:0;width:50%;
+    background:linear-gradient(180deg,#250507,#5e0d12 45%,#33080b);
+    box-shadow:inset 0 0 80px rgba(0,0,0,.7);
+    transition:transform .55s cubic-bezier(.76,0,.24,1)}
+  .door-panel.left{left:0;transform:translateX(-100%)}
+  .door-panel.right{right:0;transform:translateX(100%)}
+  .door-panel::after{content:'';position:absolute;top:0;bottom:0;width:3px;
+    background:linear-gradient(180deg,#f6c860,#fff3cf,#f6c860);opacity:.85}
+  .door-panel.left::after{right:0}
+  .door-panel.right::after{left:0}
+  .door.closing .door-panel.left,
+  .door.closing .door-panel.right{transform:translateX(0)}
+  .door.opening .door-panel.left{transform:translateX(-100%)}
+  .door.opening .door-panel.right{transform:translateX(100%)}
+
+  .reveal{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;
+    flex-direction:column;overflow:hidden;
+    background:radial-gradient(ellipse at 50% 70%, rgba(120,8,24,.55) 0%, rgba(8,2,8,.95) 55%, #050108 100%);
+    backdrop-filter:blur(3px)}
+  .reveal.on{display:flex;animation:fadeIn .5s ease forwards}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  .scene{position:relative;width:100%;height:100%;overflow:hidden}
+  .scene-bg{position:absolute;inset:0;pointer-events:none;
+    background:
+      radial-gradient(ellipse 60% 18% at 50% 78%, rgba(255,200,120,.18), transparent 70%),
+      linear-gradient(180deg,#0a0208 0%,#150410 50%,#1a0612 100%)}
+  .scene-chars{position:absolute;inset:0;pointer-events:none}
+  .scene-char{position:absolute;left:50%;top:50%;
+    transform-origin:center bottom;opacity:0;will-change:transform,opacity}
+  .scene-char.enter{transform:translate(-50%,calc(-50% + 80px)) scale(.9);transition:none}
+  .scene-char.in{opacity:1;transform:translate(-50%,-50%) scale(1);
+    transition:opacity .55s ease, transform .7s cubic-bezier(.16,.84,.35,1)}
+  .scene-char.out{opacity:0;transform:translate(calc(-50% - 80vw),-50%) scale(.94);
+    transition:opacity .6s ease, transform .9s cubic-bezier(.42,0,.7,.4)}
+  .scene-char img{display:block;width:auto;height:auto;
+    max-width:min(84vmin,800px);max-height:calc(100vh - 165px);
+    filter:drop-shadow(0 0 18px rgba(255,200,120,.5)) drop-shadow(0 0 34px rgba(198,22,29,.4))}
+  .scene-name{position:absolute;left:6%;top:50%;transform:translate(-45%,-50%);
+    display:flex;flex-direction:column;gap:8px;padding:14px 24px 14px 18px;
+    background:linear-gradient(90deg, rgba(40,6,12,.85), rgba(40,6,12,.55) 80%, transparent);
+    border-left:3px solid var(--gold);border-radius:0 8px 8px 0;opacity:0;
+    transition:opacity .45s ease, transform .6s cubic-bezier(.16,.84,.35,1);z-index:30}
+  .scene-name.in{opacity:1;transform:translate(0,-50%)}
+  .scene-name .badge{display:inline-block;padding:3px 10px;border-radius:5px;
+    color:#2a0a06;font-size:12px;letter-spacing:.2em;font-weight:700;align-self:flex-start}
+  .scene-name .nm{font-size:28px;letter-spacing:.35em;color:var(--gold-2);
+    text-shadow:0 0 14px rgba(255,200,120,.7), 0 0 28px rgba(198,22,29,.5)}
+  .scene-name .new{
+    align-self:flex-start;margin-top:2px;padding:2px 8px;border-radius:4px;
+    background:linear-gradient(180deg,#ff5b66,#8a0a12);color:#fff;
+    font-size:11px;letter-spacing:.15em;animation:newPop .5s ease}
+  @keyframes newPop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
+  .daction:disabled{opacity:.4;cursor:default}
+
+  /* SSR/SP 图鉴强制召唤：黑幕落场（与 summon.html #srFx 同款观感）。
+     层级：盖过普通立绘层；名号牌(scene-name z30)浮在黑幕之上；低于第二道门(door z60)，
+     便于语音播完后黑幕淡出、再由门回图鉴。黑底 #020104，0.6s 渐黑。 */
+  #codexSrFx{position:absolute;inset:0;z-index:20;background:#020104;opacity:0;
+    transition:opacity .6s ease;pointer-events:none;overflow:hidden;
+    display:flex;align-items:center;justify-content:center}
+  #codexSrFx.on{opacity:1}
+  #codexSrSparks{position:absolute;inset:0;pointer-events:none}
+  #codexSrSparks .spark{bottom:-10px}   /* 复用召唤阵同款 .spark 光点 + rise 动画（金光） */
+  #codexSrImg{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    max-width:min(84vmin,800px);max-height:calc(100vh - 165px);opacity:0;
+    transition:opacity .8s ease;
+    filter:drop-shadow(0 0 18px rgba(255,200,120,.5)) drop-shadow(0 0 34px rgba(198,22,29,.4))}
+  #codexSrImg.in{opacity:1}
+  /* 上升金光粒子：与 summon.html #srSparks / .spark 同款 */
+  .spark{position:absolute;width:6px;height:6px;border-radius:50%;
+    background:radial-gradient(circle,#fff7c8 0%,#f6c860 50%,transparent 70%);
+    box-shadow:0 0 10px #f6c860,0 0 18px rgba(255,200,120,.6);
+    animation:rise 7s linear infinite;opacity:0}
+  @keyframes rise{0%{transform:translateY(0) scale(.4);opacity:0}10%{opacity:1}
+    90%{opacity:.6}100%{transform:translateY(-120vh) scale(1);opacity:0}}
+</style>
+</head>
+<body data-page-node-id="uO2lm2P9yFvw2XbAIq6KKI">
+
+<header data-page-node-id="TllB6D0SioOBV4hDfWsl6i">
+  <div class="brand" data-page-node-id="mamn4tg8zukS7MpAj64Acn">式 神 图 鉴</div>
+  <div class="spacer" data-page-node-id="INEvoWHblZVeRpyozHsK3g"></div>
+  <button class="icbtn" id="resetBtn" title="清空收集册" data-page-node-id="AXJDYrbZFskMpvgO3k1lDB">清</button>
+  <a class="btn" href="index.html" data-page-node-id="60rcHvW6m9loCZgVCwaNXc">进 入 召 唤 阵</a>
+</header>
+
+<main data-page-node-id="BxonrvGUgYjECCBQfWSCHm">
+  <section class="left" data-page-node-id="yIUjNFChpgcPruzQ1RZThu">
+    <div class="subbar" data-page-node-id="IoGeJt6jucw4S8jG768JGa">
+      <div class="title" data-page-node-id="Y6jps461VFhbdgEGJVQdK4">我的式神 <b id="got" data-page-node-id="r54G39BBgDMlfvvutucoBk">0</b><span data-page-node-id="mifutuP4BXntGgBMEwxjIM">/</span><span id="all" data-page-node-id="xWkTMD81FJCuluRgaKrq7x">0</span></div>
+      <div class="sep" data-page-node-id="CvRJmOwBHBv0tJOE69LDEK"></div>
+      <input type="search" id="searchInput" class="search-input" placeholder="搜索式神名…" autocomplete="off" data-page-node-id="bR9VuoDrCHJFRIXn9rtSQD">
+      <button class="pill" id="presetBtn" data-page-node-id="urfZA2qHQdEzMODJLVRr4I">展 开</button>
+    </div>
+    <div class="tabs" id="tabs" data-page-node-id="2QlLPZuAAMXLpJ4vcpCeHK"></div>
+    <div class="grid" id="grid" data-page-node-id="VTBjCc4t1m05DhOrTTTxyx"></div>
+  </section>
+
+  <aside class="detail" id="detail" data-page-node-id="ztTDtOcuAe3d6HHwtaYMXN">
+    <div class="dempty" id="dempty" data-page-node-id="sEGTL4VxDT4qrIgnOXhUBP">
+      点 击 左 侧 式 神<br data-page-node-id="gzAdB4AC6Mr0Ch8VCoFgUg">查 看 详 情
+    </div>
+    <div class="dcontent" id="dcontent" data-page-node-id="HvVuaLurUK7ybdzL8dRZzn">
+      <div class="dimg-wrap" id="dimgWrap" data-page-node-id="GXQefAn3BwWhjxk8UB6etE">
+        <div class="dname-side" id="dnameSide" data-page-node-id="ADDhSodwfbVCO0WSCdYs1U">
+          <span class="rarity-mark" id="dvertBadge" data-page-node-id="d8uVA8tgPeDzSSwCdbyZRM"></span>
+          <span class="vert-name" id="dvertName" data-page-node-id="BHMF06usHyfBGquG2fCCMJ"></span>
+        </div>
+        <img id="dimg" alt="" data-page-node-id="SSo7FHQJf8uSIDWDqh188Q">
+        <div class="dvring" data-page-node-id="lp13oH4fKGWkODgC4P4pJ0"></div>
+        <div class="dvico" id="dvico" title="点击播放语音" data-page-node-id="GnbJM1LiuSJcsiAedDH4sZ">♫</div>
+      </div>
+      <div class="dbottom" data-page-node-id="CP0xTGBdpkGgyKNblfBTnC">
+        <div class="dinfo" id="dinfo" data-page-node-id="cKdIVflH6WnFOzym8mDEDZ"></div>
+        <div class="dsig empty" id="dsig" data-page-node-id="BtbvHoTo2A1mKwOURcOxc1"></div>
+        <div class="dacts" data-page-node-id="ddkotwEskKM7ehG58W06Fe">
+          <button class="dskin" id="dskinBtn" style="display:none" data-page-node-id="hRlPxrqIhhuNOteeGMv9an">替 换 皮 肤</button>
+          <button class="daction" id="dsummonBtn" data-page-node-id="qlKUD1oj2wsuYhmSXsaIqu">召 唤</button>
+        </div>
+      </div>
+    </div>
+  </aside>
+</main>
+
+<div class="state" id="loading" data-page-node-id="FFr23SSusxNzPpv73CqarO">
+  <div class="t" data-page-node-id="FGkNUd0SneQDSuNyodfAyV">载 入 中</div>
+  <div class="d" data-page-node-id="FZEIwQ5xukjJBdZVG11TJ8">正在扫描 img 目录…</div>
+</div>
+
+<!-- 图鉴内召唤：门过场（z 60）盖在立绘层（z 50）之上，与 summon.html 层级一致 -->
+<div class="door" id="codexDoor" aria-hidden="true" data-page-node-id="xUK8wb0DCLEQyEg5iFKaOY">
+  <div class="door-panel left" data-page-node-id="YKjwLLGBPSumnKJln6ziXw"></div>
+  <div class="door-panel right" data-page-node-id="9SUj3HxpayWYut3bFjbbLW"></div>
+</div>
+<div class="reveal" id="codexReveal" aria-hidden="true" data-page-node-id="0MZcCSGi68jJ0kzp2Tgng0">
+  <div class="scene" data-page-node-id="9kBEuvNaeu4wfZegpRKawk">
+    <div class="scene-bg" data-page-node-id="A6z0imQC04TseeqOuXtLPq"></div>
+      <div class="scene-chars" id="codexSceneChars" data-page-node-id="bWEfiiokIvtxt13wMfK2Cp"></div>
+      <!-- SSR/SP 专属落场黑幕（黑屏渐入 + 立绘渐现 + 上升光点）与 summon.html #srFx 一致 -->
+      <div id="codexSrFx" hidden data-page-node-id="csrFx00000000000000AA">
+        <div id="codexSrSparks" data-page-node-id="csrSp00000000000000AA"></div>
+        <img id="codexSrImg" alt="" data-page-node-id="csrIm00000000000000AA">
+      </div>
+      <div class="scene-name" id="codexSceneName" data-page-node-id="2DkARFDO3x1UDUXZb3Njdb">
+      <span class="badge" id="codexRvBadge" data-page-node-id="EpmOn3W8yn4VEo5eDRfW5c">SP</span>
+      <span class="nm" id="codexRvName" data-page-node-id="TKsWRn12GcyalGt9VZLMeM">—</span>
+    </div>
+  </div>
+</div>
+
+<script src="roster.js"></script>
+<script src="signature.js"></script>
+<script src="voice.js"></script>
+<script src="shared.js"></script>
+<script>
+(() => {
+  const tabsEl     = document.getElementById('tabs');
+  const gridEl     = document.getElementById('grid');
+  const loading    = document.getElementById('loading');
+  const gotEl      = document.getElementById('got');
+  const allEl      = document.getElementById('all');
+  const dempty     = document.getElementById('dempty');
+  const dcontent   = document.getElementById('dcontent');
+  const dimg       = document.getElementById('dimg');
+  const dimgWrap   = document.getElementById('dimgWrap');
+  const dvico      = document.getElementById('dvico');
+  const dnameSide  = document.getElementById('dnameSide');
+  const dvertBadge = document.getElementById('dvertBadge');
+  const dvertName  = document.getElementById('dvertName');
+  const dinfo      = document.getElementById('dinfo');
+  const dsigEl     = document.getElementById('dsig');
+  const resetBtn   = document.getElementById('resetBtn');
+  const searchInput = document.getElementById('searchInput');
+  const presetBtn  = document.getElementById('presetBtn');
+  const dsummonBtn = document.getElementById('dsummonBtn');
+  const dskinBtn   = document.getElementById('dskinBtn');
+
+  let rates;
+  let groups = [];      // [{key,label,color,chars}]
+  let crops  = {};      // { [角色id]: {t,r,b,l} }
+  let currentTab = 'all';
+  let searchQuery = '';   // 非空时在 renderGrid 中跨全部页签过滤名字含搜索字的角色
+  let currentSel = null;  // {c, g, cardEl, inst} 当前选中的角色（inst=展开模式下的副本序号，合并模式为 null）
+  let curSkin    = 1;     // 当前选中角色正在展示的皮肤序号
+  let expanded   = false; // 展开模式：每个抽到的副本单独一格；false=合并（默认，与原图鉴一致）
+
+  // ---- 图鉴点图播语音 ----
+  // 与 summon.html 同思路：voiceMap={角色id: 'n/xxx.mp3'}，base='music/'；
+  // 用 audioCache 复用 HTMLAudioElement（顺便当本地缓存）。
+  // 图鉴只需要单条打断式播放 + 状态指示，比 summon 简单得多。
+  let voiceMap  = {};
+  let voiceBase = 'music/';
+  let voiceReady = false;   // 清单是否已加载完成（用于 select() 时正确上色）
+  const audioCache = new Map();   // url -> HTMLAudioElement
+  let nowPlaying = null;     // { url, el }：当前正在播放的语音，用于打断
+
+  function showState(title, html){
+    loading.style.display = 'flex';
+    loading.innerHTML = `<div class="t">${title}</div><div class="d">${html}</div>`;
+  }
+
+  // ---- 页签顺序：全部 / UR / SP / SSR / SR / R / N / 素材（其他） ----
+  // 「全部」页签里角色的排序也按这个优先级，越靠前越优先
+  const RARITY_RANK = ['ur','sp','ssr','sr','r','n','其他'];
+  const rankOf = k => { const i = RARITY_RANK.indexOf(k); return i < 0 ? 999 : i; };
+
+  function buildTabs(){
+    const order = RARITY_RANK;
+    const tabs = [{key:'all', label:'全部', color:'#f6c860'}];
+    for(const k of order){
+      const meta = Gacha.rarityMeta(rates, k);
+      // 不显示空稀有度
+      if(!groups.some(g=>g.key===k)) continue;
+      tabs.push({key:k, label:meta.label, color:meta.color});
+    }
+    return tabs;
+  }
+
+  // ---- 渲染页签 ----
+  function renderTabs(){
+    tabsEl.innerHTML = '';
+    const tabs = buildTabs();
+    for(const t of tabs){
+      const btn = document.createElement('button');
+      btn.className = 'tab' + (t.key===currentTab?' active':'');
+      btn.textContent = t.label;
+      btn.dataset.key = t.key;
+      btn.style.color = (t.key===currentTab) ? t.color : '';
+      btn.addEventListener('click', ()=>{
+        if(currentTab === t.key && !searchQuery) return;
+        currentTab = t.key;
+        exitSearch();
+        renderTabs();
+        renderGrid();
+      });
+      tabsEl.appendChild(btn);
+    }
+  }
+
+  /* ---------- 缩略图（可选优化） ----------
+     图鉴网格里每张卡只有一百多像素，却要下 1~2MB 的原图（实测 SSR 页首屏 12 张 = 21MB），
+     既慢又吃内存。tools/optimize-images.py --thumbs 会生成 img/thumb/** 与 thumbs.json；
+     清单存在时网格用缩略图（几十 KB），详情大图仍走原图。
+     没有这个文件时 thumbOf() 原样返回，行为与之前完全一致。 */
+  let thumbMap = null;
+  const thumbReady = fetch('thumbs.json', { cache: 'force-cache' })
+    .then(r => r.ok ? r.json() : null)
+    .then(j => { thumbMap = (j && typeof j === 'object' && j.map) ? j.map : null; })
+    .catch(() => { thumbMap = null; });
+  const thumbOf = f => (thumbMap && thumbMap[f]) || f;
+
+  // ---- 渲染网格 ----
+  // 保存每张图片 → {crop, card} 映射，交给 ResizeObserver 在卡片尺寸变化时重新居中
+  const centeringItems = new Map();
+  let centeringContainer = null;
+  // 图鉴懒加载：卡片进视口（提前 1000px，比浏览器原生 lazy 更积极，滚动时不会「追着图跑」）
+  // 才真正请求立绘，避免打开图鉴时一次性并发几百张把首屏卡死。
+  // 不支持 IntersectionObserver 时退化为「直接全部加载」（原行为），功能不受影响。
+  const LAZY_MARGIN = '1000px 0px';
+  // 真正开始请求 → 打 .loading（此时才跑骨架微光动画）；完成 / 失败 → 换成 .loaded 淡入。
+  // 微光动画只活在这段请求时间里，避免几十上百张「还没轮到加载」的卡一直空转动画
+  // 把光栅线程吃满（图鉴 SSR 页实测 64 张卡里有 52 张处于未加载态）。
+  function startCardLoad(img, card){
+    if(!img || !img.dataset.src || img.getAttribute('src')) return;
+    const settle = () => {
+      img.classList.remove('loading');
+      img.classList.add('loaded');
+      Gacha.applyCrop(img, card._crop, card);
+      if(card._crop) centeringItems.set(img, { crop: card._crop, card });
+    };
+    img.classList.add('loading');
+    img.decoding = 'async';                 // 大图解码不阻塞主线程
+    img.onload  = settle;
+    img.onerror = () => { img.classList.remove('loading'); img.classList.add('loaded'); };
+    img.src = img.dataset.src;
+    img.removeAttribute('data-src');
+  }
+  const lazyObserver = ('IntersectionObserver' in window)
+    ? new IntersectionObserver((entries) => {
+        for(const e of entries){
+          if(!e.isIntersecting) continue;
+          const card = e.target;
+          startCardLoad(card.querySelector('img'), card);
+          lazyObserver.unobserve(card);
+        }
+      }, { root: gridEl, rootMargin: LAZY_MARGIN })
+    : { observe(card){ startCardLoad(card.querySelector('img'), card); }, unobserve(){}, disconnect(){} };
+  // 详情大图同理：applyCrop 写的是固定像素，面板尺寸变化时要重算
+  const detailCentering = new Map();
+  let detailObserved = false;
+  function renderGrid(){
+    gridEl.innerHTML = '';
+    centeringItems.clear();
+
+    // 收集本页签要展示的角色，顺序规则：
+    //   1) 已获得的整体置顶（未获得的排在后面）
+    //   2) 「全部」页签：稀有度越高越靠前（RARITY_RANK），同稀有度按编号从大到小
+    //   3) 单个稀有度页签：按编号从大到小
+    // 说明：g.chars 在 flatten 里已按编号倒序排好；Array.sort 是稳定排序，
+    //      所以后面只按「是否已获得」排一次，不会打乱上面排好的稀有度 / 编号顺序。
+    const counts  = Gacha.Codex.counts();   // 一次读盘，别每个角色都去解析 localStorage
+    const ownedOf = id => (counts[id] || 0) > 0;
+
+    let items = [];
+    if(searchQuery){
+      // 搜索态：忽略当前页签，跨全部稀有度收集名字含搜索字的角色
+      const q = searchQuery.trim().toLowerCase();
+      for(const g of groups)
+        for(const c of g.chars)
+          if(c.name.toLowerCase().includes(q)) items.push({ c, g });
+    }else if(currentTab === 'all'){
+      const sorted = groups.slice().sort((a,b)=> rankOf(a.key) - rankOf(b.key));
+      for(const g of sorted) for(const c of g.chars) items.push({ c, g });
+    }else{
+      const g = groups.find(x => x.key === currentTab);
+      if(g) for(const c of g.chars) items.push({ c, g });
+    }
+    items.sort((p, q)=> (ownedOf(q.c.id) ? 1 : 0) - (ownedOf(p.c.id) ? 1 : 0));
+
+    let visibleTotal = 0;
+    for(const { c, g } of items){
+      const owned = ownedOf(c.id);
+      const cnt   = counts[c.id] || 0;
+      // 展开模式：已获得的角色按「抽到的副本数」逐张铺开，每张可单独换肤；
+      //           副本号越大越新，降序铺开 → 新抽到的排在最前；
+      //           未获得的仍是一张锁定占位卡。合并模式：一张角色一张卡。
+      const slots = (expanded && owned && cnt > 0) ? cnt : 1;
+      for(let k = slots; k >= 1; k--){
+        const inst = (expanded && owned && cnt > 0) ? k : null;
+        const card = document.createElement('button');
+        card.className = 'card' + (owned ? '' : ' locked');
+        card.dataset.id = c.id;
+        // cellKey 全局唯一（合并模式=角色id；展开模式=角色id#副本号），供 FLIP 定位与搜索定位
+        card.dataset.cellKey = (expanded && inst) ? `${c.id}#${k}` : c.id;
+        if(inst) card.dataset.inst = inst;
+        const imgCls = owned ? '' : 'sil';
+        // 网格默认第 1 套皮肤；展开模式按该副本各自的选择，合并模式按角色整体选择
+        const skinN = inst ? Gacha.Skin.getInst(c.id, inst) : Gacha.Skin.get(c.id);
+        const sk = Gacha.getSkin(c, skinN);
+        card.innerHTML = `
+          <img class="${imgCls}" data-src="${thumbOf(sk.file)}" alt="${c.name}">
+          ${!expanded && cnt>1 ? `<span class="cnum">${cnt}</span>` : ''}
+        `;
+        // 懒加载：立绘进视口（提前 1000px）才真正请求，避免打开图鉴时一次性并发几百张
+        // 把请求队列挤爆、导致首屏 / 其他角色卡住。加载完再 applyCrop 居中 + 淡入。
+        const imgEl = card.querySelector('img');
+        const crop = Gacha.getCrop(crops, sk.iid);
+        card._crop = crop;
+        card.addEventListener('click', ()=>select(c, g, card));
+        gridEl.appendChild(card);
+        lazyObserver.observe(card);
+        visibleTotal++;
+      }
+    }
+
+    if(!visibleTotal){
+      const empty = document.createElement('div');
+      empty.style.cssText = 'grid-column:1/-1;text-align:center;color:#8a7358;letter-spacing:.2em;padding:40px 0;font-size:13px';
+      empty.textContent = searchQuery
+        ? `未找到匹配「${searchQuery.trim()}」的角色`
+        : '暂 无 式 神';
+      gridEl.appendChild(empty);
+    }
+
+    // 监听网格尺寸变化 → 重置所有图片的居中位移
+    if(!centeringContainer){
+      centeringContainer = gridEl;
+      Gacha.observeCentering(centeringContainer, centeringItems);
+    }
+  }
+
+  /* ================= 重排滑动过渡（FLIP） =================
+     召唤获得角色后，卡片要从「未获得段」跳到「已获得段」，直接瞬移很生硬。
+     FLIP 的套路：重排前记下每张卡的位置 → 重排后先把卡片用 transform 反向
+     偏移回旧位置 → 再过渡到偏移 0，视觉上就是平滑滑过去。
+
+     坐标统一换算成「相对 grid 内容顶部」，这样 grid 自身滚动时数值依然稳定，
+     不会因为同步进行的平滑滚动而算错。
+
+     效果不满意就把 REORDER_ANIM 改回 false，立刻退回原来的瞬移版本。 */
+  const REORDER_ANIM = true;
+  const FLIP_MS      = 480;
+  const FLIP_EASE    = 'cubic-bezier(.22,.61,.36,1)';
+  const FLIP_PAD     = 320;   // 只处理视口上下各这么多像素内的卡片，屏幕外做了也看不见
+  const noMotion     = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let flipTimer = null;      // 当前这批动画的收尾定时器
+  let flipBatch = [];        // 当前这批参与动画的卡片
+
+  /** 重排前：记下当前每张卡的位置 → { id: {x, y} } */
+  function captureCards(){
+    const m = new Map();
+    if(!REORDER_ANIM || noMotion) return m;
+    const gr = gridEl.getBoundingClientRect();
+    for(const el of gridEl.querySelectorAll('.card')){
+      const r = el.getBoundingClientRect();
+      if(r.bottom < gr.top - FLIP_PAD || r.top > gr.bottom + FLIP_PAD) continue;
+      m.set(el.dataset.cellKey || el.dataset.id, {
+        x: r.left - gr.left + gridEl.scrollLeft,
+        y: r.top  - gr.top  + gridEl.scrollTop,
+      });
+    }
+    return m;
+  }
+
+  /**
+   * 重排后第一步：只把卡片「摆回旧位置」，先不播。
+   * 拆成 start / end 两段是为了配合召唤过场 —— 重排在门后做完，
+   * 等门开了再 flipEnd() 播滑动，否则 480ms 的动画全浪费在门后面。
+   * @returns 目标卡片相对 grid 内容顶部的位置 {y, h}，供 scrollToFocus 决定滚到哪里
+   */
+  function flipStart(prev, focusId){
+    endFlip();                       // 上一轮没结束就又来了：先收尾
+    const gr = gridEl.getBoundingClientRect();
+    let focus = null;
+
+    // 没有旧位置（首屏 / 内容全换）时不做动画，但仍然要回报目标卡片位置
+    if(!prev || !prev.size){
+      if(focusId){
+        const el = gridEl.querySelector(`.card[data-cell-key="${focusId}"], .card[data-id="${focusId}"]`);
+        if(el){ const r = el.getBoundingClientRect(); focus = { y: r.top - gr.top + gridEl.scrollTop, h: r.height }; }
+      }
+      return focus;
+    }
+
+    const moves = [];
+    for(const el of gridEl.querySelectorAll('.card')){
+      const r  = el.getBoundingClientRect();
+      const nx = r.left - gr.left + gridEl.scrollLeft;
+      const ny = r.top  - gr.top  + gridEl.scrollTop;
+      const key = el.dataset.cellKey || el.dataset.id;
+      if(key === focusId) focus = { y: ny, h: r.height };
+      const old = prev.get(key);
+      if(!old) continue;
+      // 新旧位置都至少有一个在可视范围附近，才值得做动画
+      const near = !(r.bottom < gr.top - FLIP_PAD || r.top > gr.bottom + FLIP_PAD);
+      if(!near) continue;
+      const dx = old.x - nx, dy = old.y - ny;
+      if(Math.abs(dx) < 1 && Math.abs(dy) < 1) continue;
+      // 位移超过一屏半就不滑了：那种卡片是从屏幕外飞进来的，
+      // 前几百毫秒根本看不见，硬做动画只会让画面空一段。
+      if(Math.abs(dy) > gridEl.clientHeight * 1.6) continue;
+      moves.push([el, dx, dy]);
+    }
+
+    if(moves.length){
+      for(const [el, dx, dy] of moves){
+        el.style.transition = 'none';
+        el.style.transform  = `translate(${dx}px, ${dy}px)`;
+      }
+      void gridEl.offsetWidth;       // 强制回流，确立动画起始值
+      flipBatch = moves;
+    }
+    return focus;
+  }
+
+  /** 重排后第二步：从旧位置过渡到新位置（真正看得见的那一段） */
+  function flipEnd(){
+    if(!flipBatch.length) return;
+    for(const [el] of flipBatch){
+      el.style.transition = `transform ${FLIP_MS}ms ${FLIP_EASE}`;
+      el.style.transform  = '';
+    }
+    if(flipTimer) clearTimeout(flipTimer);
+    flipTimer = setTimeout(endFlip, FLIP_MS + 60);
+  }
+
+  // 清掉这一批卡片的内联 transition/transform，把 transform 交还给 CSS（否则会盖掉 :hover 的上浮）
+  function endFlip(){
+    if(flipTimer){ clearTimeout(flipTimer); flipTimer = null; }
+    for(const [el] of flipBatch){ el.style.transition = ''; el.style.transform = ''; }
+    flipBatch = [];
+  }
+
+  /**
+   * 把 grid 滚到让 focus 居中的位置，用固定时长的缓动 —— 比浏览器原生 smooth 可控，
+   * 也能和卡片滑动（FLIP_MS）节奏对齐。滚动途中用户自己滚了就立刻让位。
+   */
+  function scrollToFocus(focus){
+    if(!focus) return;
+    const max    = Math.max(0, gridEl.scrollHeight - gridEl.clientHeight);
+    const target = Math.max(0, Math.min(focus.y - (gridEl.clientHeight - focus.h) / 2, max));
+    const from   = gridEl.scrollTop;
+    const dist   = target - from;
+    if(Math.abs(dist) < 24) return;              // 本来就在视野里，别抖
+    if(noMotion){ gridEl.scrollTop = target; return; }
+
+    const dur  = Math.min(780, Math.max(380, Math.abs(dist) * 0.32));
+    const ease = t => (t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2);
+    const t0   = performance.now();
+    let last   = from;
+    requestAnimationFrame(function step(now){
+      if(Math.abs(gridEl.scrollTop - last) > 3) return;   // 用户手动滚了，放弃动画
+      const p = Math.min(1, (now - t0) / dur);
+      last = from + dist * ease(p);
+      gridEl.scrollTop = last;
+      if(p < 1) requestAnimationFrame(step);
+    });
+  }
+
+  // 把 cellKey 归一化成「跨模式可对应」的身份键：
+  //   合并模式  `id`          → `id`
+  //   展开模式  `id#1`(首副本) → `id`   （与合并那张同身份，可平滑衔接）
+  //   展开模式  `id#2`…       → `id#2` （各自独立，无旧位时淡入）
+  function matchKey(k){
+    if(!k) return k;
+    const i = k.indexOf('#');
+    return (i >= 0 && k.slice(i + 1) === '1') ? k.slice(0, i) : k;
+  }
+
+  /**
+   * 给「整体换一批卡片」的渲染做 FLIP 平滑过渡（展开/合并切换用它）。
+   * 先记旧位置 → 调 renderFn 重渲 → 把保留下来的卡片从旧位滑到新位，
+   * 新冒出来的副本卡做淡入放大（.cell-pop）。网格自身滚动位置会被 innerHTML 清空，
+   * 所以这里一并还原，避免视图跳一下。
+   */
+  function reflowAnimated(renderFn){
+    if(!REORDER_ANIM || noMotion){ renderFn(); return; }
+    endFlip();                                  // 清掉上任未结束的滑动
+    gridEl.querySelectorAll('.cell-pop').forEach(e=>e.classList.remove('cell-pop'));
+
+    const gr = gridEl.getBoundingClientRect();
+    const prev = new Map();          // matchKey → 位置（仅视口附近，用于滑动）
+    const allPrev = new Set();       // 全部旧 cellKey（含屏外），用于辨别「真正新出现的副本卡」
+    for(const el of gridEl.querySelectorAll('.card')){
+      const k = el.dataset.cellKey || el.dataset.id;
+      if(k) allPrev.add(k);
+      const r = el.getBoundingClientRect();
+      if(r.bottom < gr.top - FLIP_PAD || r.top > gr.bottom + FLIP_PAD) continue;
+      prev.set(matchKey(k), {
+        x: r.left - gr.left + gridEl.scrollLeft,
+        y: r.top  - gr.top  + gridEl.scrollTop,
+      });
+    }
+
+    const s = gridEl.scrollTop;
+    renderFn();
+    gridEl.scrollTop = s;                        // 还原滚动，否则视图会跳到网格顶部
+
+    const gr2 = gridEl.getBoundingClientRect();
+    const moves = [];
+    for(const el of gridEl.querySelectorAll('.card')){
+      const r  = el.getBoundingClientRect();
+      const nx = r.left - gr2.left + gridEl.scrollLeft;
+      const ny = r.top  - gr2.top  + gridEl.scrollTop;
+      const k   = el.dataset.cellKey || el.dataset.id;
+      const old = prev.get(matchKey(k));
+      if(old){
+        const dx = old.x - nx, dy = old.y - ny;
+        const near = !(r.bottom < gr2.top - FLIP_PAD || r.top > gr2.bottom + FLIP_PAD);
+        if(near && (Math.abs(dx) > 1 || Math.abs(dy) > 1) && Math.abs(dy) <= gridEl.clientHeight * 1.6){
+          moves.push([el, dx, dy]);
+          continue;                            // 是滑动，不该再淡入
+        }
+      }
+      // 仅「旧集合里完全没出现过这张卡」才淡入（新副本 #2/#3…）：
+      // 既要 exact key 没出现过，也要 matchKey 没出现过 —— 否则首副本
+      // `id#1` 会被当成新卡（其实它和合并那张同身份，应滑动而非淡入）；
+      // 屏外但原本就有的卡 exact key 在 allPrev 里，也不会被误判成新。
+      if(k && !allPrev.has(k) && !prev.has(matchKey(k))) el.classList.add('cell-pop');
+    }
+
+    if(moves.length){
+      for(const [el, dx, dy] of moves){
+        el.style.transition = 'none';
+        el.style.transform  = `translate(${dx}px, ${dy}px)`;
+      }
+      void gridEl.offsetWidth;                  // 强制回流，确立动画起点
+      flipBatch = moves;
+      for(const [el] of moves){
+        el.style.transition = `transform ${FLIP_MS}ms ${FLIP_EASE}`;
+        el.style.transform  = '';
+      }
+      if(flipTimer) clearTimeout(flipTimer);
+      flipTimer = setTimeout(endFlip, FLIP_MS + 60);
+    }
+  }
+
+  /**
+   * 把该角色「当前选中的皮肤」画到右侧大图 + 左侧卡片上。
+   * 皮肤只有一套时不显示切换按钮。
+   */
+  function paintSkin(c, cardEl, owned){
+    const list = Gacha.skinList(c);
+    const sk   = Gacha.getSkin(c, curSkin);
+    if(!sk) return;
+    if(typeof owned !== 'boolean') owned = Gacha.Codex.has(c.id);
+
+    dimg.className = owned ? '' : 'sil';
+    dimg.src = sk.file;
+    dimg.alt = c.name;
+    const wrapEl = dimg.parentElement;
+    const dCrop = Gacha.getCrop(crops, sk.iid);
+    Gacha.applyCrop(dimg, dCrop, wrapEl);
+    if(dCrop) detailCentering.set(dimg, { crop: dCrop, card: wrapEl });
+    else      detailCentering.delete(dimg);
+    if(!detailObserved){ detailObserved = true; Gacha.observeCentering(wrapEl, detailCentering); }
+
+    if(list.length > 1){
+      dskinBtn.style.display = '';
+      dskinBtn.textContent = `替换皮肤 ${sk.n}/${list.length}`;
+    }else{
+      dskinBtn.style.display = 'none';
+    }
+
+    // 左侧卡片同步换图（换肤后裁切数据也跟着换）
+    if(cardEl && cardEl.isConnected){
+      const img = cardEl.querySelector('img');
+      if(img){
+        img.src = sk.file;
+        const crop = Gacha.getCrop(crops, sk.iid);
+        Gacha.applyCrop(img, crop, cardEl);
+        if(crop) centeringItems.set(img, { crop, card: cardEl });
+        else     centeringItems.delete(img);
+      }
+    }
+  }
+
+  // ---- 选中角色 ----
+  function select(c, g, card){
+    // 切换角色前先把上一段语音停掉（语音切到声音上回给下一位的感觉会很怪）
+    if(currentSel && currentSel.c && currentSel.c.id !== c.id){
+      stopNowPlaying();
+    }
+    // 展开模式下卡片带 data-inst（第几个副本），合并模式下为 null
+    const inst = (card && card.dataset && card.dataset.inst) ? Number(card.dataset.inst) : null;
+    currentSel = { c, g, cardEl: card, inst };
+    gridEl.querySelectorAll('.card.sel').forEach(e=>e.classList.remove('sel'));
+    if(card) card.classList.add('sel');
+
+    const owned = Gacha.Codex.has(c.id);
+    const cnt   = Gacha.Codex.count(c.id);
+
+    dempty.style.display = 'none';
+    dcontent.classList.add('show');
+
+    dvertBadge.textContent = g.label;
+    dvertBadge.style.background = `linear-gradient(180deg, ${g.color}, #5a3308)`;
+
+    dvertName.textContent = owned ? c.name : '?????';
+    dnameSide.classList.toggle('locked', !owned);
+
+    // 皮肤选择记在 localStorage：合并模式按角色整体，展开模式按当前副本
+    curSkin = inst ? Gacha.Skin.getInst(c.id, inst) : Gacha.Skin.get(c.id);
+    paintSkin(c, card, owned);
+
+    dinfo.innerHTML = owned
+      ? `已获得 <span class="big">${cnt}</span> 次`
+      : `<span style="color:#7d6a58">继续召唤以解锁</span>`;
+
+    // 署名：按「当前显示的皮肤」查（与最后抽到哪个皮肤无关）；
+    // 仅已获得且表里有署名时才显示；未解锁时给「?????」占位。
+    updateSignature(c, owned);
+
+    // 语音状态：是否可点 / 是否有 ♫ 徽标
+    paintDVoiceState();
+  }
+
+  // 根据当前显示的皮肤刷新底部署名。选中角色时、以及在图鉴里切换皮肤后都要调用，
+  // 否则切肤只换了立绘、署名却停留在上次选中的皮肤。
+  function updateSignature(c, owned){
+    const sigMap = (typeof window !== 'undefined' && window.__SIG__ && window.__SIG__.map) || {};
+    let sig = null;
+    if(owned){
+      const sk = Gacha.getSkin(c, curSkin);
+      const iid = sk ? sk.iid : c.id;
+      sig = sigMap[iid] || (iid !== c.id ? sigMap[c.id] : null) || null;
+    }
+    if(sig){
+      dsigEl.textContent = sig;
+      dsigEl.classList.remove('empty', 'locked');
+      dsigEl.title = sig;
+    }else if(!owned){
+      dsigEl.textContent = '?????';
+      dsigEl.classList.remove('empty');
+      dsigEl.classList.add('locked');
+      dsigEl.title = '';
+    }else{
+      dsigEl.textContent = '';
+      dsigEl.classList.add('empty');
+      dsigEl.classList.remove('locked');
+      dsigEl.title = '';
+    }
+  }
+
+  // ===== 点图鉴右边大图播放语音 =====
+  // 与 summon.html 的 audioFor/voiceUrlOf 保持一致（http / file:// 都能用）：
+  // url -> HTMLAudioElement，缓存复用；挂进 body（隐藏），方便 DevTools 排查。
+  function audioFor(url){
+    let a = audioCache.get(url);
+    if(!a){
+      a = new Audio();
+      a.preload = 'auto';
+      a.src = url;
+      a.style.display = 'none';
+      a.dataset.voice = '1';
+      document.body.appendChild(a);
+      audioCache.set(url, a);
+    }
+    return a;
+  }
+  function voiceUrlOf(c){
+    // 语音始终按「基础角色 id」查（皮肤仅做图鉴切换展示用，
+    // 抽卡只出皮肤 1，所以语音只有 c.id 这一份）
+    const rel = voiceMap[c.id];
+    return rel ? Gacha.voiceUrl(voiceBase, rel) : null;
+  }
+  function hasVoice(c, owned){
+    if(!voiceReady) return false;     // 清单没回来前不亮（避免闪烁）
+    if(!owned) return false;          // 未解锁：不播（命中签名的「?????」占位语义）
+    return Boolean(voiceMap[c.id]);
+  }
+  /** 根据当前选中角色 + ownership 切换右侧大图周边的播放提示状态 */
+  function paintDVoiceState(){
+    const c = currentSel && currentSel.c;
+    if(!c){ dimgWrap.classList.remove('clickable', 'has-voice', 'playing'); return; }
+    const owned = Gacha.Codex.has(c.id);
+    const hv = hasVoice(c, owned);
+    dimgWrap.classList.toggle('clickable', hv);
+    dimgWrap.classList.toggle('has-voice', hv);
+    dvico.title = hv ? '点击播放语音' : '';
+    // 切换角色 → 重置「playing」指示（同时把上一次的 nowPlaying 停掉）
+    if(!hv){
+      stopNowPlaying();
+      dimgWrap.classList.remove('playing');
+    }
+  }
+  function stopNowPlaying(){
+    if(nowPlaying && nowPlaying.el){
+      try{ nowPlaying.el.pause(); nowPlaying.el.currentTime = 0; }catch(e){}
+    }
+    nowPlaying = null;
+    dimgWrap.classList.remove('playing');
+  }
+  /**
+   * 点击播放：暂停当前从头重播；同一首再次点击也从头开始。
+   * 清单缺失/资源 404 静默吞掉，不打断 UI。
+   */
+  function playVoiceFor(c){
+    if(!Gacha.Codex.has(c.id)) return;     // 未获得 → 不响（与签名占位一致）
+    const url = voiceUrlOf(c);
+    if(!url) return;
+    // 点同一首 → 重置到 0 再播
+    if(nowPlaying && nowPlaying.url === url && !nowPlaying.el.paused){
+      try{ nowPlaying.el.currentTime = 0; const p = nowPlaying.el.play(); if(p && p.catch) p.catch(()=>{}); return; }catch(e){}
+    }
+    // 否则停掉旧的再开新的
+    stopNowPlaying();
+    let a;
+    try{ a = audioFor(url); }catch(e){ return; }
+    try{ a.currentTime = 0; const p = a.play();
+      if(p && typeof p.catch === 'function') p.catch(()=>{ dimgWrap.classList.remove('playing'); nowPlaying = null; });
+    }catch(e){ return; }
+    nowPlaying = { url, el: a };
+    dimgWrap.classList.add('playing');
+    const onDone = () => {
+      if(!nowPlaying || nowPlaying.url !== url) return;     // 已被换掉
+      dimgWrap.classList.remove('playing');
+      nowPlaying = null;
+      a.removeEventListener('ended', onDone);
+      a.removeEventListener('error', onDone);
+    };
+    a.addEventListener('ended', onDone);
+    a.addEventListener('error', onDone);
+  }
+
+  dimgWrap.addEventListener('click', () => {
+    const c = currentSel && currentSel.c;
+    if(!c) return;
+    if(!dimgWrap.classList.contains('has-voice')) return;
+    playVoiceFor(c);
+  });
+  // 切换到别的角色时，把上一段播放停掉
+  // ---- 重新加载（首屏启动 + 点击「刷新」按钮共用） ----
+  function reload(){
+    loading.style.display = 'flex';
+    loading.innerHTML = `<div class="t">载 入 中</div><div class="d">正在扫描 img 目录…</div>`;
+    // 重置选中态，避免刷新后列表重建但右侧仍显示旧角色
+    dempty.style.display = '';
+    dcontent.classList.remove('show');
+    gridEl.querySelectorAll('.card.sel').forEach(e=>e.classList.remove('sel'));
+
+    // 等缩略图清单一起就绪再渲染，否则网格会先用原图铺一遍，白下载一轮
+    Promise.all([Gacha.load(), thumbReady]).then(([data])=>{
+      rates  = data.rates;
+      crops  = data.crops || {};
+      groups = Gacha.flatten(data.roster, data.rates);
+
+      // 统计
+      let total = 0, gotCount = 0;
+      for(const g of groups){
+        total    += g.chars.length;
+        gotCount += g.chars.filter(c=>Gacha.Codex.has(c.id)).length;
+      }
+      gotEl.textContent = gotCount;
+      allEl.textContent = total;
+
+      if(!groups.length || !total){
+        showState('图 鉴 为 空', [
+          '没有扫描到任何角色。<br>',
+          '请把图片放进 <code>img/&lt;稀有度&gt;/</code> 文件夹，例如 <code>img/sp/大天狗.png</code>。<br>',
+          '稀有度文件夹目前支持：' + ((rates.order)||[]).join('、')
+        ].join(''));
+        return;
+      }
+      loading.style.display = 'none';
+      renderTabs();
+      renderGrid();
+    }).catch(err=>{
+      showState('载 入 失 败', [
+        '无法读取角色数据：<code>' + err.message + '</code><br><br>',
+        '请确认是通过本地服务打开的，而不是双击 html 文件。<br>',
+        '在项目目录执行：<code>node server.js</code>，再访问 <code>http://127.0.0.1:8910</code>'
+      ].join(''));
+    });
+  }
+
+  reload();
+
+  resetBtn.addEventListener('click', ()=>{
+    if(!confirm('确定清空全部收集记录？此操作不可恢复。\n（召唤页的卡池选择、限时/自选UP 的保底进度与统计也会一并归零，十周年特别版可重新抽一次）')) return;
+    Gacha.Codex.reset();
+    Gacha.Skin.resetInst();   // 连带清掉展开模式的副本皮肤选择
+    /* 召唤页的池子记录一并归零：当前池子（回到蓝票）、限时UP/自选UP 的累计抽数与保底计数、
+       自选已选角色、常驻页签的全局统计；顺带清掉十周年特别版的"已使用"标记
+       （回到 summon.html 刷新后金色"十周年特别版"按钮会回来）。
+       键集中在 shared.js 的 Gacha.POOL_KEYS，两个页面共用一份，不会漏。 */
+    Gacha.Pools.reset();
+    gotEl.textContent = 0;
+    exitSearch();
+    renderGrid();
+    dempty.style.display = '';
+    dcontent.classList.remove('show');
+    gridEl.querySelectorAll('.card.sel').forEach(e=>e.classList.remove('sel'));
+    stopNowPlaying();
+    currentSel = null;
+    paintDVoiceState();
+  });
+
+  // 搜索：实时过滤出所有名字含搜索字的角色（跨全部稀有度 / 页签）
+  function applySearch(){
+    searchQuery = searchInput.value;
+    if(searchQuery) gridEl.scrollTop = 0;   // 跳回顶部，方便看结果
+    renderGrid();
+  }
+  searchInput.addEventListener('input',  applySearch);
+  searchInput.addEventListener('search', applySearch);   // 浏览器原生 ✕ / 回车
+
+  // 点页签等于退出搜索态，回到正常视图
+  // （renderTabs 内已处理；这里兜底：任何切页都清掉搜索框）
+  function exitSearch(){
+    if(searchQuery){ searchQuery = ''; searchInput.value = ''; }
+  }
+
+  // 预设按钮 → 合并 / 展开 切换：
+  //   合并（默认）：每个角色一张卡，和原来的图鉴完全一致；
+  //   展开：每个抽到的副本单独一格，可单独替换对应皮肤（若该角色有多套皮肤）。
+  function applyExpanded(){
+    presetBtn.textContent = expanded ? '合 并' : '展 开';
+    presetBtn.title = expanded ? '合并：每个角色一张卡' : '展开：每个抽到的副本单独一格';
+  }
+  presetBtn.addEventListener('click', ()=>{
+    expanded = !expanded;
+    applyExpanded();
+    reflowAnimated(()=>{ renderGrid(); });   // 平滑滑动 + 新副本卡淡入，替代瞬移重渲
+    // 尽量保持当前选中的角色（展开模式下定位到它的第一个副本）
+    if(currentSel){
+      const key = expanded ? `${currentSel.c.id}#1` : currentSel.c.id;
+      const el = gridEl.querySelector(`.card[data-cell-key="${key}"]`)
+              || gridEl.querySelector(`.card[data-id="${currentSel.c.id}"]`);
+      if(el) select(currentSel.c, currentSel.g, el);
+      else { currentSel = null; dempty.style.display = ''; dcontent.classList.remove('show'); }
+    }
+  });
+  applyExpanded();   // 初始化按钮文案（合并模式 → 显示「展开」）
+
+  // ---- 替换皮肤：按 1 → 2 → 3 → …→ 1 循环 ----
+  dskinBtn.addEventListener('click', ()=>{
+    if(!currentSel) return;
+    const { c, cardEl, inst } = currentSel;
+    curSkin = Gacha.nextSkin(c, curSkin);
+    // 展开模式：只改当前这张副本的皮肤；合并模式：改整个角色（与原图鉴一致）
+    if(inst) Gacha.Skin.setInst(c.id, inst, curSkin);
+    else     Gacha.Skin.set(c.id, curSkin);
+    paintSkin(c, cardEl);
+    updateSignature(c, Gacha.Codex.has(c.id));   // 切肤后同步刷新署名
+  });
+
+  /* ================= 图鉴内召唤 =================
+     已获得 → 只播这个角色的语音（点别的角色 / 离开页面自动停）
+     未获得 → 门关上 → 立绘 + 语音 → 门再关再开 → 回到图鉴播滑动
+     时序常量与 summon.html 保持一致，两边观感才统一。 */
+  const DOOR_CLOSE_MS = 550, DOOR_OPEN_MS = 600;
+  const HOLD_MS = 1250;
+  const VOICE_TAIL = 650, VOICE_LEAD = 260, VOICE_MAX = 30000;
+
+  const doorEl     = document.getElementById('codexDoor');
+  const revealEl   = document.getElementById('codexReveal');
+  const sceneChars = document.getElementById('codexSceneChars');
+  const sceneName  = document.getElementById('codexSceneName');
+  const rvName     = document.getElementById('codexRvName');
+  const rvBadge    = document.getElementById('codexRvBadge');
+  // SSR/SP 黑幕落场元素（与 summon.html 一致）
+  const codexSrFx     = document.getElementById('codexSrFx');
+  const codexSrImg    = document.getElementById('codexSrImg');
+  const codexSrSparks = document.getElementById('codexSrSparks');
+  const CODEX_SPECIAL = new Set(['ssr','sp']);
+  const isSpecialR = c => CODEX_SPECIAL.has(String(c.rarity || '').toLowerCase());
+
+  let summoning = false;   // 过场进行中：锁按钮
+  let voiceCtl  = null;    // 过场语音句柄
+
+  /** 关门 → 门后执行 midFn → 开门；门开过半时回调 onOpened。
+      midFn 可以是 async（返回 Promise），等 resolve 后再开门，方便门后预加载资源。 */
+  function doorTransition(midFn, onOpened){
+    const open = ()=>{
+      doorEl.classList.remove('closing');
+      doorEl.classList.add('opening');
+      if(onOpened) setTimeout(onOpened, 260);        // 等门开过半再交棒，画面不空
+      setTimeout(()=>doorEl.classList.remove('opening'), DOOR_OPEN_MS + 80);
+    };
+    doorEl.classList.remove('opening');
+    doorEl.classList.add('closing');
+    setTimeout(()=>{
+      let res;
+      try{ res = midFn && midFn(); }catch(e){ console.error(e); }
+      // 支持 async midFn：等 Promise 完成再开门；非 Promise 立即开门
+      if(res && typeof res.then === 'function'){
+        Promise.resolve(res).then(open).catch(e=>{ console.error(e); open(); });
+      }else{
+        setTimeout(open, 70);
+      }
+    }, DOOR_CLOSE_MS);
+  }
+
+  /** 预加载某角色的缩略图（默认皮肤），最多等 timeoutMs；用于图鉴内召唤后
+      renderGrid 前先把图片拉进缓存，避免新卡片骨架占位暴露太久。 */
+  async function preloadCardImg(c, timeoutMs = 2500){
+    await thumbReady.catch(()=>{});      // 等 thumbs.json 解析完再用正确缩略图路径预加载
+    return new Promise((resolve)=>{
+      if(!c) return resolve();
+      const sk = Gacha.getSkin(c, 1);
+      const url = (sk && sk.file) ? thumbOf(sk.file) : null;
+      if(!url) return resolve();
+      const im = new Image();
+      let settled = false;
+      const fin = ()=>{ if(!settled){ settled = true; resolve(); } };
+      im.onload = fin;
+      im.onerror = fin;
+      const t = setTimeout(fin, timeoutMs);
+      im.src = url;
+      if(im.complete) fin();
+    });
+  }
+
+  /** 立绘登场（与 summon.html 的 enterChar 同款：下方偏 80px → 归位 + 淡入） */
+  function showSceneChar(c, g){
+    sceneChars.innerHTML = '';
+    sceneName.classList.remove('in');
+    const el = document.createElement('div');
+    el.className = 'scene-char enter';
+    el.innerHTML = `<img src="${c.file}" alt="${c.name}">`;
+    sceneChars.appendChild(el);
+    rvName.textContent = c.name;
+    rvBadge.textContent = g.label;
+    rvBadge.style.background = `linear-gradient(180deg, ${g.color}, #5a3308)`;
+    const old = sceneName.querySelector('.new');
+    if(old) old.remove();
+    const tag = document.createElement('span');
+    tag.className = 'new'; tag.textContent = 'NEW';
+    sceneName.appendChild(tag);
+    sceneName.classList.add('in');
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      el.classList.remove('enter'); el.classList.add('in');
+    }));
+  }
+
+  /** 播语音，播完（或播不了 / 被停掉）后回调 done；没有语音就停留 HOLD_MS。返回 {stop} */
+  function playVoiceCtl(c, done){
+    const url = voiceUrlOf(c);
+    const holdThen = ms => {
+      const t = setTimeout(done, ms);
+      return { stop(run){ clearTimeout(t); if(run) done(); } };
+    };
+    if(!url) return holdThen(HOLD_MS);
+    let a;
+    try{ a = audioFor(url); }catch(e){ return holdThen(HOLD_MS); }
+
+    let settled = false, t1 = null, t2 = null, leadT = null;
+    const detach = ()=>{
+      a.removeEventListener('ended', onEnd);
+      a.removeEventListener('error', onEnd);
+      if(t1){ clearTimeout(t1); t1 = null; }
+      if(leadT){ clearTimeout(leadT); leadT = null; }
+    };
+    const onEnd = ()=>{
+      if(settled) return;
+      settled = true;
+      detach();
+      t2 = setTimeout(()=>{ t2 = null; done(); }, VOICE_TAIL);
+    };
+    a.addEventListener('ended', onEnd);
+    a.addEventListener('error', onEnd);
+    t1 = setTimeout(onEnd, VOICE_MAX);        // 硬上限：元数据异常也不至于把过场卡死
+    leadT = setTimeout(()=>{
+      leadT = null;
+      try{ a.currentTime = 0; }catch(e){}
+      const p = a.play();
+      if(p && typeof p.catch === 'function') p.catch(()=>onEnd());
+      const dur = (a.duration && isFinite(a.duration) && a.duration > 0) ? a.duration * 1000 : 0;
+      if(dur){ clearTimeout(t1); t1 = setTimeout(onEnd, dur + VOICE_LEAD + 1500); }
+    }, VOICE_LEAD);
+    return {
+      stop(run){
+        detach();
+        if(t2){ clearTimeout(t2); t2 = null; }
+        try{ a.pause(); a.currentTime = 0; }catch(e){}
+        if(run && !settled){ settled = true; done(); }
+        settled = true;
+      }
+    };
+  }
+
+  function refreshGotCount(){
+    let n = 0;
+    for(const g0 of groups) n += g0.chars.filter(x=>Gacha.Codex.has(x.id)).length;
+    gotEl.textContent = n;
+  }
+
+  // 合并模式下，刷新某角色所有卡片上的「副本数」角标（召唤使其 +1 后调用）
+  function updateCardCount(c){
+    const cnt = Gacha.Codex.count(c.id);
+    gridEl.querySelectorAll(`.card[data-id="${c.id}"]`).forEach(cardEl=>{
+      let cnum = cardEl.querySelector('.cnum');
+      if(cnt > 1){
+        if(cnum){ cnum.textContent = cnt; }
+        else {
+          cnum = document.createElement('span');
+          cnum.className = 'cnum';
+          cnum.textContent = cnt;
+          cardEl.appendChild(cnum);
+        }
+      } else if(cnum){
+        cnum.remove();
+      }
+    });
+  }
+
+  /* SSR/SP 图鉴强制召唤：黑幕渐入 → 立绘渐现 + 上升光点 → 名牌 → 播语音 → 黑幕淡出后回图鉴
+     与 summon.html 的 enterCharSpecial 同款观感。runCodexSummon 仅在「未获得」时调用，
+     故 isNew 恒为真（保留参数以便语义清晰、避免后期改动误判）。 */
+  let codexSrT = null, codexSrTimer = null;
+  function codexSrStartSparks(){
+    codexSrStopSparks();
+    codexSrT = setInterval(()=>{
+      const s = document.createElement('div');
+      s.className = 'spark';
+      s.style.left = (6 + Math.random()*88) + '%';
+      const d = 2.6 + Math.random()*2.8;
+      s.style.animationDuration = d + 's';
+      s.style.width = s.style.height = (4 + Math.random()*5) + 'px';
+      codexSrSparks.appendChild(s);
+      setTimeout(()=>s.remove(), (d + 0.5) * 1000);
+    }, 160);
+  }
+  function codexSrStopSparks(){
+    if(codexSrT){ clearInterval(codexSrT); codexSrT = null; }
+    codexSrSparks.innerHTML = '';
+  }
+  function codexSrFadeOut(){
+    codexSrStopSparks();
+    codexSrFx.classList.remove('on');
+    codexSrImg.classList.remove('in');
+    setTimeout(()=>{ if(!codexSrFx.classList.contains('on')) codexSrFx.hidden = true; }, 650);
+  }
+  function codexSrReset(){
+    if(codexSrTimer){ clearTimeout(codexSrTimer); codexSrTimer = null; }
+    codexSrStopSparks();
+    codexSrFx.classList.remove('on');
+    codexSrImg.classList.remove('in');
+    codexSrFx.hidden = true;
+    sceneName.classList.remove('in');
+  }
+  function codexSrReveal(c, g, isNew, onDone){
+    rvName.textContent = c.name;
+    rvBadge.textContent = g.label;
+    rvBadge.style.background = `linear-gradient(180deg, ${g.color}, #5a3308)`;
+    sceneName.classList.remove('in');
+    const old = sceneName.querySelector('.new');
+    if(old) old.remove();
+    if(isNew){
+      const tag = document.createElement('span');
+      tag.className = 'new'; tag.textContent = 'NEW';
+      sceneName.appendChild(tag);
+    }
+    codexSrImg.onload = ()=>{};
+    codexSrImg.onerror = ()=>{};
+    codexSrImg.classList.remove('in');
+    codexSrImg.src = c.file;
+    revealEl.classList.add('on');           // 让黑幕容器（reveal）可见，黑屏盖住其自身渐变背景
+    codexSrFx.hidden = false;
+    requestAnimationFrame(()=>requestAnimationFrame(()=>codexSrFx.classList.add('on')));
+    const BLACK = 650, ART = 800;
+    codexSrTimer = setTimeout(()=>{
+      sceneName.classList.remove('in');
+      codexSrStartSparks();
+      codexSrImg.classList.add('in');
+      codexSrTimer = setTimeout(()=>{
+        sceneName.classList.add('in');
+        voiceCtl = playVoiceCtl(c, ()=>{
+          voiceCtl = null;
+          codexSrFadeOut();                      // 黑幕淡出（0.6s）
+          sceneName.classList.remove('in');
+          if(onDone) setTimeout(onDone, 650);    // 等黑幕完全淡出后再走第二道门回图鉴
+        });
+      }, ART);
+    }, BLACK);
+  }
+
+  /** 未获得：两道门 + 立绘语音，最后回到图鉴播滑动 */
+  function runCodexSummon(c, g, cardEl){
+    if(summoning) return;
+    summoning = true;
+    dsummonBtn.disabled = true;
+    stopNowPlaying();
+
+    // 用户还看得见网格时先记下旧位置；滑动要等第二道门开了再播
+    const prevScroll = gridEl.scrollTop;
+    const prevRects  = captureCards();
+    let focus = null;
+
+    const backToCodex = ()=>{
+      // 第二道门：门后重排 + 重新选中，门开后再播滑动
+      doorTransition(async ()=>{
+        revealEl.classList.remove('on');
+        sceneChars.innerHTML = '';
+        await preloadCardImg(c);             // 目标角色缩略图预加载进缓存，renderGrid 后新卡片不再闪骨架
+        renderGrid();
+        gridEl.scrollTop = prevScroll;         // 不清零，否则视图会「啪」地跳到网格顶部
+        // 召唤后该角色可能从「未获得」变「已获得」、或副本数 +1；展开模式下定位到最新那张副本
+        const newCount = Gacha.Codex.count(c.id);
+        const focusKey = (expanded && newCount > 0) ? `${c.id}#${newCount}` : c.id;
+        focus = flipStart(prevRects, focusKey);    // 先把卡片摆回旧位置
+        const newCard = gridEl.querySelector(`.card[data-cell-key="${focusKey}"]`)
+                     || gridEl.querySelector(`.card[data-id="${c.id}"]`);
+        select(c, g, newCard || cardEl);       // 详情面板改指向新节点
+        if(newCard){
+          newCard.classList.add('justgot');
+          setTimeout(()=>newCard.classList.remove('justgot'), 4000);
+        }
+      }, ()=>{
+        flipEnd();                             // 门开了 → 卡片滑到新位置
+        scrollToFocus(focus);
+        summoning = false;
+        dsummonBtn.disabled = false;
+      });
+    };
+
+    // SSR/SP：去掉第一道门，直接黑屏渐入 → 立绘渐现 + 上升光点 → 名牌 → 语音 → 黑幕淡出后第二道门回图鉴
+    if(isSpecialR(c)){
+      const isNew = !Gacha.Codex.has(c.id);
+      Gacha.Codex.add(c.id);
+      refreshGotCount();
+      codexSrReveal(c, g, isNew, backToCodex);
+      return;
+    }
+
+    // 其余稀有度：第一道门 → 立绘 + 语音 → 第二道门回图鉴
+    let isNew = false;
+    doorTransition(()=>{
+      isNew = !Gacha.Codex.has(c.id);
+      Gacha.Codex.add(c.id);
+      refreshGotCount();
+      revealEl.classList.add('on');
+      showSceneChar(c, g);
+    }, ()=>{
+      voiceCtl = playVoiceCtl(c, ()=>{
+        voiceCtl = null;
+        backToCodex();                        // 语音播完直接走门回图鉴，立绘在门后清掉（不左移渐隐）
+      });
+    });
+  }
+
+  dsummonBtn.addEventListener('click', ()=>{
+    if(!currentSel || summoning) return;
+    const { c, g, cardEl } = currentSel;
+    if(Gacha.Codex.has(c.id)){
+      // 已获得：副本数 +1，仍只播语音、不播门动画；未获得才走完整过场
+      Gacha.Codex.add(c.id);
+      refreshGotCount();
+      if(expanded){
+        // 展开模式：FLIP 重渲出新增的副本卡（旧卡平滑滑动、新卡 cell-pop 淡入），并选中它
+        const newCount = Gacha.Codex.count(c.id);
+        reflowAnimated(renderGrid);          // 内部已还原滚动位置，视图不会跳
+        const newCard = gridEl.querySelector(`.card[data-cell-key="${c.id}#${newCount}"]`)
+                     || gridEl.querySelector(`.card[data-id="${c.id}"]`);
+        select(c, g, newCard || cardEl);
+      }else{
+        // 合并模式：更新该角色卡片的副本数角标 + 详情面板计数
+        updateCardCount(c);
+        select(c, g, cardEl);
+      }
+      playVoiceFor(c);
+      return;
+    }
+    runCodexSummon(c, g, cardEl);
+  });
+
+  // 离开图鉴（切页 / 切后台 / 关标签）就静音，别让声音跟着跑到别的页面
+  const hushAll = ()=>{
+    stopNowPlaying();
+    if(voiceCtl){ voiceCtl.stop(false); voiceCtl = null; }
+  };
+  window.addEventListener('pagehide', hushAll);
+  window.addEventListener('beforeunload', hushAll);
+  document.addEventListener('visibilitychange', ()=>{ if(document.hidden) hushAll(); });
+
+  // ---- 启动时拉取语音清单（dev 走 /api/voice 即时扫，release 走 voice.json 快照） ----
+  function loadVoiceFresh(){
+    Gacha.loadVoice().then(v=>{
+      voiceMap  = v.map  || {};
+      voiceBase = v.base || 'music/';
+      voiceReady = true;
+      // 已选中角色时同步刷新徽标状态（可能清单刚拿到就立刻点对账）
+      if(currentSel) paintDVoiceState();
+    }).catch(()=>{
+      voiceMap = {};
+      voiceReady = true;   // 即便失败也别让 has-voice 一直挂着
+      if(currentSel) paintDVoiceState();
+    });
+  }
+  loadVoiceFresh();
+})();
+</script>
+
+<script>
+  if('serviceWorker' in navigator){
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(e => console.warn('SW 注册失败:', e.message));
+    });
+  }
+</script>
+</body>
+</html>

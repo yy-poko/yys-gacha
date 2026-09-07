@@ -1,0 +1,2 @@
+// 本文件由 gen.js 自动生成，请勿手动编辑。
+window.__AUTHOR_NOTE__ = "<h3 data-page-node-id=\"kdP5isKUrTTUJR3FNNS3tI3u\">作 者 有 话 说</h3>\n<p data-page-node-id=\"6rcQm6ttY1W5T3iVUbhKHk81\">欢迎来到召唤阵！十周年特别版仅可抽取一次——祝你好运，一发入魂！</p>\n<p data-page-node-id=\"bDzPjjALr4RR4Dsi0DtejpcP\">提示：蓝票与破碎符咒是两个池子，概率不一样，祝阴阳师大人十周年快乐！</p>\n<p style=\"text-align:right\" data-page-node-id=\"jiMQx4jO1cgi8x0iyKK6Wfu3\">—— 忆亦</p>\n<p style=\"text-align:right\" data-page-node-id=\"QqL58LyarepoYSNYoA1lNeQR\">1.0.0版本</p>";
