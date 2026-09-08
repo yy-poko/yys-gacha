@@ -1,5 +1,5 @@
 
-const CACHE = 'gacha-pwa-mtsuv7o0';
+const CACHE = 'gacha-pwa-mtszmbvj';
 const SHELL = [
   './', 'index.html', 'codex.html', 'shared.js', 'roster.js',
   'roster.json', 'rates.json',

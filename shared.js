@@ -531,9 +531,50 @@
     },
   };
 
+  /* ---------- 背景音乐（BGM）----------
+     梅林茂《気楽なお祭り日和》，循环播放，图鉴页与召唤页共用，默认开启。
+     · 浏览器禁止「无交互自动播放」：页面加载后先挂好音频，等用户第一次
+       点击/按键（任意交互）时才真正开始播，这是浏览器策略，绕不开；
+     · 无开关按钮（按需求去掉了），页面加载即生效。 */
+  const BGM_SRC  = '梅林茂 - 気楽なお祭り日和.mp3';
+  const BGM_VOL  = 0.2;                  // 背景乐音量（0~1），压得比语音低一档
+
+  const Bgm = {
+    audio: null,
+
+    _ensureAudio(){
+      if(this.audio) return this.audio;
+      const a = new Audio();
+      a.src = encodeURI(BGM_SRC);        // 中文名+空格要编码，http / file:// 都能用
+      a.loop = true;                     // 循环播放
+      a.volume = BGM_VOL;
+      a.preload = 'auto';
+      this.audio = a;
+      return a;
+    },
+
+    play(){
+      const a = this._ensureAudio();
+      const p = a.play();
+      if(p && p.catch) p.catch(()=>{});  // 无交互被拦截属正常，等首次手势兜底再试
+    },
+
+    /** 页面加载后调用一次：挂首次手势兜底 */
+    init(){
+      if(typeof document === 'undefined') return;
+      // 首次任意交互时尝试开播（浏览器自动播放策略的解法）
+      const kick = () => { this.play(); };
+      document.addEventListener('pointerdown', kick, { once:true, capture:true });
+      document.addEventListener('keydown',    kick, { once:true, capture:true });
+    },
+  };
+
   global.Gacha = {
-    Codex, Skin, load, loadCrops, loadVoice, loadSignature, voiceUrl, getCrop, applyCrop, observeCentering,
+    Codex, Skin, Bgm, load, loadCrops, loadVoice, loadSignature, voiceUrl, getCrop, applyCrop, observeCentering,
     buildTiers, draw, drawTenth, flatten, rarityMeta, skinList, getSkin, nextSkin,
     STORE_KEY, SKIN_KEY, POOL_KEYS, Pools,
   };
+
+  // 两页共用：脚本加载完（body 末尾，DOM 已就绪）直接初始化 BGM
+  try{ Bgm.init(); }catch(e){ /* 老浏览器 / 异常环境静默跳过 */ }
 })(window);
