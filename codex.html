@@ -1845,7 +1845,19 @@
 <script>
   if('serviceWorker' in navigator){
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js').catch(e => console.warn('SW 注册失败:', e.message));
+      var hadController = !!navigator.serviceWorker.controller;
+      navigator.serviceWorker.register('sw.js').then(function(reg){
+        // 每次进页面主动查一次 sw.js 有没有新版，不等浏览器自己的轮询
+        if(reg.update) reg.update().catch(function(){});
+        if(!hadController) return;          // 首次安装：页面本来就是最新的，不用刷新
+        var refreshing = false;
+        // 新 SW 接管后自动刷新一次，确保拿到最新资源（否则要用户手动刷好几次才生效）
+        navigator.serviceWorker.addEventListener('controllerchange', function(){
+          if(refreshing) return;
+          refreshing = true;
+          window.location.reload();
+        });
+      }).catch(e => console.warn('SW 注册失败:', e.message));
     });
   }
 </script>

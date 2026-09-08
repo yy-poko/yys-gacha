@@ -1,5 +1,5 @@
 
-const CACHE = 'gacha-pwa-v7';
+const CACHE = 'gacha-pwa-mtsu8uon';
 const SHELL = [
   './', 'index.html', 'codex.html', 'shared.js', 'roster.js',
   'roster.json', 'rates.json',
@@ -33,10 +33,12 @@ self.addEventListener('fetch', e => {
   const url = new URL(req.url);
   if(url.origin !== self.location.origin) return;
 
-  // 导航请求：网络优先，失败回退到已缓存的页面
+  // 导航请求：网络优先，失败回退到已缓存的页面。
+  // cache:'reload' 用来绕过浏览器自身的 HTTP 缓存（站点是 max-age=600），
+  // 否则刷新时可能直接从本地 HTTP 缓存拿到 10 分钟前的旧 HTML。
   if(req.mode === 'navigate'){
     e.respondWith(
-      fetch(req).catch(() => caches.match('index.html').then(r => r || caches.match('codex.html')))
+      fetch(req, { cache: 'reload' }).catch(() => caches.match('index.html').then(r => r || caches.match('codex.html')))
     );
     return;
   }
