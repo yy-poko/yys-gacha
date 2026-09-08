@@ -9,7 +9,7 @@
   "修改 img/署名表格.xlsx 后重新执行 node gen.js 即可同步。",
   "unmatched 列出「对不上」的行，照 suggest / note 修正再跑一次即可。"
  ],
- "generated": "2026-09-07T19:05:35.463Z",
+ "generated": "2026-09-08T11:50:23.214Z",
  "map": {
   "n/寄生魂.png": "神秘鼠鼠",
   "n/涂壁.png": "沐白洛/Mio",
@@ -296,7 +296,7 @@
   "ssr/葛叶.png": "青鸢",
   "ssr/两面佛.png": "神秘鼠鼠",
   "ssr/市加美.png": "极彩之月蚀",
-  "ssr/思金神.png": "神秘鼠鼠",
+  "ssr/思金神.png": "blesky",
   "ssr/毗沙门天.png": "blesky",
   "ssr/毗沙门天#2.png": "神秘鼠鼠",
   "ssr/不相狐禅.png": "神秘鼠鼠",
