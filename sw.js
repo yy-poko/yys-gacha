@@ -1,5 +1,5 @@
 
-const CACHE = 'gacha-pwa-mtsu8uon';
+const CACHE = 'gacha-pwa-mtsuv7o0';
 const SHELL = [
   './', 'index.html', 'codex.html', 'shared.js', 'roster.js',
   'roster.json', 'rates.json',
@@ -27,6 +27,22 @@ self.addEventListener('activate', e => {
   );
 });
 
+/* 离线兜底页：网络连不上、且本地缓存也被清掉时，至少返回一个能看的提示页，
+   而不是让 respondWith 拿到 undefined —— 那会让浏览器直接报「无法访问此网站」，
+   看起来就像站点挂了（「清了缓存之后就打不开」就是这么来的）。 */
+const OFFLINE_HTML = '<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">'
+  + '<meta name="viewport" content="width=device-width,initial-scale=1"><title>暂时打不开</title></head>'
+  + '<body style="margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;'
+  + 'background:#12060c;color:#e8cf9a;font-family:system-ui,-apple-system,sans-serif;text-align:center;padding:24px">'
+  + '<div><div style="font-size:18px;margin-bottom:10px">暂时连不上站点</div>'
+  + '<div style="font-size:13px;opacity:.75;line-height:1.8">本地缓存已被清除，当前网络又打不开页面。<br>'
+  + '请检查网络连接后重试。</div>'
+  + '<button onclick="location.reload()" style="margin-top:18px;padding:10px 24px;border:0;'
+  + 'border-radius:999px;background:#c8161d;color:#fff;font-size:14px">重试</button></div></body></html>';
+function offlineRes(){
+  return new Response(OFFLINE_HTML, { status: 200, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+}
+
 self.addEventListener('fetch', e => {
   const req = e.request;
   if(req.method !== 'GET') return;
@@ -38,7 +54,21 @@ self.addEventListener('fetch', e => {
   // 否则刷新时可能直接从本地 HTTP 缓存拿到 10 分钟前的旧 HTML。
   if(req.mode === 'navigate'){
     e.respondWith(
-      fetch(req, { cache: 'reload' }).catch(() => caches.match('index.html').then(r => r || caches.match('codex.html')))
+      fetch(req, { cache: 'reload' })
+        .catch(() => fetch(req))        // 个别浏览器不支持 navigate + cache:'reload'，退回普通请求
+        .then(res => {
+          if(res && res.ok){
+            const copy = res.clone();
+            caches.open(CACHE).then(c => c.put(req, copy)).catch(() => {});
+            return res;
+          }
+          throw new Error('bad response');
+        })
+        .catch(() => caches.match(req)                       // 依次回退：当前页 → 首页 → 根 → 图鉴 → 离线提示页
+          .then(r => r || caches.match('index.html'))
+          .then(r => r || caches.match('./'))
+          .then(r => r || caches.match('codex.html'))
+          .then(r => r || offlineRes()))
     );
     return;
   }

@@ -2476,6 +2476,30 @@
 </script>
 
 <script>
+  (function(){
+  // 紧急自救入口：访问 ?reset=1 会注销 Service Worker、清空本地缓存后自动重载。
+  // 用于「清了缓存就打不开 / 卡在某个旧版本」的情况，不必去手机设置里翻站点数据。
+  if(/[?&]reset=1(?:&|$)/.test(location.search)){
+    window.addEventListener('load', function(){
+      (async function(){
+        try{
+          if('serviceWorker' in navigator){
+            var rs = await navigator.serviceWorker.getRegistrations();
+            await Promise.all(rs.map(function(r){ return r.unregister(); }));
+          }
+          if(window.caches){
+            var ks = await caches.keys();
+            await Promise.all(ks.map(function(k){ return caches.delete(k); }));
+          }
+        }catch(e){}
+        var u = new URL(location.href);
+        u.searchParams.delete('reset');
+        u.searchParams.set('_r', Date.now());
+        location.replace(u.toString());
+      })();
+    });
+    return;
+  }
   if('serviceWorker' in navigator){
     window.addEventListener('load', () => {
       var hadController = !!navigator.serviceWorker.controller;
@@ -2493,6 +2517,7 @@
       }).catch(e => console.warn('SW 注册失败:', e.message));
     });
   }
+  })();
 </script>
 </body>
 </html>
