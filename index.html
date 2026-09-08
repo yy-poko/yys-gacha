@@ -2,7 +2,7 @@
 <html lang="zh-CN" data-page-node-id="BOiyIfQArPMysRPgw3zbGf">
 <head data-page-node-id="SMWiuBcCZ2yzbt3vGLB2NW">
 <meta charset="utf-8" data-page-node-id="bC0fGEgWcELuj78pP6fKaC">
-<title>阴阳师 · 召唤阵</title>
+<title>鼠鼠 · 召唤阵</title>
 <link rel="icon" href="data:," data-page-node-id="lxLU676ftySj22HpbAX0cs">
 <meta name="viewport" content="width=device-width,initial-scale=1" data-page-node-id="RSxILF6VgBUGOsDKO2oJNY">
   <link rel="manifest" href="manifest.webmanifest">
@@ -306,6 +306,29 @@
     /* 召唤阵光效缩小 */
     .fx-circle{width:min(56vmin,300px);height:min(56vmin,300px)}
     .fx-glow{width:40vmin;height:40vmin}
+  }
+
+  /* 手机竖屏：左侧名字牌会遮挡居中的角色立绘，改为顶部居中显示在角色上方 */
+  @media (max-width: 720px) and (orientation: portrait){
+    .scene-name{
+      left:50%;
+      top:max(8vh, 50px);
+      transform:translate(-50%, 0);
+      align-items:center;
+      padding:10px 18px 12px;
+      text-align:center;
+      background:linear-gradient(180deg, rgba(40,6,12,.92) 0%, rgba(40,6,12,.55) 80%, transparent 100%);
+      border-left:none;
+      border-top:3px solid var(--gold);
+      border-radius:0 0 10px 10px
+    }
+    .scene-name.in{transform:translate(-50%, 0)}
+    .scene-name .badge,
+    .scene-name .nm,
+    .scene-name .new{align-self:center}
+    .scene-name .nm{font-size:22px;letter-spacing:.25em}
+    .scene-name .badge{font-size:11px;padding:2px 9px}
+    .scene-name .new{margin-top:3px}
   }
 
   /* 比 720 更窄：更猛的小屏幕（iPhone SE 之类 320~375 宽） */
