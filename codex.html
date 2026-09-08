@@ -1129,7 +1129,19 @@
     if(cardEl && cardEl.isConnected){
       const img = cardEl.querySelector('img');
       if(img){
-        img.src = sk.file;
+        // 必须走 thumbOf：网格卡片统一用缩略图，与 renderGrid 保持一致。
+        // 直接用原图 sk.file 会和缩略图混用，尺寸基准不同会让 crop 裁切错位。
+        img.src = thumbOf(sk.file);
+        // 这里是直接赋值 src，绕过了懒加载的 startCardLoad，所以必须自己补 .loaded：
+        // 卡片 img 基础样式是 opacity:0，只有 .loaded 才显示。之前全靠 .justgot 的
+        // opacity:1 !important 临时撑着，而 justgot 4 秒后被移除 → 缩略图就「消失」了
+        // （强制召唤后最明显：召唤完还在，过几秒左边的缩略图就没了）。
+        const markLoaded = ()=>{ img.classList.remove('loading'); img.classList.add('loaded'); };
+        if(img.complete && img.naturalWidth > 0) markLoaded();
+        else {
+          img.addEventListener('load',  markLoaded, { once:true });
+          img.addEventListener('error', markLoaded, { once:true });
+        }
         const crop = Gacha.getCrop(crops, sk.iid);
         Gacha.applyCrop(img, crop, cardEl);
         if(crop) centeringItems.set(img, { crop, card: cardEl });
