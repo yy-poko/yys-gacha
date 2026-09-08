@@ -659,7 +659,22 @@
   let currentSel = null;  // {c, g, cardEl, inst} 当前选中的角色（inst=展开模式下的副本序号，合并模式为 null）
   let curSkin    = 1;     // 当前选中角色正在展示的皮肤序号
   let expanded   = false; // 展开模式：每个抽到的副本单独一格；false=合并（默认，与原图鉴一致）
-  let pinnedKey  = localStorage.getItem('codexPinnedKey') || null;  // 风铃置顶的角色键：合并模式=c.id，展开模式=c.id#inst
+  /* 风铃置顶：支持同时置顶多个角色。
+     key 规则：合并模式=c.id，展开模式=c.id#inst（所以展开模式下可以只钉住某个副本）。
+     存档用 JSON 数组；旧版本存的是单个 key 字符串，读取时自动兼容成 [key]。 */
+  function loadPinnedKeys(){
+    try{
+      const raw = localStorage.getItem('codexPinnedKey');
+      if(!raw) return [];
+      if(raw.trim().startsWith('[')){
+        const a = JSON.parse(raw);
+        return Array.isArray(a) ? a : [];
+      }
+      return [raw];                       // 旧格式：单个 key
+    }catch(e){ return []; }
+  }
+  function savePinnedKeys(){ localStorage.setItem('codexPinnedKey', JSON.stringify([...pinnedKeys])); }
+  let pinnedKeys = new Set(loadPinnedKeys());
 
   // ---- 图鉴点图播语音 ----
   // 与 summon.html 同思路：voiceMap={角色id: 'n/xxx.mp3'}，base='music/'；
@@ -863,13 +878,14 @@
         visibleTotal++;
       }
     }
-    // 风铃置顶：把选中的那一张（仅一张，不是同式神全部）提到网格最前面
-    if(pinnedKey && !searchQuery){
-      const idx = cardBuffer.findIndex(x => x.key === pinnedKey);
-      if(idx > 0){
-        const [pinned] = cardBuffer.splice(idx, 1);
-        cardBuffer.unshift(pinned);
-      }
+    // 风铃置顶：可同时置顶多个 —— 稳定分区，把已置顶的整体提到最前面。
+    // 多个置顶之间仍保持原本的相对顺序（稀有度/编号），不会因为点击先后而乱跳。
+    if(pinnedKeys.size && !searchQuery){
+      const pinned = [], rest = [];
+      for(const it of cardBuffer) (pinnedKeys.has(it.key) ? pinned : rest).push(it);
+      cardBuffer.length = 0;
+      for(const it of pinned) cardBuffer.push(it);
+      for(const it of rest)   cardBuffer.push(it);
     }
     for(const {card} of cardBuffer){
       gridEl.appendChild(card);
@@ -1285,20 +1301,19 @@
       return;
     }
     pinBtn.disabled = false;
-    const isPinned = pinnedKey === key;
+    const isPinned = pinnedKeys.has(key);
     pinBtn.classList.toggle('on', isPinned);
-    pinBtn.title = isPinned ? '取消置顶当前角色' : '置顶当前角色';
+    pinBtn.title = isPinned
+      ? `取消置顶当前角色（已置顶 ${pinnedKeys.size} 个）`
+      : `置顶当前角色${pinnedKeys.size ? `（已置顶 ${pinnedKeys.size} 个）` : ''}`;
   }
   pinBtn.addEventListener('click', ()=>{
     const key = currentPinKey();
     if(!key) return;
-    if(pinnedKey === key){
-      pinnedKey = null;
-      localStorage.removeItem('codexPinnedKey');
-    }else{
-      pinnedKey = key;
-      localStorage.setItem('codexPinnedKey', key);
-    }
+    // 可同时置顶多个：已置顶则取消，未置顶则加入（再点一次取消）
+    if(pinnedKeys.has(key)) pinnedKeys.delete(key);
+    else                    pinnedKeys.add(key);
+    savePinnedKeys();
     updatePinBtn();
     // 重排网格，让置顶角色滑到最前
     reflowAnimated(()=>{ renderGrid(); });
