@@ -40,7 +40,7 @@
   @keyframes spin{to{transform:rotate(360deg)}}
 
   /* 符咒卡 */
-  .talisman{position:absolute;width:74px;height:104px;border-radius:6px;
+  .talisman{position:absolute;width:74px;height:104px;border-radius:6px;z-index:2;
     background:linear-gradient(160deg,#fff5dc 0%,#f3d490 55%,#b8893a 100%);
     border:1px solid #6a4a1a;box-shadow:0 0 18px rgba(255,180,80,.45), inset 0 0 14px rgba(120,40,30,.35);
     color:#3a0508;display:flex;align-items:center;justify-content:center;font-weight:700;
@@ -58,7 +58,7 @@
   .talisman:nth-child(7){top:50%;left:2%;--rot:10deg;animation-delay:-4.2s}
   .talisman:nth-child(8){top:18%;left:14%;--rot:-4deg;animation-delay:-4.9s}
 
-  .rose{position:absolute;width:120px;height:120px;transform:translate(-50%,-50%);
+  .rose{position:absolute;width:120px;height:120px;transform:translate(-50%,-50%);z-index:0;
     opacity:.9;pointer-events:none;filter:drop-shadow(0 0 18px rgba(255,80,90,.5))}
   .rose.r1{top:6%;left:18%} .rose.r2{top:6%;right:8%;left:auto}
   .rose.r3{bottom:6%;left:10%} .rose.r4{bottom:6%;right:8%;left:auto}
@@ -107,7 +107,7 @@
 
   /* ===== 百羽凤凰火限时UP：花瓣入口按钮（顶部「召唤阵」标题右侧） ===== */
   .top-main{position:relative;display:inline-block}
-  .petal-btn{position:absolute;left:calc(100% + 14px);top:-5px;
+  .petal-btn{position:absolute;left:calc(100% + 14px);top:2px;
     width:38px;height:38px;padding:0;border:none;background:transparent;cursor:pointer;
     filter:drop-shadow(0 0 12px rgba(255,120,150,.5));animation:petalPulse 2.6s ease-in-out infinite;
     transition:transform .15s}
@@ -269,7 +269,7 @@
   .up-pick.done{background:linear-gradient(180deg,#c8161d,#7a0a10);color:#fff5dc;border-color:rgba(246,200,96,.7)}
 
   @media (max-width: 720px){
-    .petal-btn{width:32px;height:32px;top:-3px;left:calc(100% + 9px)}
+    .petal-btn{width:32px;height:32px;top:2px;left:calc(100% + 9px)}
     .up-modal{width:min(94vw,400px)}
     .up-figure img{height:24vh}
   }
@@ -284,10 +284,12 @@
     /* 缩小符咒：让它散布在召阵边缘而不是堆在中心（vmin 自适应） */
     .talisman{width:13vmin;height:18vmin;min-width:48px;min-height:68px}
     .talisman span{font-size:5.6vmin}
-    /* 把花往 viewport 角落推开，不被召阵吃掉 */
-    .rose{width:18vmin;height:18vmin;min-width:72px;min-height:72px}
-    .rose.r1{top:1%;left:3%} .rose.r2{top:1%;right:3%}
-    .rose.r3{bottom:34vh;left:3%} .rose.r4{bottom:34vh;right:3%}
+    /* 手机端：四朵花瓣对称贴在召阵边缘，半进半出 */
+    .rose{width:13vmin;height:13vmin;min-width:52px;min-height:52px}
+    .rose.r1{top:12%;left:13%;right:auto}
+    .rose.r2{top:12%;left:75%;right:auto}
+    .rose.r3{top:72%;left:13%;right:auto}
+    .rose.r4{top:78%;left:82%;right:auto}
     /* 工具栏紧凑化：允许换行居中，避免一组按钮在窄屏一整行溢出被裁 */
     .toolbar{left:8px;right:8px;bottom:max(12px, env(safe-area-inset-bottom));
       transform:none;                          /* 清掉桌面版 translateX(-50%)，否则 left/right 定位会错位 */
@@ -308,28 +310,6 @@
     .fx-glow{width:40vmin;height:40vmin}
   }
 
-  /* 手机竖屏：左侧名字牌会遮挡居中的角色立绘，改为顶部居中显示在角色上方 */
-  @media (max-width: 720px) and (orientation: portrait){
-    .scene-name{
-      left:50%;
-      top:max(8vh, 50px);
-      transform:translate(-50%, 0);
-      align-items:center;
-      padding:10px 18px 12px;
-      text-align:center;
-      background:linear-gradient(180deg, rgba(40,6,12,.92) 0%, rgba(40,6,12,.55) 80%, transparent 100%);
-      border-left:none;
-      border-top:3px solid var(--gold);
-      border-radius:0 0 10px 10px
-    }
-    .scene-name.in{transform:translate(-50%, 0)}
-    .scene-name .badge,
-    .scene-name .nm,
-    .scene-name .new{align-self:center}
-    .scene-name .nm{font-size:22px;letter-spacing:.25em}
-    .scene-name .badge{font-size:11px;padding:2px 9px}
-    .scene-name .new{margin-top:3px}
-  }
 
   /* 比 720 更窄：更猛的小屏幕（iPhone SE 之类 320~375 宽） */
   @media (max-width: 420px){
@@ -602,13 +582,56 @@
     box-shadow:0 0 6px #f6c860, 0 0 14px rgba(255,200,120,.6);
     opacity:0}
   @keyframes fxSpin{to{transform:rotate(360deg)}}
+
+  /* ============ 手机/小屏：名字牌移到顶部靠左，避免压住居中放大的角色立绘 ============
+     注意：此段必须放在 .scene-name 基础规则之后（源序靠后），才能盖过基础定位；
+     之前写在基础规则前面导致被覆盖，手机端名字仍停在左侧。 */
+  @media (max-width: 820px){
+    .scene-name,
+    .scene-name.in{
+      left:max(10px, env(safe-area-inset-left));
+      right:auto;
+      top:max(8vh, 56px);
+      bottom:auto;
+      transform:none;
+      align-items:flex-start;
+      padding:10px 18px 12px 14px;
+      text-align:left;
+      background:linear-gradient(180deg, rgba(40,6,12,.92) 0%, rgba(40,6,12,.55) 80%, transparent 100%);
+      border-left:none;
+      border-top:3px solid var(--gold);
+      border-radius:0 0 10px 10px
+    }
+    .scene-name .badge,
+    .scene-name .nm,
+    .scene-name .new{align-self:flex-start}
+    .scene-name .nm{font-size:22px;letter-spacing:.25em}
+    .scene-name .badge{font-size:11px;padding:2px 9px}
+    .scene-name .new{margin-top:3px}
+  }
+  /* JS 检测到名字与立绘重叠时强制置顶（与上面等价，纯 CSS 之外的兜底） */
+  .scene-name.top-mode,
+  .scene-name.top-mode.in{
+    left:max(10px, env(safe-area-inset-left));
+    right:auto;
+    top:max(8vh, 56px);
+    bottom:auto;
+    transform:none;
+    align-items:flex-start;
+    padding:10px 18px 12px 14px;
+    text-align:left;
+    background:linear-gradient(180deg, rgba(40,6,12,.92) 0%, rgba(40,6,12,.55) 80%, transparent 100%);
+    border-left:none;
+    border-top:3px solid var(--gold);
+    border-radius:0 0 10px 10px
+  }
 </style>
 </head>
 <body data-page-node-id="BbzFNgWp3xnQN8koik7bJf">
   <a class="back" href="codex.html" data-page-node-id="fEBg9NrS7ezwt9PN8wGlHH">← 返回图鉴</a>
 
   <div class="stage" id="stage" data-page-node-id="B8W3hV3ltuecYDQi4P3j0U">
-    <div class="top" data-page-node-id="OaXdqssDezfuL8tMYEsgCc"><span class="top-main">召 唤 阵<small data-page-node-id="7q9UkMFzGgNuEO1hPPkerk">· 鼠标在阵中绘制图形 ·</small><button class="petal-btn" id="petalBtn" title="百羽凤凰火 限时UP卡池" aria-label="百羽凤凰火 限时UP卡池">
+    <div class="top" data-page-node-id="OaXdqssDezfuL8tMYEsgCc"><span class="top-main">召 唤 阵<small id="summonHint" data-page-node-id="7q9UkMFzGgNuEO1hPPkerk">· 点击右方花瓣选择卡池 ·</small><button class="petal-btn" id="petalBtn" title="百羽凤凰火 限时UP卡池" aria-label="百羽凤凰火 限时UP卡池">
         <svg viewBox="0 0 100 100">
           <circle cx="50" cy="50" r="46" fill="rgba(42,7,12,.85)" stroke="rgba(246,200,96,.8)" stroke-width="2.5"/>
           <g transform="translate(50 50)">
@@ -893,6 +916,7 @@
   const srImg = document.getElementById('srImg');
   const srSparks = document.getElementById('srSparks');
   const poolSeg = document.getElementById('poolSeg');
+  const summonHint = document.getElementById('summonHint');
   const doll = document.getElementById('doll');
   const scrollWrap = document.getElementById('scrollWrap');
   const scrollEl = document.getElementById('scrollEl');
@@ -916,6 +940,22 @@
     redraw();
   }
   window.addEventListener('resize', resize);
+
+  /* 名字牌与立绘重叠时自动移到顶部：手机/小屏（<=820px）无条件置顶，
+     其余情况仅在矩形确实重叠时才置顶，避免遮挡角色脸。桌面端不触发以免破坏原设计。 */
+  function fitSceneName(){
+    if(!sceneName || !sceneName.classList.contains('in')) return;
+    const small = window.innerWidth <= 820;
+    if(small){ sceneName.classList.add('top-mode'); return; }
+    sceneName.classList.remove('top-mode');
+    const img = document.querySelector('#srFx:not([hidden]) #srImg, .scene-chars .scene-char.in img');
+    if(!img) return;
+    const nr = sceneName.getBoundingClientRect();
+    const pr = img.getBoundingClientRect();
+    const overlap = !(nr.right <= pr.left || nr.left >= pr.right || nr.bottom <= pr.top || nr.top >= pr.bottom);
+    if(overlap) sceneName.classList.add('top-mode');
+  }
+  window.addEventListener('resize', fitSceneName);
 
   document.querySelectorAll('.swatch').forEach(s=>{
     s.addEventListener('click', ()=>{
@@ -1049,6 +1089,7 @@
     const isUp = (pool === UP_POOL.key || pool === PICK_POOL.key);
     upChip.hidden = !isUp;
     if(isUp) upChip.textContent = (pool === UP_POOL.key ? '限时UP' : '自选UP') + ' · 使用中';
+    paintSummonHint();          // 池子状态变化 → 同步召唤阵下方小字
   }
 
   modeSeg.addEventListener('click', e=>{
@@ -1320,6 +1361,17 @@
       `${Math.max(0, UP_PITY - upStates.limited.since)}次召唤内必得`;
     upPickGuarantee.textContent =
       `${Math.max(0, UP_PITY - upStates.pick.since)}次召唤内必得`;
+  }
+  /** 召唤阵标题下方小字：常驻池提示选池；限时/自选UP显示当前保底剩余次数 */
+  function paintSummonHint(){
+    if(!summonHint) return;
+    if(pool === UP_POOL.key){
+      summonHint.textContent = ` · ${Math.max(0, UP_PITY - upStates.limited.since)}次召唤内必得SSR/SP · `;
+    }else if(pool === PICK_POOL.key){
+      summonHint.textContent = ` · ${Math.max(0, UP_PITY - upStates.pick.since)}次召唤内必得SSR/SP · `;
+    }else{
+      summonHint.textContent = ' · 点击右方花瓣选择卡池 · ';
+    }
   }
   /** 自选页签的 UP 行：随选中角色与当前档位刷新 */
   function paintPickLine(){
@@ -1930,6 +1982,7 @@
       srImg.classList.add('in');
       seqTimer = setTimeout(()=>{
         sceneName.classList.add('in');
+        requestAnimationFrame(fitSceneName);
         reveal.classList.remove('sr-black');  // 立绘已渐现：底部按钮/进度点淡回来
         warmNextVoice(i);
         if(seqList.length <= 1){ voiceCtl = playVoice(c, ()=>{}); return; }  // 单抽：停住
@@ -1986,6 +2039,7 @@
       sceneName.appendChild(tag);
     }
     sceneName.classList.add('in');
+    requestAnimationFrame(fitSceneName);
 
     paintDots(i);
     seqProgress.textContent = seqList.length>1 ? `${i+1} / ${seqList.length}` : '';

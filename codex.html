@@ -49,6 +49,25 @@
     transition:background .15s, color .15s;
   }
   .icbtn:hover{background:rgba(246,200,96,.22)}
+  /* 右上角小风铃：置顶当前选中的角色 */
+  .windbell{
+    width:34px;height:34px;border-radius:8px;cursor:pointer;
+    background:rgba(246,200,96,.08);border:1px solid var(--line);
+    color:var(--gold-2);font-size:18px;line-height:1;
+    display:flex;align-items:center;justify-content:center;
+    transition:background .15s, color .15s, transform .15s, border-color .15s, box-shadow .15s;
+    user-select:none;
+  }
+  .windbell:hover{background:rgba(246,200,96,.18);transform:scale(1.08)}
+  .windbell.on{
+    color:#ff5b66;border-color:rgba(255,91,102,.7);
+    background:rgba(198,22,29,.22);
+    box-shadow:0 0 12px rgba(255,91,102,.45), inset 0 0 8px rgba(255,91,102,.2);
+  }
+  .windbell:disabled{opacity:.35;cursor:default;transform:none}
+  /* 风铃图标改为爱心：默认空心描边，点击置顶(.on)后填充为实心；颜色随 .on 变红 */
+  .windbell svg .heart{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round;stroke-linecap:round}
+  .windbell.on svg .heart{fill:currentColor}
 
   /* ============ 主体 ============ */
   main{height:calc(100% - 64px);display:flex;gap:14px;padding:14px}
@@ -209,25 +228,16 @@
     opacity:0;                       /* 立绘未加载完先隐身，加载完 .loaded 淡入（替代空白闪烁） */
     transition:opacity .35s ease;
   }
-  /* 骨架占位：立绘还没拉下来时，卡片里显示微光，避免一片空白让人以为「卡住」。
-     只有「正在请求」的卡（.loading，由懒加载 observer 打上）才跑微光动画；
-     还没进视口的卡只给静态底色 —— 否则一屏几十上百张卡各自跑无限渐变动画，
-     光栅线程被吃满，在核显 / 笔记本上会把整个页面拖慢（实测图鉴 SSR 页 64 张卡
-     里有 52 张处于未加载状态）。 */
-  .card img:not(.loaded){
-    opacity:1;                       /* 已获得角色不预先压暗 */
-  }
-  .card.locked img:not(.loaded){
-    opacity:.6;                      /* 未获得锁定卡保持压暗，与 .sil 一致 */
-  }
-  .card img.loading{
-    background:linear-gradient(110deg, rgba(255,255,255,.05) 28%, rgba(255,225,150,.16) 50%, rgba(255,255,255,.05) 72%);
-    background-size:220% 100%;
-    animation:skel 1.2s linear infinite;
-  }
+  /* 立绘未加载完先隐身（base opacity:0），加载完 .loaded 才淡入。
+     不再显示灰色骨架微光 / 剪影占位 —— 切换页签、展开合并时就不会闪过「没加载出来」的图。 */
   .card img.loaded{opacity:1;animation:none;background:none}
+  .card img.instant{transition:none}       /* 缓存命中瞬时显示（重渲/置顶时不闪） */
   @keyframes skel{from{background-position:220% 0}to{background-position:-220% 0}}
-  .card .sil{filter:brightness(0) opacity(.62)}
+  /* 未获得卡：黑色剪影。立绘本身是透明底 WEBP/RGBA，brightness(0) 只把式神像素压黑、
+     保留 alpha 通道 → 呈现「式神形状的黑色剪影」，背景保持透明。
+     切忌给 img 加 background：那会在透明区域垫出一个深色矩形，把剪影糊成实心黑块（看不出形状）。
+     灰色骨架微光占位（.loading/skel）已移除 —— 切页签不再闪「没加载出来」的图。 */
+  .card.locked img{display:block;filter:url(#silhouetteFill) opacity(1)}
   .card:hover{transform:translateY(-3px);border-color:rgba(246,200,96,.7);box-shadow:0 0 14px rgba(255,200,120,.35)}
   .card.sel{
     border-color:var(--gold);
@@ -326,12 +336,18 @@
   .dimg-wrap.has-voice .dvring{ opacity:1 }
   .dimg-wrap.has-voice:hover .dvring{ box-shadow:inset 0 0 0 1px rgba(246,200,96,.45), 0 0 26px rgba(246,200,96,.18) inset }
 
-  /* 左侧竖排徽章 + 角色名 */
+  /* 左侧竖排徽章 + 角色名。
+     默认：名字(z3)浮在立绘(z2)上方，便于阅读完整名字；
+     鼠标悬停详情区时名字降到 z1，立绘盖住名字 → 此时立绘完整无遮挡。 */
   .dname-side{
     position:absolute;left:8px;top:50%;transform:translateY(-50%);
     display:flex;flex-direction:column;align-items:center;gap:8px;
-    pointer-events:none;
+    pointer-events:none;z-index:3;
+    transition:z-index .01s;
   }
+  .dimg-wrap img{z-index:2}
+  .dimg-wrap:hover .dname-side{z-index:1}
+  .dimg-wrap .dvring,.dimg-wrap .dvico{z-index:3}
   .dname-side .rarity-mark{
     font-size:13px;letter-spacing:.18em;padding:5px 8px;
     border-radius:5px;color:#2a0a06;font-weight:700;
@@ -456,6 +472,46 @@
   @keyframes newPop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
   .daction:disabled{opacity:.4;cursor:default}
 
+  /* 手机端：图鉴召唤名牌与 summon 一致，置顶显示在角色上方（不再遮挡居中立绘） */
+  @media (max-width: 820px){
+    .scene-name,
+    .scene-name.in{
+      left:max(10px, env(safe-area-inset-left));
+      right:auto;
+      top:max(8vh, 56px);
+      bottom:auto;
+      transform:none;
+      align-items:flex-start;
+      padding:10px 18px 12px 14px;
+      text-align:left;
+      background:linear-gradient(180deg, rgba(40,6,12,.92) 0%, rgba(40,6,12,.55) 80%, transparent 100%);
+      border-left:none;
+      border-top:3px solid var(--gold);
+      border-radius:0 0 10px 10px
+    }
+    .scene-name .badge,
+    .scene-name .nm,
+    .scene-name .new{align-self:flex-start}
+    .scene-name .nm{font-size:22px;letter-spacing:.25em}
+    .scene-name .badge{font-size:11px;padding:2px 9px}
+    .scene-name .new{margin-top:3px}
+  }
+  /* JS 检测到名字与立绘重叠时强制置顶（兜底，与上面等价） */
+  .scene-name.top-mode,
+  .scene-name.top-mode.in{
+    left:max(10px, env(safe-area-inset-left));
+    right:auto;
+    top:max(8vh, 56px);
+    bottom:auto;
+    transform:none;
+    align-items:flex-start;
+    text-align:left;
+    background:linear-gradient(180deg, rgba(40,6,12,.92) 0%, rgba(40,6,12,.55) 80%, transparent 100%);
+    border-left:none;
+    border-top:3px solid var(--gold);
+    border-radius:0 0 10px 10px
+  }
+
   /* SSR/SP 图鉴强制召唤：黑幕落场（与 summon.html #srFx 同款观感）。
      层级：盖过普通立绘层；名号牌(scene-name z30)浮在黑幕之上；低于第二道门(door z60)，
      便于语音播完后黑幕淡出、再由门回图鉴。黑底 #020104，0.6s 渐黑。 */
@@ -480,10 +536,25 @@
 </style>
 </head>
 <body data-page-node-id="uO2lm2P9yFvw2XbAIq6KKI">
+<!-- 未获得卡的「剪影」滤镜：feFlood 填色 + feComposite(in) 以原图 alpha 做遮罩，
+     于是只有式神本体被填成纯黑、背景保持透明 —— 是「式神形状的纯黑剪影」，
+     而不是把整张图压黑成一个实心方块（brightness(0) 对不透明 JPG 就会成方块）。
+     想调剪影颜色只改 flood-color 即可。 -->
+<svg width="0" height="0" aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden">
+  <filter id="silhouetteFill" color-interpolation-filters="sRGB">
+    <feFlood flood-color="#000000" flood-opacity="1" result="fill"/>
+    <feComposite in="fill" in2="SourceGraphic" operator="in"/>
+  </filter>
+</svg>
 
 <header data-page-node-id="TllB6D0SioOBV4hDfWsl6i">
   <div class="brand" data-page-node-id="mamn4tg8zukS7MpAj64Acn">式 神 图 鉴</div>
   <div class="spacer" data-page-node-id="INEvoWHblZVeRpyozHsK3g"></div>
+  <button class="windbell" id="pinBtn" title="置顶当前角色" disabled data-page-node-id="pinBtn00000000000000AA">
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" style="display:block">
+      <path class="heart" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+    </svg>
+  </button>
   <button class="icbtn" id="resetBtn" title="清空收集册" data-page-node-id="AXJDYrbZFskMpvgO3k1lDB">清</button>
   <a class="btn" href="index.html" data-page-node-id="60rcHvW6m9loCZgVCwaNXc">进 入 召 唤 阵</a>
 </header>
@@ -574,6 +645,7 @@
   const dinfo      = document.getElementById('dinfo');
   const dsigEl     = document.getElementById('dsig');
   const resetBtn   = document.getElementById('resetBtn');
+  const pinBtn     = document.getElementById('pinBtn');
   const searchInput = document.getElementById('searchInput');
   const presetBtn  = document.getElementById('presetBtn');
   const dsummonBtn = document.getElementById('dsummonBtn');
@@ -587,6 +659,7 @@
   let currentSel = null;  // {c, g, cardEl, inst} 当前选中的角色（inst=展开模式下的副本序号，合并模式为 null）
   let curSkin    = 1;     // 当前选中角色正在展示的皮肤序号
   let expanded   = false; // 展开模式：每个抽到的副本单独一格；false=合并（默认，与原图鉴一致）
+  let pinnedKey  = localStorage.getItem('codexPinnedKey') || null;  // 风铃置顶的角色键：合并模式=c.id，展开模式=c.id#inst
 
   // ---- 图鉴点图播语音 ----
   // 与 summon.html 同思路：voiceMap={角色id: 'n/xxx.mp3'}，base='music/'；
@@ -657,6 +730,12 @@
   // 保存每张图片 → {crop, card} 映射，交给 ResizeObserver 在卡片尺寸变化时重新居中
   const centeringItems = new Map();
   let centeringContainer = null;
+  /* 卡片节点缓存：cellKey → 卡片元素。
+     置顶、切页签、展开/合并都会重渲网格；若每次都 createElement 新建卡片，
+     已加载的立绘会被迫重新走「opacity:0 → .loaded 淡入」，看起来就是「闪一下」。
+     这里按 cellKey 复用同一批节点（DOM 移动不会导致图片重新加载），立绘保持已加载状态，
+     重渲时就不会闪；只有获得状态变化或换皮肤、新副本这类真正需要变的情况才重建。 */
+  const cardCache = new Map();
   // 图鉴懒加载：卡片进视口（提前 1000px，比浏览器原生 lazy 更积极，滚动时不会「追着图跑」）
   // 才真正请求立绘，避免打开图鉴时一次性并发几百张把首屏卡死。
   // 不支持 IntersectionObserver 时退化为「直接全部加载」（原行为），功能不受影响。
@@ -666,18 +745,27 @@
   // 把光栅线程吃满（图鉴 SSR 页实测 64 张卡里有 52 张处于未加载态）。
   function startCardLoad(img, card){
     if(!img || !img.dataset.src || img.getAttribute('src')) return;
-    const settle = () => {
+    const settle = (instant) => {
       img.classList.remove('loading');
-      img.classList.add('loaded');
+      if(instant){
+        // 缓存命中（重渲/置顶等已加载过的图）：跳过 0.35s 淡入，直接显示，避免「闪一下」。
+        img.classList.add('instant');       // 临时关掉 transition
+        img.classList.add('loaded');
+        requestAnimationFrame(() => img.classList.remove('instant'));
+      } else {
+        img.classList.add('loaded');        // 真正首次加载才走淡入
+      }
       Gacha.applyCrop(img, card._crop, card);
       if(card._crop) centeringItems.set(img, { crop: card._crop, card });
     };
     img.classList.add('loading');
     img.decoding = 'async';                 // 大图解码不阻塞主线程
-    img.onload  = settle;
+    img.onload  = () => settle(false);
     img.onerror = () => { img.classList.remove('loading'); img.classList.add('loaded'); };
     img.src = img.dataset.src;
     img.removeAttribute('data-src');
+    // 浏览器缓存（内存/磁盘）里已有这张图时，complete 会立即为真 —— 本次重渲直接瞬时显示，不闪。
+    if(img.complete && img.naturalWidth > 0) settle(true);
   }
   const lazyObserver = ('IntersectionObserver' in window)
     ? new IntersectionObserver((entries) => {
@@ -722,6 +810,7 @@
     items.sort((p, q)=> (ownedOf(q.c.id) ? 1 : 0) - (ownedOf(p.c.id) ? 1 : 0));
 
     let visibleTotal = 0;
+    const cardBuffer = [];
     for(const { c, g } of items){
       const owned = ownedOf(c.id);
       const cnt   = counts[c.id] || 0;
@@ -731,30 +820,60 @@
       const slots = (expanded && owned && cnt > 0) ? cnt : 1;
       for(let k = slots; k >= 1; k--){
         const inst = (expanded && owned && cnt > 0) ? k : null;
-        const card = document.createElement('button');
-        card.className = 'card' + (owned ? '' : ' locked');
-        card.dataset.id = c.id;
         // cellKey 全局唯一（合并模式=角色id；展开模式=角色id#副本号），供 FLIP 定位与搜索定位
-        card.dataset.cellKey = (expanded && inst) ? `${c.id}#${k}` : c.id;
-        if(inst) card.dataset.inst = inst;
-        const imgCls = owned ? '' : 'sil';
+        const cellKey = (expanded && inst) ? `${c.id}#${k}` : c.id;
         // 网格默认第 1 套皮肤；展开模式按该副本各自的选择，合并模式按角色整体选择
         const skinN = inst ? Gacha.Skin.getInst(c.id, inst) : Gacha.Skin.get(c.id);
         const sk = Gacha.getSkin(c, skinN);
-        card.innerHTML = `
-          <img class="${imgCls}" data-src="${thumbOf(sk.file)}" alt="${c.name}">
-          ${!expanded && cnt>1 ? `<span class="cnum">${cnt}</span>` : ''}
-        `;
-        // 懒加载：立绘进视口（提前 1000px）才真正请求，避免打开图鉴时一次性并发几百张
-        // 把请求队列挤爆、导致首屏 / 其他角色卡住。加载完再 applyCrop 居中 + 淡入。
-        const imgEl = card.querySelector('img');
         const crop = Gacha.getCrop(crops, sk.iid);
+        const badge = (!expanded && cnt > 1) ? `<span class="cnum">${cnt}</span>` : '';
+
+        // 复用旧卡片节点（同 cellKey，且获得状态 / 皮肤没变）：DOM 移动不会让图片重新加载，
+        // 立绘保持 .loaded（opacity:1），置顶 / 切页签 / 展开合并都不会闪。
+        let card = cardCache.get(cellKey);
+        if(card && card.dataset.owned !== (owned ? '1' : '0')) card = null;   // 获得状态变了 → 重建
+        if(card && card.dataset.skin  !== String(skinN))       card = null;   // 换皮肤 → 重建
+        if(card){
+          // 复用：只刷新数量角标，立绘原样保留
+          const old = card.querySelector('.cnum');
+          if(old) old.remove();
+          if(badge) card.insertAdjacentHTML('beforeend', badge);
+          card.className = 'card' + (owned ? '' : ' locked');
+        }else{
+          // 懒加载：立绘进视口（提前 1000px）才真正请求，避免打开图鉴时一次性并发几百张
+          // 把请求队列挤爆、导致首屏 / 其他角色卡住。加载完再 applyCrop 居中 + 淡入。
+          card = document.createElement('button');
+          card.className = 'card' + (owned ? '' : ' locked');
+          card.innerHTML = `<img data-src="${thumbOf(sk.file)}" alt="${c.name}">${badge}`;
+          card.addEventListener('click', ()=>select(c, g, card));
+          cardCache.set(cellKey, card);
+        }
+        card.dataset.id = c.id;
+        card.dataset.cellKey = cellKey;
+        card.dataset.owned = owned ? '1' : '0';
+        card.dataset.skin  = String(skinN);
+        if(inst) card.dataset.inst = inst; else delete card.dataset.inst;
         card._crop = crop;
-        card.addEventListener('click', ()=>select(c, g, card));
-        gridEl.appendChild(card);
-        lazyObserver.observe(card);
+        // 复用的卡片立绘早已加载完，startCardLoad 不会再跑，这里补回居中登记
+        const imgEl = card.querySelector('img');
+        if(imgEl && imgEl.classList.contains('loaded')){
+          if(crop){ Gacha.applyCrop(imgEl, crop, card); centeringItems.set(imgEl, { crop, card }); }
+        }
+        cardBuffer.push({card, key: cellKey});
         visibleTotal++;
       }
+    }
+    // 风铃置顶：把选中的那一张（仅一张，不是同式神全部）提到网格最前面
+    if(pinnedKey && !searchQuery){
+      const idx = cardBuffer.findIndex(x => x.key === pinnedKey);
+      if(idx > 0){
+        const [pinned] = cardBuffer.splice(idx, 1);
+        cardBuffer.unshift(pinned);
+      }
+    }
+    for(const {card} of cardBuffer){
+      gridEl.appendChild(card);
+      lazyObserver.observe(card);
     }
 
     if(!visibleTotal){
@@ -1057,6 +1176,9 @@
 
     // 语音状态：是否可点 / 是否有 ♫ 徽标
     paintDVoiceState();
+
+    // 风铃置顶：只有选中具体角色后才可点击
+    updatePinBtn();
   }
 
   // 根据当前显示的皮肤刷新底部署名。选中角色时、以及在图鉴里切换皮肤后都要调用，
@@ -1135,6 +1257,41 @@
     nowPlaying = null;
     dimgWrap.classList.remove('playing');
   }
+
+  // ---- 风铃置顶：更新按钮状态（选中角色后调用） ----
+  function currentPinKey(){
+    if(!currentSel) return null;
+    const { c, inst } = currentSel;
+    return (expanded && inst) ? `${c.id}#${inst}` : c.id;
+  }
+  function updatePinBtn(){
+    const key = currentPinKey();
+    if(!key){
+      pinBtn.disabled = true;
+      pinBtn.classList.remove('on');
+      pinBtn.title = '先选择一位式神';
+      return;
+    }
+    pinBtn.disabled = false;
+    const isPinned = pinnedKey === key;
+    pinBtn.classList.toggle('on', isPinned);
+    pinBtn.title = isPinned ? '取消置顶当前角色' : '置顶当前角色';
+  }
+  pinBtn.addEventListener('click', ()=>{
+    const key = currentPinKey();
+    if(!key) return;
+    if(pinnedKey === key){
+      pinnedKey = null;
+      localStorage.removeItem('codexPinnedKey');
+    }else{
+      pinnedKey = key;
+      localStorage.setItem('codexPinnedKey', key);
+    }
+    updatePinBtn();
+    // 重排网格，让置顶角色滑到最前
+    reflowAnimated(()=>{ renderGrid(); });
+  });
+
   /**
    * 点击播放：暂停当前从头重播；同一首再次点击也从头开始。
    * 清单缺失/资源 404 静默吞掉，不打断 UI。
@@ -1310,6 +1467,22 @@
   const CODEX_SPECIAL = new Set(['ssr','sp']);
   const isSpecialR = c => CODEX_SPECIAL.has(String(c.rarity || '').toLowerCase());
 
+  /* 名字牌与立绘重叠时自动置顶：手机/小屏(<=820px)无条件置顶，其余仅在确实重叠时置顶，
+     与 summon.html 的 fitSceneName 同款逻辑，保证图鉴召唤名牌不遮挡居中立绘。 */
+  function fitCodexSceneName(){
+    if(!sceneName || !sceneName.classList.contains('in')) return;
+    const small = window.innerWidth <= 820;
+    if(small){ sceneName.classList.add('top-mode'); return; }
+    sceneName.classList.remove('top-mode');
+    const img = document.querySelector('#codexSrImg, .scene-char.in img');
+    if(!img) return;
+    const nr = sceneName.getBoundingClientRect();
+    const pr = img.getBoundingClientRect();
+    const overlap = !(nr.right <= pr.left || nr.left >= pr.right || nr.bottom <= pr.top || nr.top >= pr.bottom);
+    if(overlap) sceneName.classList.add('top-mode');
+  }
+  window.addEventListener('resize', fitCodexSceneName);
+
   let summoning = false;   // 过场进行中：锁按钮
   let voiceCtl  = null;    // 过场语音句柄
 
@@ -1373,6 +1546,7 @@
     tag.className = 'new'; tag.textContent = 'NEW';
     sceneName.appendChild(tag);
     sceneName.classList.add('in');
+    fitCodexSceneName();
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
       el.classList.remove('enter'); el.classList.add('in');
     }));
@@ -1510,6 +1684,7 @@
       codexSrImg.classList.add('in');
       codexSrTimer = setTimeout(()=>{
         sceneName.classList.add('in');
+        fitCodexSceneName();
         voiceCtl = playVoiceCtl(c, ()=>{
           voiceCtl = null;
           codexSrFadeOut();                      // 黑幕淡出（0.6s）

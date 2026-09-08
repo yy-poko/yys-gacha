@@ -16,7 +16,7 @@
     "sp":   { "label": "SP",  "weight": 0,  "color": "#c8161d" },
     "ur":   { "label": "UR",  "weight": 0,  "color": "#e05a9a" },
     "ssr":  { "label": "SSR", "weight": 0,  "color": "#f6c860" },
-    "sr":   { "label": "SR",  "weight": 0,  "color": "#a87422" },
+    "sr":   { "label": "SR",  "weight": 0,  "color": "#9422a8" },
     "r":    { "label": "R",   "weight": 0,  "color": "#4a90d9" },
     "n":    { "label": "N",   "weight": 1,  "color": "#7e7e7e" },
     "其他": { "label": "其他", "weight": 0, "color": "#6b6b6b" }
