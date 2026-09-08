@@ -1405,9 +1405,12 @@
   reload();
 
   resetBtn.addEventListener('click', ()=>{
-    if(!confirm('确定清空全部收集记录？此操作不可恢复。\n（召唤页的卡池选择、限时/自选UP 的保底进度与统计也会一并归零，十周年特别版可重新抽一次）')) return;
+    if(!confirm('确定清空全部收集记录？此操作不可恢复。\n（置顶、召唤页的卡池选择、限时/自选UP 的保底进度与统计也会一并归零，十周年特别版可重新抽一次）')) return;
     Gacha.Codex.reset();
     Gacha.Skin.resetInst();   // 连带清掉展开模式的副本皮肤选择
+    // 收集册都清空了，置顶记录留着没意义（还都是已不存在的获得状态）→ 一并重置
+    pinnedKeys.clear();
+    savePinnedKeys();
     /* 召唤页的池子记录一并归零：当前池子（回到蓝票）、限时UP/自选UP 的累计抽数与保底计数、
        自选已选角色、常驻页签的全局统计；顺带清掉十周年特别版的"已使用"标记
        （回到 summon.html 刷新后金色"十周年特别版"按钮会回来）。
@@ -1421,6 +1424,7 @@
     gridEl.querySelectorAll('.card.sel').forEach(e=>e.classList.remove('sel'));
     stopNowPlaying();
     currentSel = null;
+    updatePinBtn();           // 风铃回到「未选中 / 未置顶」态
     paintDVoiceState();
   });
 
